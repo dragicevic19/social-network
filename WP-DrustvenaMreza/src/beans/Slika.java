@@ -8,6 +8,10 @@ public class Slika {
 	public Slika() {
 	}
 
+	public Slika(String id) {
+		this.id = id;
+	}
+
 	public Slika(String id, String putanja, boolean obrisana) {
 		super();
 		this.id = id;

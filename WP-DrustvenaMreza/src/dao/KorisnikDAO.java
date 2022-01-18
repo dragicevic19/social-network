@@ -21,7 +21,6 @@ import beans.ZahtevZaPrijateljstvo;
 public class KorisnikDAO {
 
 	private HashMap<String, Korisnik> korisnici = new HashMap<String, Korisnik>();
-	private ObjaveDAO objaveDAO;
 	private SlikeDAO slikeDAO;
 
 //	private static KorisnikDAO instance = null;
@@ -38,9 +37,8 @@ public class KorisnikDAO {
 	public KorisnikDAO() {
 	}
 
-	public KorisnikDAO(String contextPath, ObjaveDAO o, SlikeDAO s) {
-		this.objaveDAO = o;
-		this.slikeDAO = s;
+	public KorisnikDAO(String contextPath, SlikeDAO slikeDAO) {
+		this.slikeDAO = slikeDAO;
 		ucitajKorisnike(contextPath);
 	}
 
@@ -69,12 +67,12 @@ public class KorisnikDAO {
 			System.out.println(file.getCanonicalPath());
 			in = new BufferedReader(new FileReader(file));
 			String line, korisnickoIme = "", lozinka = "", email = "", ime = "", prezime = "", sPol = "", sUloga = "",
-					idProfilnaSlika = "", idObjave = "", idSlike = "", idZahteviZaPrijateljstvo = "", idPrijatelji = "",
-					privatan = "", obrisan = "";
+					idProfilnaSlika = "", idSvihObjava = "", idSvihSlika = "", idZahteviZaPrijateljstvo = "",
+					kImePrijatelja = "", privatan = "", obrisan = "";
 
-			Date datumRodjenja = new Date();
-			Pol pol = Pol.MUSKI;
-			Uloga uloga = Uloga.KORISNIK;
+			Date datumRodjenja = null;
+			Pol pol = null;
+			Uloga uloga = null;
 			Slika profilnaSlika = new Slika();
 			List<Objava> objave = new ArrayList<Objava>();
 			List<Slika> slike = new ArrayList<Slika>();
@@ -98,23 +96,19 @@ public class KorisnikDAO {
 					sPol = st.nextToken().trim();
 					sUloga = st.nextToken().trim();
 					idProfilnaSlika = st.nextToken().trim();
-					idObjave = st.nextToken().trim();
-					idSlike = st.nextToken().trim();
+					idSvihObjava = st.nextToken().trim();
+					idSvihSlika = st.nextToken().trim();
 					idZahteviZaPrijateljstvo = st.nextToken().trim();
-					idPrijatelji = st.nextToken().trim();
+					kImePrijatelja = st.nextToken().trim();
 					privatan = st.nextToken().trim();
 					obrisan = st.nextToken().trim();
 
 					pol = Pol.valueOf(sPol);
 					uloga = Uloga.valueOf(sUloga);
-					slike = slikeDAO.pronadjiSlike(idSlike);
-					profilnaSlika = slikeDAO.pronadjiSliku(idProfilnaSlika, slike);
-					objave = objaveDAO.pronadjiObjave(idObjave);
-					// zahtevi = zahteviDAO.pronadjiZahteve(idZahteviZaPrijateljstvo);
-					// ostavljam sad praznu listu koja ce se popuniti kad se ucitaju zahtevi u
-					// ZahteviDAO
 
-					prijatelji = pronadjiKorisnike(idPrijatelji);
+					slike = slikeDAO.pronadjiSlike(idSvihSlika);
+					profilnaSlika = slikeDAO.pronadjiSliku(idProfilnaSlika);
+					prijatelji = unesiPrijateljeSamoId(kImePrijatelja);
 
 				}
 				korisnici.put(korisnickoIme,
@@ -122,6 +116,8 @@ public class KorisnikDAO {
 								profilnaSlika, objave, slike, zahtevi, prijatelji, Boolean.parseBoolean(privatan),
 								Boolean.parseBoolean(obrisan)));
 			}
+			onUcitaniKorisnici(); // popunjavam prijatelje pravim objektima
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -134,21 +130,62 @@ public class KorisnikDAO {
 		}
 	}
 
-	private List<Korisnik> pronadjiKorisnike(String kImePrijatelja) { // kImePrijatelja = pera,mika,djura
+	private List<Korisnik> unesiPrijateljeSamoId(String kImePrijatelji) {
 		List<Korisnik> retList = new ArrayList<Korisnik>();
-		StringTokenizer st = new StringTokenizer(kImePrijatelja, ",");
-		String korisnickoIme = "";
-
+		StringTokenizer st = new StringTokenizer(kImePrijatelji, ",");
+		String kIme = "";
 		while (st.hasMoreTokens()) {
-			korisnickoIme = st.nextToken().trim();
-			Korisnik k = pronadjiKorisnika(korisnickoIme);
+			kIme = st.nextToken().trim();
+			Korisnik k = new Korisnik(kIme);
 			retList.add(k);
 		}
-
 		return retList;
 	}
-	
-	
+
+	public void onUcitaneObjave(Collection<Objava> objave) {
+		for (Objava objava : objave) {
+			korisnici.get(objava.getKorisnik().getKorisnickoIme()).getObjave().add(objava);
+		}
+	}
+
+	public void onUcitaniZahtevi(Collection<ZahtevZaPrijateljstvo> zahtevi) {
+		for (ZahtevZaPrijateljstvo zahtev : zahtevi) {
+			korisnici.get(zahtev.getPrimalac().getKorisnickoIme()).getZahteviZaPrijateljstvo().add(zahtev);
+		}
+	}
+
+	public void onUcitaniKorisnici() {
+		for (Korisnik k : korisnici.values()) {
+			for (Korisnik prijatelj : k.getPrijatelji()) {
+				prijatelj = korisnici.get(prijatelj.getKorisnickoIme());
+			}
+		}
+	}
+
+//	private List<Objava> unesiObjaveSamoId(String idSvihObjava) {
+//		List<Objava> retList = new ArrayList<Objava>();
+//		StringTokenizer st = new StringTokenizer(idSvihObjava, ",");
+//		String id = "";
+//		while (st.hasMoreTokens()) {
+//			id = st.nextToken().trim();
+//			Objava o = new Objava(id);
+//			retList.add(o);
+//		}
+//		return retList;
+//	}
+
+//	private List<ZahtevZaPrijateljstvo> unesiZahteveSamoId(String idZahteviZaPrijateljstvo) {
+//		List<ZahtevZaPrijateljstvo> retList = new ArrayList<ZahtevZaPrijateljstvo>();
+//		StringTokenizer st = new StringTokenizer(idZahteviZaPrijateljstvo, ",");
+//		String id = "";
+//
+//		while (st.hasMoreTokens()) {
+//			id = st.nextToken().trim();
+//			ZahtevZaPrijateljstvo z = new ZahtevZaPrijateljstvo(id);
+//			retList.add(z);
+//		}
+//		return retList;
+//	}
 
 //	public Korisnik update(Korisnik k, Korisnik noviKorisnik) {
 //		k.setLozinka(noviKorisnik.getLozinka());

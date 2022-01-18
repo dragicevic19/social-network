@@ -3,6 +3,7 @@ package beans;
 import java.util.Date;
 
 public class ZahtevZaPrijateljstvo {
+	private String id;
 	private Korisnik posiljalac;
 	private Korisnik primalac;
 	private Status status;
@@ -11,12 +12,29 @@ public class ZahtevZaPrijateljstvo {
 	public ZahtevZaPrijateljstvo() {
 	}
 
-	public ZahtevZaPrijateljstvo(Korisnik posiljalac, Korisnik primalac, Status status, Date datum) {
+	public ZahtevZaPrijateljstvo(String id) {
+		this.id = id;
+		this.posiljalac = null;
+		this.primalac = null;
+		this.status = null;
+		this.datum = null;
+	}
+
+	public ZahtevZaPrijateljstvo(String id, Korisnik posiljalac, Korisnik primalac, Status status, Date datum) {
 		super();
+		this.id = id;
 		this.posiljalac = posiljalac;
 		this.primalac = primalac;
 		this.status = status;
 		this.datum = datum;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public Korisnik getPosiljalac() {

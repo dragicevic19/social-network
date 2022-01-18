@@ -29,8 +29,8 @@ public class Korisnik {
 		this.zahteviZaPrijateljstvo = new ArrayList<ZahtevZaPrijateljstvo>();
 	}
 
-	public Korisnik(String korisnickoIme, String lozinka, String email, String ime, String prezime,
-			Date datumRodjenja, Pol pol, Uloga uloga, Slika profilnaSlika, List<Objava> objave, List<Slika> slike,
+	public Korisnik(String korisnickoIme, String lozinka, String email, String ime, String prezime, Date datumRodjenja,
+			Pol pol, Uloga uloga, Slika profilnaSlika, List<Objava> objave, List<Slika> slike,
 			List<ZahtevZaPrijateljstvo> zahteviZaPrijateljstvo, List<Korisnik> prijatelji, boolean privatan,
 			boolean obrisan) {
 		this();
@@ -49,6 +49,11 @@ public class Korisnik {
 		this.zahteviZaPrijateljstvo = zahteviZaPrijateljstvo;
 		this.privatan = privatan;
 		this.obrisan = obrisan;
+	}
+
+	public Korisnik(String kIme) {
+		this();
+		this.korisnickoIme = kIme;
 	}
 
 	public String getKorisnickoIme() {

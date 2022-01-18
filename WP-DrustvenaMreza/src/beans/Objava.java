@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Objava {
 	private String id;
+	private Korisnik korisnik;
 	private String slika; // putanja
 	private String tekst;
 	private List<Komentar> komentari;
@@ -14,13 +15,20 @@ public class Objava {
 		this.komentari = new ArrayList<Komentar>();
 	}
 
-	public Objava(String id, String slika, String tekst, List<Komentar> komentari, boolean obrisana) {
+	public Objava(String id, Korisnik korisnik, String slika, String tekst, List<Komentar> komentari,
+			boolean obrisana) {
 		this();
 		this.id = id;
+		this.korisnik = korisnik;
 		this.slika = slika;
 		this.tekst = tekst;
 		this.komentari = komentari;
 		this.obrisana = obrisana;
+	}
+
+	public Objava(String id) {
+		this();
+		this.id = id;
 	}
 
 	public String getId() {
@@ -29,6 +37,14 @@ public class Objava {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Korisnik getKorisnik() {
+		return korisnik;
+	}
+
+	public void setKorisnik(Korisnik korisnik) {
+		this.korisnik = korisnik;
 	}
 
 	public String getSlika() {
