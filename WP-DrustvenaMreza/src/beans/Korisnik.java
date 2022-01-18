@@ -6,7 +6,6 @@ import java.util.List;
 
 public class Korisnik {
 
-	private String id;
 	private String korisnickoIme;
 	private String lozinka;
 	private String email;
@@ -30,12 +29,11 @@ public class Korisnik {
 		this.zahteviZaPrijateljstvo = new ArrayList<ZahtevZaPrijateljstvo>();
 	}
 
-	public Korisnik(String id, String korisnickoIme, String lozinka, String email, String ime, String prezime,
+	public Korisnik(String korisnickoIme, String lozinka, String email, String ime, String prezime,
 			Date datumRodjenja, Pol pol, Uloga uloga, Slika profilnaSlika, List<Objava> objave, List<Slika> slike,
 			List<ZahtevZaPrijateljstvo> zahteviZaPrijateljstvo, List<Korisnik> prijatelji, boolean privatan,
 			boolean obrisan) {
 		this();
-		this.id = id;
 		this.korisnickoIme = korisnickoIme;
 		this.lozinka = lozinka;
 		this.email = email;
@@ -51,14 +49,6 @@ public class Korisnik {
 		this.zahteviZaPrijateljstvo = zahteviZaPrijateljstvo;
 		this.privatan = privatan;
 		this.obrisan = obrisan;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getKorisnickoIme() {
