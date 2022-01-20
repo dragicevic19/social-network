@@ -96,4 +96,11 @@ public class SlikeDAO {
 		return slika; // ok
 	}
 
+	public void ispisiSve() {
+		for (Slika s : slike.values()) {
+			System.out.println(s);
+		}
+		
+	}
+
 }

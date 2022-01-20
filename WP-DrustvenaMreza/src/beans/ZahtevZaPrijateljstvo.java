@@ -69,4 +69,10 @@ public class ZahtevZaPrijateljstvo {
 		this.datum = datum;
 	}
 
+	@Override
+	public String toString() {
+		return "ZahtevZaPrijateljstvo [id=" + id + ", posiljalac=" + posiljalac.getIme() + ", primalac="
+				+ primalac.getIme() + ", status=" + status + ", datum=" + datum + "]";
+	}
+
 }

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import beans.Korisnik;
+import beans.Slika;
 import beans.Status;
 import beans.ZahtevZaPrijateljstvo;
 
@@ -94,6 +95,13 @@ public class ZahteviDAO {
 
 	public ZahtevZaPrijateljstvo pronadjiZahtev(String id) {
 		return zahtevi.containsKey(id) ? zahtevi.get(id) : null;
+	}
+
+	public void ispisiSve() {
+		for (ZahtevZaPrijateljstvo z : zahtevi.values()) {
+			System.out.println(z);
+		}
+		
 	}
 
 }

@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 
 import beans.Komentar;
 import beans.Korisnik;
+import beans.Slika;
 
 public class KomentariDAO {
 
@@ -48,7 +49,7 @@ public class KomentariDAO {
 					kImeKorisnika = st.nextToken().trim();
 					datumKomentara = new SimpleDateFormat("dd/MM/yyyy").parse(st.nextToken().trim());
 					String datumIzmeneStr = st.nextToken().trim();
-					if (datumIzmeneStr.length() != 0)
+					if (datumIzmeneStr.length() != 1)
 						datumIzmene = new SimpleDateFormat("dd/MM/yyyy").parse(datumIzmeneStr);
 					obrisana = st.nextToken().trim();
 
@@ -67,7 +68,6 @@ public class KomentariDAO {
 				}
 			}
 		}
-
 	}
 
 	public List<Komentar> pronadjiKomentare(String idKomentari) { // idKomentari = 1,2,3,4
@@ -89,6 +89,13 @@ public class KomentariDAO {
 
 	public Collection<Komentar> pronadjiSve() {
 		return komentari.values();
+	}
+
+	public void ispisiSve() {
+		for (Komentar k : komentari.values()) {
+			System.out.println(k);
+		}
+
 	}
 
 }

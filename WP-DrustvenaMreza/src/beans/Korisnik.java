@@ -176,4 +176,23 @@ public class Korisnik {
 		this.obrisan = obrisan;
 	}
 
+	@Override
+	public String toString() {
+		return "Korisnik [korisnickoIme=" + korisnickoIme + ", lozinka=" + lozinka + ", email=" + email + ", ime=" + ime
+				+ ", prezime=" + prezime + ", datumRodjenja=" + datumRodjenja + ", pol=" + pol + ", uloga=" + uloga
+				+ ", profilnaSlika=" + profilnaSlika + ", objave=" + objave + ", slike=" + slike + ", prijatelji="
+				+ prijateljiKorisnickaImena() + ", zahteviZaPrijateljstvo=" + zahteviZaPrijateljstvo + ", privatan=" + privatan
+				+ ", obrisan=" + obrisan + "]";
+	}
+
+	private String prijateljiKorisnickaImena() {
+		String retString = "";
+		for (Korisnik prijatelj : prijatelji) {
+			retString += prijatelj.getKorisnickoIme() + " " + prijatelj.getIme() + "|";
+		}
+		return retString;
+	}
+	
+	
+
 }

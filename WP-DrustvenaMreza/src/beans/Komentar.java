@@ -61,4 +61,12 @@ public class Komentar {
 		this.obrisan = obrisan;
 	}
 
+	@Override
+	public String toString() {
+		return "Komentar [id=" + id + ", korisnik=" + korisnik.getKorisnickoIme() + ", datumKomentara=" + datumKomentara + ", datumIzmene="
+				+ datumIzmene + ", obrisan=" + obrisan + "]";
+	}
+	
+	
+
 }

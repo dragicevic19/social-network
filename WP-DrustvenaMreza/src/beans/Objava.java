@@ -79,4 +79,12 @@ public class Objava {
 		this.obrisana = obrisana;
 	}
 
+	@Override
+	public String toString() {
+		return "Objava [id=" + id + ", korisnik=" + korisnik.getKorisnickoIme() + ", slika=" + slika + ", tekst=" + tekst + ", komentari="
+				+ komentari + ", obrisana=" + obrisana + "]";
+	}
+	
+	
+
 }

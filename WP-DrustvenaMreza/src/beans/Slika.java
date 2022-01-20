@@ -43,4 +43,11 @@ public class Slika {
 		this.obrisana = obrisana;
 	}
 
+	@Override
+	public String toString() {
+		return "Slika [id=" + id + ", putanja=" + putanja + ", obrisana=" + obrisana + "]";
+	}
+	
+	
+
 }

@@ -37,6 +37,14 @@ public class KorisnikDAO {
 	public KorisnikDAO() {
 	}
 
+	public HashMap<String, Korisnik> getKorisnici() {
+		return korisnici;
+	}
+
+	public void setKorisnici(HashMap<String, Korisnik> korisnici) {
+		this.korisnici = korisnici;
+	}
+
 	public KorisnikDAO(String contextPath, SlikeDAO slikeDAO) {
 		this.slikeDAO = slikeDAO;
 		ucitajKorisnike(contextPath);
@@ -67,8 +75,7 @@ public class KorisnikDAO {
 			System.out.println(file.getCanonicalPath());
 			in = new BufferedReader(new FileReader(file));
 			String line, korisnickoIme = "", lozinka = "", email = "", ime = "", prezime = "", sPol = "", sUloga = "",
-					idProfilnaSlika = "", idSvihObjava = "", idSvihSlika = "", idZahteviZaPrijateljstvo = "",
-					kImePrijatelja = "", privatan = "", obrisan = "";
+					idProfilnaSlika = "", idSvihSlika = "", kImePrijatelja = "", privatan = "", obrisan = "";
 
 			Date datumRodjenja = null;
 			Pol pol = null;
@@ -96,9 +103,7 @@ public class KorisnikDAO {
 					sPol = st.nextToken().trim();
 					sUloga = st.nextToken().trim();
 					idProfilnaSlika = st.nextToken().trim();
-					idSvihObjava = st.nextToken().trim();
 					idSvihSlika = st.nextToken().trim();
-					idZahteviZaPrijateljstvo = st.nextToken().trim();
 					kImePrijatelja = st.nextToken().trim();
 					privatan = st.nextToken().trim();
 					obrisan = st.nextToken().trim();
@@ -108,8 +113,9 @@ public class KorisnikDAO {
 
 					slike = slikeDAO.pronadjiSlike(idSvihSlika);
 					profilnaSlika = slikeDAO.pronadjiSliku(idProfilnaSlika);
-					prijatelji = unesiPrijateljeSamoId(kImePrijatelja);
-
+					if (!kImePrijatelja.equals("/")) {
+						prijatelji = unesiPrijateljeSamoId(kImePrijatelja);
+					}
 				}
 				korisnici.put(korisnickoIme,
 						new Korisnik(korisnickoIme, lozinka, email, ime, prezime, datumRodjenja, pol, uloga,
@@ -144,6 +150,7 @@ public class KorisnikDAO {
 
 	public void onUcitaneObjave(Collection<Objava> objave) {
 		for (Objava objava : objave) {
+			System.out.println(objava.getKorisnik().getKorisnickoIme());
 			korisnici.get(objava.getKorisnik().getKorisnickoIme()).getObjave().add(objava);
 		}
 	}
@@ -156,10 +163,20 @@ public class KorisnikDAO {
 
 	public void onUcitaniKorisnici() {
 		for (Korisnik k : korisnici.values()) {
+			List<Korisnik> prijatelji = new ArrayList<Korisnik>();
 			for (Korisnik prijatelj : k.getPrijatelji()) {
-				prijatelj = korisnici.get(prijatelj.getKorisnickoIme());
+				System.out.println("PRIJATELJ: " + prijatelj);
+				prijatelji.add(korisnici.get(prijatelj.getKorisnickoIme()));
 			}
+			k.setPrijatelji(prijatelji);
 		}
+	}
+
+	public void ispisiSve() {
+		for (Korisnik k : korisnici.values()) {
+			System.out.println(k);
+		}
+
 	}
 
 //	private List<Objava> unesiObjaveSamoId(String idSvihObjava) {
