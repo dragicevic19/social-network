@@ -16,5 +16,4 @@ public class Test {
 		objaveDAO.ispisiSve();
 		zahteviDAO.ispisiSve();
 	}
-
 }

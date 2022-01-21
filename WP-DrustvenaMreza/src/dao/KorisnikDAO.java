@@ -64,20 +64,21 @@ public class KorisnikDAO {
 			System.out.println(file.getCanonicalPath());
 			in = new BufferedReader(new FileReader(file));
 			String line, korisnickoIme = "", lozinka = "", email = "", ime = "", prezime = "", sPol = "", sUloga = "",
-					idProfilnaSlika = "", idSvihSlika = "", kImePrijatelja = "", privatan = "", obrisan = "";
+					idProfilnaSlika = "", idSvihSlika = "", idObjava = "", idZahteva = "", kImePrijatelja = "",
+					privatan = "", obrisan = "";
 
 			Date datumRodjenja = null;
 			Pol pol = null;
 			Uloga uloga = null;
 			Slika profilnaSlika = new Slika();
-			List<Objava> objave = new ArrayList<Objava>();
 			List<Slika> slike = new ArrayList<Slika>();
-			List<ZahtevZaPrijateljstvo> zahtevi = new ArrayList<ZahtevZaPrijateljstvo>();
-
 			StringTokenizer st;
 
 			while ((line = in.readLine()) != null) {
-				List<Korisnik> prijatelji = new ArrayList<Korisnik>();
+				List<String> prijatelji = new ArrayList<String>();
+				List<String> objave = new ArrayList<String>();
+				List<String> zahtevi = new ArrayList<String>();
+
 				line = line.trim();
 				if (line.equals("") || line.indexOf('#') == 0)
 					continue;
@@ -91,19 +92,28 @@ public class KorisnikDAO {
 					datumRodjenja = new SimpleDateFormat("dd/MM/yyyy").parse(st.nextToken().trim());
 					sPol = st.nextToken().trim();
 					sUloga = st.nextToken().trim();
+					kImePrijatelja = st.nextToken().trim();
 					idProfilnaSlika = st.nextToken().trim();
 					idSvihSlika = st.nextToken().trim();
-					kImePrijatelja = st.nextToken().trim();
+					idObjava = st.nextToken().trim();
+					idZahteva = st.nextToken().trim();
 					privatan = st.nextToken().trim();
 					obrisan = st.nextToken().trim();
-
 					pol = Pol.valueOf(sPol);
 					uloga = Uloga.valueOf(sUloga);
 
 					slike = slikeDAO.pronadjiSlike(idSvihSlika);
 					profilnaSlika = slikeDAO.pronadjiSliku(idProfilnaSlika);
-					if (!kImePrijatelja.equals("/")) {
-						prijatelji = unesiPrijateljeSamoId(kImePrijatelja);
+
+					// lista prijatelja ce biti lista
+					if (!kImePrijatelja.equals("/")) { // korisnickih imena zbog rekurzije tako i za zahteve i
+						prijatelji = parseIds(kImePrijatelja); // objave
+					}
+					if (!idObjava.equals("/")) {
+						objave = parseIds(idObjava);
+					}
+					if (!idZahteva.equals("/")) {
+						zahtevi = parseIds(idZahteva);
 					}
 				}
 				korisnici.put(korisnickoIme,
@@ -111,7 +121,6 @@ public class KorisnikDAO {
 								profilnaSlika, objave, slike, zahtevi, prijatelji, Boolean.parseBoolean(privatan),
 								Boolean.parseBoolean(obrisan)));
 			}
-			onUcitaniKorisnici(); // popunjavam prijatelje pravim objektima
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -125,56 +134,43 @@ public class KorisnikDAO {
 		}
 	}
 
-	private List<Korisnik> unesiPrijateljeSamoId(String kImePrijatelji) {
-		List<Korisnik> retList = new ArrayList<Korisnik>();
-		StringTokenizer st = new StringTokenizer(kImePrijatelji, ",");
-		String kIme = "";
+	private List<String> parseIds(String ids) {
+		List<String> retList = new ArrayList<String>();
+		StringTokenizer st = new StringTokenizer(ids, ",");
 		while (st.hasMoreTokens()) {
-			kIme = st.nextToken().trim();
-			Korisnik k = new Korisnik(kIme);
-			retList.add(k);
+			retList.add(st.nextToken().trim());
 		}
 		return retList;
 	}
 
-	public void onUcitaneObjave(Collection<Objava> objave) {
-		for (Korisnik k : korisnici.values()) {
-			List<Objava> objaveKorisnika = new ArrayList<Objava>();
-			for (Objava objava : objave) {
-				if (k.getKorisnickoIme().equals(objava.getKorisnik().getKorisnickoIme())) {
-					objaveKorisnika.add(objava);
-				}
-			}
-			k.setObjave(objaveKorisnika);
-		}
-	}
+//	public void onUcitaneObjave(Collection<Objava> objave) {
+//		for (Korisnik k : korisnici.values()) {
+//			List<Objava> objaveKorisnika = new ArrayList<Objava>();
+//			for (Objava objava : objave) {
+//				if (k.getKorisnickoIme().equals(objava.getKorisnik().getKorisnickoIme())) {
+//					objaveKorisnika.add(objava);
+//				}
+//			}
+//			k.setObjave(objaveKorisnika);
+//		}
+//	}
 
 //	public void onUcitaniZahtevi(Collection<ZahtevZaPrijateljstvo> zahtevi) {
 //		for (ZahtevZaPrijateljstvo zahtev : zahtevi) {
 //			korisnici.get(zahtev.getPrimalac().getKorisnickoIme()).getZahteviZaPrijateljstvo().add(zahtev);
 //		}
 //	}
-	public void onUcitaniZahtevi(Collection<ZahtevZaPrijateljstvo> zahtevi) {
-		for (Korisnik korisnik : korisnici.values()) {
-			List<ZahtevZaPrijateljstvo> zahteviKorisnika = new ArrayList<ZahtevZaPrijateljstvo>();
-			for (ZahtevZaPrijateljstvo zahtev : zahtevi) {
-				if (korisnik.getKorisnickoIme().equals(zahtev.getPrimalac().getKorisnickoIme())) {
-					zahteviKorisnika.add(zahtev);
-				}
-			}
-			korisnik.setZahteviZaPrijateljstvo(zahteviKorisnika);
-		}
-	}
-
-	public void onUcitaniKorisnici() {
-		for (Korisnik k : korisnici.values()) {
-			List<Korisnik> prijatelji = new ArrayList<Korisnik>();
-			for (Korisnik prijatelj : k.getPrijatelji()) {
-				prijatelji.add(korisnici.get(prijatelj.getKorisnickoIme()));
-			}
-			k.setPrijatelji(prijatelji);
-		}
-	}
+//	public void onUcitaniZahtevi(Collection<ZahtevZaPrijateljstvo> zahtevi) {
+//		for (Korisnik korisnik : korisnici.values()) {
+//			List<ZahtevZaPrijateljstvo> zahteviKorisnika = new ArrayList<ZahtevZaPrijateljstvo>();
+//			for (ZahtevZaPrijateljstvo zahtev : zahtevi) {
+//				if (korisnik.getKorisnickoIme().equals(zahtev.getPrimalac().getKorisnickoIme())) {
+//					zahteviKorisnika.add(zahtev);
+//				}
+//			}
+//			korisnik.setZahteviZaPrijateljstvo(zahteviKorisnika);
+//		}
+//	}
 
 	public void ispisiSve() {
 		for (Korisnik k : korisnici.values()) {

@@ -71,8 +71,8 @@ public class ZahtevZaPrijateljstvo {
 
 	@Override
 	public String toString() {
-		return "ZahtevZaPrijateljstvo [id=" + id + ", posiljalac=" + posiljalac.getIme() + ", primalac="
-				+ primalac.getIme() + ", status=" + status + ", datum=" + datum + "]";
+		return "ZahtevZaPrijateljstvo [id=" + id + ", posiljalac=" + posiljalac + ", primalac=" + primalac + ", status="
+				+ status + ", datum=" + datum + "]";
 	}
 
 }

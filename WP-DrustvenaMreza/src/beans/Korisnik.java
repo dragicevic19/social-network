@@ -15,24 +15,23 @@ public class Korisnik {
 	private Pol pol;
 	private Uloga uloga;
 	private Slika profilnaSlika; // samo putanja?
-	private List<Objava> objave;
+	private List<String> objave;
 	private List<Slika> slike; // ?
-	private List<Korisnik> prijatelji;
-	private List<ZahtevZaPrijateljstvo> zahteviZaPrijateljstvo;
+	private List<String> prijatelji;
+	private List<String> zahteviZaPrijateljstvo;
 	private boolean privatan;
 	private boolean obrisan;
 
 	public Korisnik() {
-		this.objave = new ArrayList<Objava>();
+		this.objave = new ArrayList<String>();
 		this.slike = new ArrayList<Slika>();
-		this.prijatelji = new ArrayList<Korisnik>();
-		this.zahteviZaPrijateljstvo = new ArrayList<ZahtevZaPrijateljstvo>();
+		this.prijatelji = new ArrayList<String>();
+		this.zahteviZaPrijateljstvo = new ArrayList<String>();
 	}
 
 	public Korisnik(String korisnickoIme, String lozinka, String email, String ime, String prezime, Date datumRodjenja,
-			Pol pol, Uloga uloga, Slika profilnaSlika, List<Objava> objave, List<Slika> slike,
-			List<ZahtevZaPrijateljstvo> zahteviZaPrijateljstvo, List<Korisnik> prijatelji, boolean privatan,
-			boolean obrisan) {
+			Pol pol, Uloga uloga, Slika profilnaSlika, List<String> objave, List<Slika> slike,
+			List<String> zahteviZaPrijateljstvo, List<String> prijatelji, boolean privatan, boolean obrisan) {
 		this();
 		this.korisnickoIme = korisnickoIme;
 		this.lozinka = lozinka;
@@ -128,11 +127,11 @@ public class Korisnik {
 		this.profilnaSlika = profilnaSlika;
 	}
 
-	public List<Objava> getObjave() {
+	public List<String> getObjave() {
 		return objave;
 	}
 
-	public void setObjave(List<Objava> objave) {
+	public void setObjave(List<String> objave) {
 		this.objave = objave;
 	}
 
@@ -144,19 +143,19 @@ public class Korisnik {
 		this.slike = slike;
 	}
 
-	public List<Korisnik> getPrijatelji() {
+	public List<String> getPrijatelji() {
 		return prijatelji;
 	}
 
-	public void setPrijatelji(List<Korisnik> prijatelji) {
+	public void setPrijatelji(List<String> prijatelji) {
 		this.prijatelji = prijatelji;
 	}
 
-	public List<ZahtevZaPrijateljstvo> getZahteviZaPrijateljstvo() {
+	public List<String> getZahteviZaPrijateljstvo() {
 		return zahteviZaPrijateljstvo;
 	}
 
-	public void setZahteviZaPrijateljstvo(List<ZahtevZaPrijateljstvo> zahteviZaPrijateljstvo) {
+	public void setZahteviZaPrijateljstvo(List<String> zahteviZaPrijateljstvo) {
 		this.zahteviZaPrijateljstvo = zahteviZaPrijateljstvo;
 	}
 
@@ -181,18 +180,7 @@ public class Korisnik {
 		return "Korisnik [korisnickoIme=" + korisnickoIme + ", lozinka=" + lozinka + ", email=" + email + ", ime=" + ime
 				+ ", prezime=" + prezime + ", datumRodjenja=" + datumRodjenja + ", pol=" + pol + ", uloga=" + uloga
 				+ ", profilnaSlika=" + profilnaSlika + ", objave=" + objave + ", slike=" + slike + ", prijatelji="
-				+ prijateljiKorisnickaImena() + ", zahteviZaPrijateljstvo=" + zahteviZaPrijateljstvo + ", privatan=" + privatan
+				+ prijatelji + ", zahteviZaPrijateljstvo=" + zahteviZaPrijateljstvo + ", privatan=" + privatan
 				+ ", obrisan=" + obrisan + "]";
 	}
-
-	private String prijateljiKorisnickaImena() {
-		String retString = "";
-		for (Korisnik prijatelj : prijatelji) {
-			retString += prijatelj.getKorisnickoIme() + " " + prijatelj.getIme() + "|";
-		}
-		return retString;
-	}
-	
-	
-
 }
