@@ -23,17 +23,6 @@ public class KorisnikDAO {
 	private HashMap<String, Korisnik> korisnici = new HashMap<String, Korisnik>();
 	private SlikeDAO slikeDAO;
 
-//	private static KorisnikDAO instance = null;
-//	
-//	public static KorisnikDAO getInstance(){
-//		if (instance == null) {
-//			instance = new KorisnikDAO();
-//			return instance;
-//		}
-//		else 
-//			return instance;
-//	}
-
 	public KorisnikDAO() {
 	}
 
@@ -84,11 +73,11 @@ public class KorisnikDAO {
 			List<Objava> objave = new ArrayList<Objava>();
 			List<Slika> slike = new ArrayList<Slika>();
 			List<ZahtevZaPrijateljstvo> zahtevi = new ArrayList<ZahtevZaPrijateljstvo>();
-			List<Korisnik> prijatelji = new ArrayList<Korisnik>();
 
 			StringTokenizer st;
 
 			while ((line = in.readLine()) != null) {
+				List<Korisnik> prijatelji = new ArrayList<Korisnik>();
 				line = line.trim();
 				if (line.equals("") || line.indexOf('#') == 0)
 					continue;
@@ -149,15 +138,31 @@ public class KorisnikDAO {
 	}
 
 	public void onUcitaneObjave(Collection<Objava> objave) {
-		for (Objava objava : objave) {
-			System.out.println(objava.getKorisnik().getKorisnickoIme());
-			korisnici.get(objava.getKorisnik().getKorisnickoIme()).getObjave().add(objava);
+		for (Korisnik k : korisnici.values()) {
+			List<Objava> objaveKorisnika = new ArrayList<Objava>();
+			for (Objava objava : objave) {
+				if (k.getKorisnickoIme().equals(objava.getKorisnik().getKorisnickoIme())) {
+					objaveKorisnika.add(objava);
+				}
+			}
+			k.setObjave(objaveKorisnika);
 		}
 	}
 
+//	public void onUcitaniZahtevi(Collection<ZahtevZaPrijateljstvo> zahtevi) {
+//		for (ZahtevZaPrijateljstvo zahtev : zahtevi) {
+//			korisnici.get(zahtev.getPrimalac().getKorisnickoIme()).getZahteviZaPrijateljstvo().add(zahtev);
+//		}
+//	}
 	public void onUcitaniZahtevi(Collection<ZahtevZaPrijateljstvo> zahtevi) {
-		for (ZahtevZaPrijateljstvo zahtev : zahtevi) {
-			korisnici.get(zahtev.getPrimalac().getKorisnickoIme()).getZahteviZaPrijateljstvo().add(zahtev);
+		for (Korisnik korisnik : korisnici.values()) {
+			List<ZahtevZaPrijateljstvo> zahteviKorisnika = new ArrayList<ZahtevZaPrijateljstvo>();
+			for (ZahtevZaPrijateljstvo zahtev : zahtevi) {
+				if (korisnik.getKorisnickoIme().equals(zahtev.getPrimalac().getKorisnickoIme())) {
+					zahteviKorisnika.add(zahtev);
+				}
+			}
+			korisnik.setZahteviZaPrijateljstvo(zahteviKorisnika);
 		}
 	}
 
@@ -176,33 +181,7 @@ public class KorisnikDAO {
 		for (Korisnik k : korisnici.values()) {
 			System.out.println(k);
 		}
-
 	}
-
-//	private List<Objava> unesiObjaveSamoId(String idSvihObjava) {
-//		List<Objava> retList = new ArrayList<Objava>();
-//		StringTokenizer st = new StringTokenizer(idSvihObjava, ",");
-//		String id = "";
-//		while (st.hasMoreTokens()) {
-//			id = st.nextToken().trim();
-//			Objava o = new Objava(id);
-//			retList.add(o);
-//		}
-//		return retList;
-//	}
-
-//	private List<ZahtevZaPrijateljstvo> unesiZahteveSamoId(String idZahteviZaPrijateljstvo) {
-//		List<ZahtevZaPrijateljstvo> retList = new ArrayList<ZahtevZaPrijateljstvo>();
-//		StringTokenizer st = new StringTokenizer(idZahteviZaPrijateljstvo, ",");
-//		String id = "";
-//
-//		while (st.hasMoreTokens()) {
-//			id = st.nextToken().trim();
-//			ZahtevZaPrijateljstvo z = new ZahtevZaPrijateljstvo(id);
-//			retList.add(z);
-//		}
-//		return retList;
-//	}
 
 //	public Korisnik update(Korisnik k, Korisnik noviKorisnik) {
 //		k.setLozinka(noviKorisnik.getLozinka());
