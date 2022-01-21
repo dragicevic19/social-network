@@ -81,7 +81,7 @@ public class Objava {
 
 	@Override
 	public String toString() {
-		return "Objava [id=" + id + ", korisnik=" + korisnik.getKorisnickoIme() + ", slika=" + slika + ", tekst=" + tekst + ", komentari="
+		return "Objava [id=" + id + ", korisnik=" + korisnik + ", slika=" + slika + ", tekst=" + tekst + ", komentari="
 				+ komentari + ", obrisana=" + obrisana + "]";
 	}
 	

@@ -86,7 +86,7 @@ public class ObjaveDAO {
                 objave.put(id, new Objava(id, k, putanjaSlike, tekst, komentari, Boolean.parseBoolean(obrisana)));
             }
 
-            korisniciDAO.onUcitaneObjave(objave.values()); // da se popune objave za sve korisnike
+         //   korisniciDAO.onUcitaneObjave(objave.values()); // da se popune objave za sve korisnike
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -38,6 +38,16 @@ public class SparkMain {
 			return "radi";
 		});
 
+		get("/rest/korisnici/loggedIn", (req, res) -> {	// vraca trenutno registrovanog korisnika
+			res.type("application/json");
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("ulogovaniKorisnik");
+			if (k == null) {
+				return false;
+			}
+			return g.toJson(k);
+		});
+
 		post("rest/korisnici/login", (req, res) -> {
 			res.type("application/json");
 			String kIme = req.queryParams("logKorisnicko");
@@ -55,7 +65,14 @@ public class SparkMain {
 		post("/rest/korisnici/register", (req, res) -> {
 			res.type("application/json");
 			Korisnik k = g.fromJson(req.body(), Korisnik.class);
-			return g.toJson(KorisniciService.register(k, korisniciDAO));
+			Session ss = req.session(true);
+			k = KorisniciService.register(k, korisniciDAO);
+			if (k != null) {
+				ss.attribute("ulogovaniKorisnik", k);
+				return g.toJson(k);
+			} else {
+				return null;
+			}
 		});
 	}
 }

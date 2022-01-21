@@ -57,7 +57,7 @@ public class ZahteviDAO {
 				zahtevi.put(id, new ZahtevZaPrijateljstvo(id, poslao, primio, status, datumZahteva));
 			}
 
-			korisniciDAO.onUcitaniZahtevi(zahtevi.values()); // da se popune zahtevi za sve korisnike
+		//	korisniciDAO.onUcitaniZahtevi(zahtevi.values()); // da se popune zahtevi za sve korisnike
 
 		} catch (Exception e) {
 			e.printStackTrace();

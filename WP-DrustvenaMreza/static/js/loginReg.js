@@ -125,12 +125,14 @@ function login() {
         url: '/rest/korisnici/login',
         data: data,
         success: function (korisnik) {
-            $('#successLog').text('Successfully logged in!');
-            $('#successLog').show().delay(3000).fadeOut();
-            window.location = "pocetna.html";
-        },
-        fail: function () {
-            alert('ne mere');
+            if (korisnik) {
+                $('#successLog').text('Successfully logged in!');
+                $('#successLog').show().delay(3000).fadeOut();
+                window.location = "pocetna.html";
+            }
+            else {
+                alert("Username or password is not correct");
+            }
         }
     });
 }

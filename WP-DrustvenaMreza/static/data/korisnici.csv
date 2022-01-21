@@ -1,3 +1,3 @@
-pera;pera123;pera@gmail.com;Pera;Peric;12/12/2000;MUSKI;KORISNIK;1;1;mika;false;false
-mika;mika123;mika@gmail.com;Mika;Mikic;10/10/1999;MUSKI;KORISNIK;1;1;pera;false;false
-jova;jova123;jova@gmail.com;Jova;Jovic;02/02/2001;MUSKI;KORISNIK;/;/;/;false;false
+pera;pera123;pera@gmail.com;Pera;Peric;12/12/2000;MUSKI;KORISNIK;mika;1;1;1,2;1;false;false
+mika;mika123;mika@gmail.com;Mika;Mikic;10/10/1999;MUSKI;KORISNIK;pera;1;1;/;/;false;false
+jova;jova123;jova@gmail.com;Jova;Jovic;02/02/2001;MUSKI;KORISNIK;/;/;/;/;/;false;false
