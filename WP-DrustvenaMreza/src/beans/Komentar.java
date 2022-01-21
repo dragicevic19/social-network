@@ -5,6 +5,7 @@ import java.util.Date;
 public class Komentar {
 	private String id;
 	private Korisnik korisnik;
+	private String tekst;
 	private Date datumKomentara;
 	private Date datumIzmene;
 	private boolean obrisan;
@@ -12,10 +13,12 @@ public class Komentar {
 	public Komentar() {
 	}
 
-	public Komentar(String id, Korisnik korisnik, Date datumKomentara, Date datumIzmene, boolean obrisan) {
+	public Komentar(String id, Korisnik korisnik, String tekst, Date datumKomentara, Date datumIzmene,
+			boolean obrisan) {
 		super();
 		this.id = id;
 		this.korisnik = korisnik;
+		this.tekst = tekst;
 		this.datumKomentara = datumKomentara;
 		this.datumIzmene = datumIzmene;
 		this.obrisan = obrisan;
@@ -35,6 +38,14 @@ public class Komentar {
 
 	public void setKorisnik(Korisnik korisnik) {
 		this.korisnik = korisnik;
+	}
+
+	public String getTekst() {
+		return tekst;
+	}
+
+	public void setTekst(String tekst) {
+		this.tekst = tekst;
 	}
 
 	public Date getDatumKomentara() {
@@ -63,10 +74,8 @@ public class Komentar {
 
 	@Override
 	public String toString() {
-		return "Komentar [id=" + id + ", korisnik=" + korisnik.getKorisnickoIme() + ", datumKomentara=" + datumKomentara + ", datumIzmene="
-				+ datumIzmene + ", obrisan=" + obrisan + "]";
+		return "Komentar [id=" + id + ", korisnik=" + korisnik + ", tekst=" + tekst + ", datumKomentara="
+				+ datumKomentara + ", datumIzmene=" + datumIzmene + ", obrisan=" + obrisan + "]";
 	}
-	
-	
 
 }

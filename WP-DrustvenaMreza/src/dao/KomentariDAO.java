@@ -13,7 +13,6 @@ import java.util.StringTokenizer;
 
 import beans.Komentar;
 import beans.Korisnik;
-import beans.Slika;
 
 public class KomentariDAO {
 
@@ -34,7 +33,7 @@ public class KomentariDAO {
 			File file = new File(contextPath + "/komentari.csv");
 			System.out.println(file.getCanonicalPath());
 			in = new BufferedReader(new FileReader(file));
-			String line, id = "", kImeKorisnika = "", obrisana = "";
+			String line, id = "", kImeKorisnika = "", tekst = "", obrisana = "";
 			Date datumKomentara = null, datumIzmene = null;
 			Korisnik korisnik = null;
 
@@ -47,6 +46,7 @@ public class KomentariDAO {
 				while (st.hasMoreTokens()) {
 					id = st.nextToken().trim();
 					kImeKorisnika = st.nextToken().trim();
+					tekst = st.nextToken().trim();
 					datumKomentara = new SimpleDateFormat("dd/MM/yyyy").parse(st.nextToken().trim());
 					String datumIzmeneStr = st.nextToken().trim();
 					if (datumIzmeneStr.length() != 1)
@@ -56,7 +56,7 @@ public class KomentariDAO {
 					korisnik = korisniciDAO.pronadjiKorisnika(kImeKorisnika);
 				}
 				komentari.put(id,
-						new Komentar(id, korisnik, datumKomentara, datumIzmene, Boolean.parseBoolean(obrisana)));
+						new Komentar(id, korisnik, tekst, datumKomentara, datumIzmene, Boolean.parseBoolean(obrisana)));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -95,7 +95,24 @@ public class KomentariDAO {
 		for (Komentar k : komentari.values()) {
 			System.out.println(k);
 		}
+	}
 
+	public Komentar sacuvaj(Komentar komentar) {
+		if (komentari.containsKey(komentar.getId())) {
+			return null; // greska
+		}
+		Integer maxId = -1;
+		for (String id : komentari.keySet()) {
+			int idNum = Integer.parseInt(id);
+			if (idNum > maxId) {
+				maxId = idNum;
+			}
+		}
+		maxId++;
+		komentar.setId(maxId.toString());
+		komentari.put(komentar.getId(), komentar);
+		// DODAJ U FAJL
+		return komentar; // ok
 	}
 
 }

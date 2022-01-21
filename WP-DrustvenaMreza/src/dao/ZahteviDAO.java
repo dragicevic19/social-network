@@ -101,7 +101,6 @@ public class ZahteviDAO {
 		for (ZahtevZaPrijateljstvo z : zahtevi.values()) {
 			System.out.println(z);
 		}
-		
 	}
 
 }

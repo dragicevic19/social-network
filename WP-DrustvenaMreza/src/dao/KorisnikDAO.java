@@ -170,7 +170,6 @@ public class KorisnikDAO {
 		for (Korisnik k : korisnici.values()) {
 			List<Korisnik> prijatelji = new ArrayList<Korisnik>();
 			for (Korisnik prijatelj : k.getPrijatelji()) {
-				System.out.println("PRIJATELJ: " + prijatelj);
 				prijatelji.add(korisnici.get(prijatelj.getKorisnickoIme()));
 			}
 			k.setPrijatelji(prijatelji);
