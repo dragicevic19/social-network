@@ -2,5 +2,6 @@ package beans;
 
 public enum Uloga {
 	KORISNIK,
-	ADMINISTRATOR
+	ADMINISTRATOR,
+	GOST
 }

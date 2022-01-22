@@ -1,18 +1,20 @@
 let ulogovaniKorisnik = null;
 
 $(document).ready(function () {
-
     $.ajax({
         type: "GET",
         url: "rest/korisnici/loggedIn",
-        success: function (korisnik) {
-            if (!korisnik)
+        success: function (response) {
+            if (response.status == "ERROR")
                 alert("Nema ulogovanog greska");
             else {
-                ulogovaniKorisnik = korisnik;
-                alert(ulogovaniKorisnik.objave);
-                $("body").append(ulogovaniKorisnik.korisnickoIme);
-                //alert(ulogovaniKorisnik.email);
+                ulogovaniKorisnik = response.data;
+                if (ulogovaniKorisnik.uloga == "GOST") {
+                    $("body").append("You are logged in as guest")
+                }
+                else {
+                    $("body").append('Welcome user: ' + ulogovaniKorisnik.korisnickoIme);
+                }
             }
         }
     });
