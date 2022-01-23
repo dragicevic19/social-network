@@ -26,6 +26,10 @@ $(document).ready(function(){
     $(".login .btn").click(function () {
         login();
     });
+
+    $(".btn.guest").click(function () {
+        guestLogin();
+    });
 });
 
 function register() {
@@ -84,7 +88,8 @@ function register() {
         email: email,
         ime: ime,
         prezime: prezime,
-        pol: pol
+        pol: pol,
+        uloga: "KORISNIK"
     });
 
     $.ajax({
@@ -92,11 +97,13 @@ function register() {
         url: "/rest/korisnici/register",
         data: data,
         contentType: 'application/json',
-        success: function (korisnik) {
-            if (!korisnik)
-                alert("Korisnik vec registrovan");
-            else
+        success: function (response) {
+            if (response.status == "ERROR") {
+                toast(response.message);
+            }
+            else {
                 window.location = "pocetna.html";
+            }
         }
     });
 }
@@ -110,7 +117,6 @@ function login() {
         $('input[name="logKorisnicko"]').addClass('error');
         $('input[name="logKorisnicko"]').attr("placeholder", "Enter username");
         greska = true;
-
     }
     if (!lozinka) {
         $('input[name="logPass"]').addClass('error');
@@ -119,20 +125,45 @@ function login() {
     }
     if (greska) return;
     
-    var data = $('#loginForm').serialize();
+    //var data = $('#loginForm').serialize();
+    var data = JSON.stringify({
+        korisnickoIme: korisnickoIme,
+        lozinka: lozinka,
+        uloga: "KORISNIK"
+    })
     $.ajax({
         type: "POST",
         url: '/rest/korisnici/login',
         data: data,
-        success: function (korisnik) {
-            if (korisnik) {
+        contentType: "application/json",
+        success: function (response) {
+            if (response.status == "SUCCESS") {
                 $('#successLog').text('Successfully logged in!');
                 $('#successLog').show().delay(3000).fadeOut();
                 window.location = "pocetna.html";
             }
             else {
-                alert("Username or password is not correct");
+                $('#successLog').text('The username or password is incorrect');
+                $('#successLog').addClass('loginError')
             }
+        }
+    });
+}
+
+function guestLogin() {
+    var data = JSON.stringify({
+        uloga: "GOST"
+    });
+    $.ajax({
+        type: "POST",
+        url: '/rest/korisnici/login',
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "SUCCESS")
+                window.location = "pocetna.html";
+            else 
+                toast("Error");   
         }
     });
 }

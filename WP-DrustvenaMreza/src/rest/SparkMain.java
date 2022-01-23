@@ -28,51 +28,18 @@ public class SparkMain {
 	private static ObjaveDAO objaveDAO = new ObjaveDAO(dataPath, korisniciDAO, komentariDAO);
 	private static ZahteviDAO zahteviDAO = new ZahteviDAO(dataPath, korisniciDAO);
 
-	private static Gson g = new Gson();
-
 	public static void main(String[] args) throws IOException {
 		port(8080);
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 
-		get("/rest/test", (req, res) -> {
-			return "radi";
-		});
+		post("/rest/korisnici/register", (req, res) -> KorisniciApi.register(req, res, korisniciDAO));
 
-		get("/rest/korisnici/loggedIn", (req, res) -> {	// vraca trenutno registrovanog korisnika
-			res.type("application/json");
-			Session ss = req.session(true);
-			Korisnik k = ss.attribute("ulogovaniKorisnik");
-			if (k == null) {
-				return false;
-			}
-			return g.toJson(k);
-		});
+		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res));
 
-		post("rest/korisnici/login", (req, res) -> {
-			res.type("application/json");
-			String kIme = req.queryParams("logKorisnicko");
-			String lozinka = req.queryParams("logPass");
-			Session ss = req.session(true);
-			Korisnik k = KorisniciService.login(kIme, lozinka, korisniciDAO);
-			if (k != null) {
-				ss.attribute("ulogovaniKorisnik", k);
-				return g.toJson(k);
-			} else {
-				return false;
-			}
-		});
+		post("/rest/korisnici/login", (req, res) -> KorisniciApi.login(req, res, korisniciDAO));
 
-		post("/rest/korisnici/register", (req, res) -> {
-			res.type("application/json");
-			Korisnik k = g.fromJson(req.body(), Korisnik.class);
-			Session ss = req.session(true);
-			k = KorisniciService.register(k, korisniciDAO);
-			if (k != null) {
-				ss.attribute("ulogovaniKorisnik", k);
-				return g.toJson(k);
-			} else {
-				return null;
-			}
-		});
+//		get("/rest/test", (req, res) -> {
+//		return "radi";
+//	});
 	}
 }

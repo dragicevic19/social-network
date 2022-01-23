@@ -38,7 +38,8 @@ body{
   background: #494f57;
 }
 
-.wrapper .left h3{
+.wrapper .left h3,
+.wrapper .left h4{
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 3px;
@@ -95,6 +96,10 @@ body{
   background: #ecebeb;
 }
 
+.loginError {
+  color: red;
+}
+
 .wrapper .right .input_field .input.error::placeholder{
   color: red;
   opacity: 1;
@@ -119,6 +124,21 @@ body{
   text-transform: uppercase;
   letter-spacing: 3px;
   font-weight: bold;
+}
+.wrapper .left .btn{
+  margin-top: 30px;
+  background: #fff;
+  padding: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+
+.wrapper .left .btn a{
+  color: #494f57;
+  display: block;
+  font-size: 14px;
 }
 
 .wrapper .right .btn a{
