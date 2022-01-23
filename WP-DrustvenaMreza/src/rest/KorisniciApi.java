@@ -30,16 +30,19 @@ public class KorisniciApi {
 		Session ss = req.session(true);
 		if (k.getUloga() == Uloga.GOST) {
 			ss.attribute("currentUser", k);
-//			return res.redirect("./static/pocetnaGost.html");
-			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
+			res.redirect("./static/pocetnaGost.html");
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS,"pocetnaGost.html", g.toJsonTree(k)));
 		}
 		k = KorisniciService.login(k.getKorisnickoIme(), k.getLozinka(), korisniciDAO);
 		if (k != null) {
 			ss.attribute("currentUser", k);
-//			return res.redirect("./static/pocetnaKorisnik.html");
-			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
+			if (k.getUloga() == Uloga.KORISNIK) {
+				return g.toJson(new StandardResponse(StatusResponse.SUCCESS, "pocetnaKorisnik.html", g.toJsonTree(k)));
+			}
+			else {
+				return g.toJson(new StandardResponse(StatusResponse.SUCCESS, "pocetnaAdmin.html", g.toJsonTree(k)));
+			}
 		} else {
-			//return res.redirect("./static/pocetnaAdministrator.html");
 			return g.toJson(new StandardResponse(StatusResponse.ERROR));
 		}
 	}
@@ -53,8 +56,7 @@ public class KorisniciApi {
 			ss.attribute("currentUser", k);
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
 		} else {
-			return g.toJson(
-					new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
 		}
 	}
 

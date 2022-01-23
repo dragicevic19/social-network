@@ -140,7 +140,7 @@ function login() {
             if (response.status == "SUCCESS") {
                 $('#successLog').text('Successfully logged in!');
                 $('#successLog').show().delay(3000).fadeOut();
-                window.location = "pocetna.html";
+                window.location = response.message;
             }
             else {
                 $('#successLog').text('The username or password is incorrect');

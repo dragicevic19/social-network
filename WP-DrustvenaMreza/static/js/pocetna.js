@@ -1,6 +1,66 @@
 let ulogovaniKorisnik = null;
 
 $(document).ready(function () {
+
+    $(".requests").hide();
+    $(".messages").hide();
+    $(".logout").hide();
+    $(".myprofile_li").addClass("active");
+    let activeDiv = $(".myprofile");
+    let activeLi = $(".myprofile_li");
+
+    $(".requests_li").click(function () {
+        if (activeLi.is(this)) {
+            return;
+        }
+        $(this).addClass("active");
+        $(activeLi).removeClass("active");
+        activeLi = $(this);
+        $(".requests").show(300);
+        $(activeDiv).hide(300);
+        activeDiv = $(".requests");
+    });
+
+    $(".messages_li").click(function () {
+        if (activeLi.is(this)) {
+            return;
+        }
+        $(this).addClass("active");
+        $(activeLi).removeClass("active");
+        activeLi = $(this);
+
+        $(".messages").show(300);
+        $(activeDiv).hide(300);
+        activeDiv = $(".messages");
+    });
+
+    $(".logout_li").click(function () {
+        if (activeLi.is(this)) {
+            return;
+        }
+        $(this).addClass("active");
+        $(activeLi).removeClass("active");
+        activeLi = $(this);
+
+        $(".logout").show(300);
+        $(active).hide(300);
+        active = $(".logout");
+    });
+
+    $(".myprofile_li").click(function () {
+        if (activeLi.is(this)) {
+            return;
+        }
+        $(this).addClass("active");
+        $(activeLi).removeClass("active");
+        activeLi = $(this);
+
+        $(".myprofile").show(300);
+        $(active).hide(300);
+        active = $(".myprofile");
+    });
+
+
     $.ajax({
         type: "GET",
         url: "rest/korisnici/loggedIn",
