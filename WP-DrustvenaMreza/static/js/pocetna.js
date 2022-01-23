@@ -5,8 +5,10 @@ $(document).ready(function () {
         type: "GET",
         url: "rest/korisnici/loggedIn",
         success: function (response) {
-            if (response.status == "ERROR")
-                alert("Nema ulogovanog greska");
+            if (response.status == "ERROR"){
+                alert("You need to login first");
+                window.location = "index.html";
+            }
             else {
                 ulogovaniKorisnik = response.data;
                 if (ulogovaniKorisnik.uloga == "GOST") {
@@ -16,6 +18,10 @@ $(document).ready(function () {
                     $("body").append('Welcome user: ' + ulogovaniKorisnik.korisnickoIme);
                 }
             }
+        },
+        error: function (response) {
+            alert("You need to login first!");
+            window.location = "index.html";
         }
     });
 

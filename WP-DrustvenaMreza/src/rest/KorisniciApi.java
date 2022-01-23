@@ -16,8 +16,9 @@ public class KorisniciApi {
 	public static Object getCurrentUser(Request req, Response res) {
 		res.type("application/json");
 		Session ss = req.session(true);
-		Korisnik k = ss.attribute("ulogovaniKorisnik");
+		Korisnik k = ss.attribute("currentUser");
 		if (k == null) {
+			res.status(401);
 			return g.toJson(new StandardResponse(StatusResponse.ERROR));
 		}
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
@@ -28,13 +29,13 @@ public class KorisniciApi {
 		Korisnik k = g.fromJson(req.body(), Korisnik.class);
 		Session ss = req.session(true);
 		if (k.getUloga() == Uloga.GOST) {
-			ss.attribute("ulogovaniKorisnik", k);
+			ss.attribute("currentUser", k);
 //			return res.redirect("./static/pocetnaGost.html");
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
 		}
 		k = KorisniciService.login(k.getKorisnickoIme(), k.getLozinka(), korisniciDAO);
 		if (k != null) {
-			ss.attribute("ulogovaniKorisnik", k);
+			ss.attribute("currentUser", k);
 //			return res.redirect("./static/pocetnaKorisnik.html");
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
 		} else {
@@ -49,11 +50,11 @@ public class KorisniciApi {
 		Session ss = req.session(true);
 		k = KorisniciService.register(k, korisniciDAO);
 		if (k != null) {
-			ss.attribute("ulogovaniKorisnik", k);
+			ss.attribute("currentUser", k);
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
 		} else {
 			return g.toJson(
-					new StandardResponse(StatusResponse.ERROR, "User with that username is already registered!"));
+					new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
 		}
 	}
 
