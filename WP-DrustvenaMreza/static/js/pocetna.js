@@ -43,8 +43,8 @@ $(document).ready(function () {
         activeLi = $(this);
 
         $(".logout").show(300);
-        $(active).hide(300);
-        active = $(".logout");
+        $(activeDiv).hide(300);
+        activeDiv = $(".logout");
     });
 
     $(".myprofile_li").click(function () {
@@ -56,8 +56,8 @@ $(document).ready(function () {
         activeLi = $(this);
 
         $(".myprofile").show(300);
-        $(active).hide(300);
-        active = $(".myprofile");
+        $(activeDiv).hide(300);
+        activeDiv = $(".myprofile");
     });
 
 
@@ -72,10 +72,10 @@ $(document).ready(function () {
             else {
                 ulogovaniKorisnik = response.data;
                 if (ulogovaniKorisnik.uloga == "GOST") {
-                    $("body").append("You are logged in as guest")
+                    // $("body").append("You are logged in as guest")
                 }
                 else {
-                    $("body").append('Welcome user: ' + ulogovaniKorisnik.korisnickoIme);
+                    // $("body").append('Welcome user: ' + ulogovaniKorisnik.korisnickoIme);
                 }
             }
         },

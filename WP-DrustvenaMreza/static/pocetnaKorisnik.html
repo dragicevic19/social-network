@@ -4,7 +4,6 @@
         <link rel="stylesheet" href="css/unicons.css">
         <link rel="stylesheet" href="css/pocetnaKorisnik.css">
         <script src="js/pocetna.js"></script>
-        <title>Home page</title>
     </head>
     <body>
         <nav>
@@ -19,18 +18,60 @@
                 <div class="tabs">
                     <ul>
                         <li class="myprofile_li">My Profile</li>
-                        <li class="requests_li">Friend requests</li>
-                        <li class="messages_li">Messages</li>
+                        <!-- <li class="requests_li">Friend requests</li> -->
+                        <!-- <li class="messages_li">Messages</li> -->
                         <li class="logout_li">Log Out</li>
                     </ul>
                 </div>
             </div>
         </nav>
         <div class="wrapper">
-            asdaf
-            <div class="myprofile"></div>
-            <div class="requests"></div>
-            <div class="messages"></div>
+            <div class="left">
+                <div class="tabs">
+                    <ul>
+                        <li class="friends_li active">Friends</li>
+                        <li class="mutual_friends_li">Mutual friends</li>
+                    </ul>
+                </div>
+                <div class="friends_content">
+                    <!-- popuniti preko JS -->
+                </div>
+            </div>
+
+            <div class="center">
+                <div class="myprofile">
+                    <div class="header">
+                        <div class="profile_pic">
+                            <img src="pics/avatar.png" class="avatar" alt="profile_pic"/>
+                        </div>
+                        <div class="name_last_name"><h1>Marko Dragicevic</h1></div> <!--ovde i edit-->
+                        <div class="tabs">
+                            <ul>
+                                <li class="info_li active">About me</li>
+                                <li class="posts_li">Posts</li>
+                                <li class="photos_li">Photos</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="center_content">
+                        <div class="aboutme"></div>
+                        <div class="posts"></div>
+                        <div class="photos"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right">
+                <div class="tabs">
+                    <ul>
+                        <li class="requests_li active">Requests</li>
+                        <li class="messages_li">Messages</li>
+                    </ul>
+                </div>
+                <div class="requests"></div>
+                <div class="messages"></div>
+            </div>
+
             <div class="logout"></div>
         </div>
     </body>
