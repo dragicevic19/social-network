@@ -177,7 +177,8 @@ nav .tabs ul li.active{
 
 .left .friend .info{
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
+    align-items: center;
     /* margin-bottom: 1rem; */
 }
 
@@ -284,21 +285,24 @@ nav .tabs ul li.active{
 
 .right .request{
     background: #fff;
-    padding: 1rem;
+    padding: 0.8rem;
     border-radius: 1rem;
     margin-bottom: 0.5rem;
 }
 
 .right .request .info{
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
+    align-items: center;
     /* margin-bottom: 1rem; */
 }
 
-
-
-
 .right .request .action{
+    align-items: center;
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
+}
+
+.text-muted{
+    font-size: 15px;
 }
