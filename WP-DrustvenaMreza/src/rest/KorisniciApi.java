@@ -60,4 +60,16 @@ public class KorisniciApi {
 		}
 	}
 
+	public static Object changePass(Request req, Response res, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		Korisnik k = g.fromJson(req.body(), Korisnik.class);
+		k = KorisniciService.changePassword(k, korisniciDAO);
+		if (k != null) {
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
+		}
+		else {
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Error while changing password!"));
+		}
+	}
+
 }

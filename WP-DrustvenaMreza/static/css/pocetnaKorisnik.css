@@ -205,6 +205,19 @@ nav .tabs ul li.active{
     height: 150px;
     border-radius: 50%;
 }
+.center .myprofile .name_last_name{
+    display: inline-flex;
+    align-items: center;
+}
+.center .myprofile .edit{
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.center .myprofile .edit:hover{
+    opacity: 0.8;
+}
+
 .wrapper .center .tabs{
     width: 100%;
     background-color: whitesmoke;
@@ -221,9 +234,40 @@ nav .tabs ul li.active{
     letter-spacing: 1px;
     cursor: pointer;
 }
-
 .wrapper .center .tabs ul li.active{
     border-bottom: 2px solid #343536;
+}
+
+.center .about,
+.center .passChange{
+    margin: 20px;
+}
+.center .input_field{
+    margin-bottom: 25px;
+}
+
+.center p
+{
+    font-size: 18px;
+}
+  
+.center .input_field .input{
+margin-left: 30px;
+width: 50%;
+padding: 10px 15px;
+border: 0;
+font-size: 15px;
+background: #ecebeb;
+}
+
+.center .about .btnChanges{
+    margin-top: 50px;
+    margin-left: 4%;
+}
+
+.center .passChange .error{
+    color: red;
+    font-size: 15px;
 }
 
 .wrapper .right .content{

@@ -29,4 +29,12 @@ public class KorisniciService {
 		// u funkciji sacuvaj() se proverava da li vec postoji username
 	}
 
+	public static Korisnik changePassword(Korisnik k, KorisnikDAO korisniciDAO) {
+		Korisnik korisnik = korisniciDAO.pronadjiKorisnika(k.getKorisnickoIme());
+		if (korisnik == null) {
+			return null;
+		}
+		korisnik.setLozinka(k.getLozinka());	// sacuvaj u bazu
+		return korisnik;
+	}
 }

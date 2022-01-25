@@ -1,5 +1,6 @@
 let currentUser = null;
 let userToShow = null;
+let editUser = false;
 
 function navSetting() {
     $('.logout').hide();
@@ -105,7 +106,9 @@ function centerSettings() {
     $('.about_li').addClass('active');
 
     let centerActiveLi = $('.about_li');
-    let centerActiveDiv = $('about');
+    let centerActiveDiv = $('.about');
+    fillInformationsAboutUser();
+
 
     $('.about_li').click(function () {
         if (centerActiveLi.is(this)) {
@@ -117,6 +120,8 @@ function centerSettings() {
         $('.about').show(300);
         $(centerActiveDiv).hide(300);
         centerActiveDiv = $('.about');
+        fillInformationsAboutUser();
+
     });
     $('.posts_li').click(function () {
         if (centerActiveLi.is(this)) {
@@ -140,7 +145,178 @@ function centerSettings() {
         $(centerActiveDiv).hide(300);
         centerActiveDiv = $('.photos');
     });
+
+    addProfilePictureAndName();
+    if (currentUser != userToShow) {
+        addButtonsForOtherUser();
+    }
+    else {
+        addButtonForEdit();
+    }
+
+    $('#saveChangesBtn').click(function () {
+        changeInfos(); 
+    });
+
+    $('#changePasswordBtn').click(function () {
+        $('.about').hide(300);
+        $('.passChange').show(300);
+    });
+
+    $('#backBtn').click(function () {
+        $('.about').show(300);
+        $('.passChange').hide(300);
+    });
+
+    $('#savePassChangesBtn').click(function () {
+        changePassword(); 
+    });
 }
+
+function addProfilePictureAndName() {
+    let picPath = userToShow.profilnaSlika.putanja;
+    if (userToShow.profilnaSlika.obrisana) {
+        picPath = "pics/avatar.png";
+    }
+    var profile_pic = $('<img src=' + picPath + ' class="avatar">'); 
+    $('.myprofile .profile_pic').append(profile_pic)
+
+    var name = $("<h1></h1>").text(userToShow.ime + ' ' + userToShow.prezime);
+    $('.myprofile .name_last_name').append(name);
+}
+
+function addButtonForEdit() {
+    var editIcon = $('<i class="fas fa-edit edit"></i>');
+    $('.myprofile .name_last_name').append(editIcon);
+
+    $('.edit').click(function () {
+        editUser = true;
+        $('.about_li').click();
+        fillInformationsAboutUser();
+    });
+
+}
+
+function fillInformationsAboutUser() {
+    $('.about').show();
+    $('.passChange').hide();
+    if (editUser) {
+        $('.btnChanges').show(100);
+    }
+    else {
+        $('.btnChanges').hide(100);
+    }
+    $('input[name="email"]').val(userToShow.email).attr('disabled', !editUser);
+    $('input[name="name"]').val(userToShow.ime).attr('disabled', !editUser);
+    $('input[name="lastName"]').val(userToShow.prezime).attr('disabled', !editUser);
+    var date = new Date(userToShow.datumRodjenja);
+    var dan = date.getDay().toString();
+    dan = (dan.length == 1) ? '0' + dan : dan;
+    $('input[name="birthday"]').val(date.getFullYear() + '-' + date.getMonth() + '-' + dan).attr('disabled', !editUser);
+}
+
+function changePassword() {
+    let currPass = $('input[name="password"').val();
+    let newPass = $('input[name="newPassword"').val();
+    let repPass = $('input[name="repPassword"').val();
+    let err = false;
+    if (!currPass) {
+        $('#currPass').text("Enter password");
+        err = true;
+    }
+    else 
+        $('#currPass').text("");
+    if (!newPass) {
+        $('#newPass').text("Enter password");
+        err = true;
+    }
+    else 
+        $('#newPass').text("");
+    if (!repPass) {
+        $('#repPass').text("Enter password");
+        err = true;
+    }
+    else $('#repPass').text('');
+    if (err) return;
+
+    if (currPass !== currentUser.lozinka) {
+        $('#currPass').text("Password is not correct");
+        err = true;
+        return;
+    }
+
+    if (newPass !== repPass) {
+        $('#repPass').text('Passwords do not match!');
+        err = true;
+        return;
+    }
+    var data = JSON.stringify({
+        korisnickoIme: currentUser.korisnickoIme,
+        lozinka: newPass
+    });
+
+    $.ajax({
+        type: 'PUT',
+        url: 'rest/korisnici/changePass',
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "SUCCESS") {
+                alert('Password changed successfully!');
+                currentUser = response.data;
+                userToShow = currentUser;
+                onChangedPassword();
+            }
+        },
+        error: function (response) {
+            alert('error while changing password');
+        }
+    });
+}
+
+function onChangedPassword() {
+    $('input[name="password"').val('');
+    $('input[name="newPassword"').val('');
+    $('input[name="repPassword"').val('');
+    $('#backBtn').click();
+}
+
+function changeInfos() {
+    let email = $('input[name="email"]').val();
+    let name = $('input[name="name"]').val();
+    let lastName = $('input[name="lastName"]').val();
+    let date = $('input[name="birthday"]').val();
+    alert(date);
+    let err = false;
+    if (!email) {
+        $('#email').text("Enter password");
+        err = true;
+    }
+    else 
+        $('#email').text("");
+    
+    if (!name) {
+        $('#name').text("Enter password");
+        err = true;
+    }
+    else 
+        $('#name').text("");
+    
+    if (!lastName) {
+        $('#lastName').text("Enter password");
+        err = true;
+    }
+    else $('#lastName').text('');
+
+    if (!date) {
+        $('#date').text("Enter password");
+        err = true;
+    }
+    else $('#date').text('');
+
+    if (err) return;
+}
+
 
 $(document).ready(function () {
 

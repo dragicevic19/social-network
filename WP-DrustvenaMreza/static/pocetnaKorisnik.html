@@ -1,9 +1,9 @@
 <html>
     <head>
-        <script src="js/jquery.min.js"></script>
         <link rel="stylesheet" href="css/unicons.css">
         <link rel="stylesheet" href="css/pocetnaKorisnik.css">
-        <script src="js/pocetna.js"></script>
+        <script src="https://kit.fontawesome.com/74f64ccb8e.js" crossorigin="anonymous"></script>
+        <title>Home page</title>
     </head>
     <body>
         <nav>
@@ -66,20 +66,70 @@
                 <div class="myprofile">
                     <div class="header">
                         <div class="profile_pic">
-                            <img src="pics/avatar.png" class="avatar" alt="profile_pic"/>
+                            <!-- <img src="pics/avatar.png" class="avatar" alt="profile_pic"/> -->
                         </div>
-                        <div class="name_last_name"><h1>Marko Dragicevic</h1></div> <!--ovde i edit-->
+                        <div class="name_last_name">
+                            <!-- <h1></h1> --> <!--ovde i edit-->
+                        </div> 
                         <div class="tabs">
                             <ul>
-                                <li class="about_li active">About me</li>
+                                <li class="about_li">About</li>
                                 <li class="posts_li">Posts</li>
                                 <li class="photos_li">Photos</li>
                             </ul>
                         </div>
                     </div>
                     <div class="center_content">
-                        <div class="about"></div>
-                        <div class="posts"></div>
+                        <div class="about">
+                            <div class="input_field">
+                                <p>E-Mail</p><input type="text" placeholder="E-mail" class="input" name="email">
+                            </div>
+                  
+                            <div class="input_field">
+                                <p>Name</p><input type="text" placeholder="Name" class="input" name="name">
+                            </div>
+                            <div class="input_field">
+                                <p>Last Name</p><input type="text" placeholder="Last name" class="input" name="lastName">
+                            </div>
+                            <div class="input_field">
+                                <p>Birthday</p><input type="date" placeholder="Birthday" class="input" name="birthday">
+                            </div>
+                            <div class="btnChanges">
+                                <button class="btn btn-primary" id="saveChangesBtn">
+                                    <p>Save Changes</p>
+                                </button>
+                                <button class="btn" id="changePasswordBtn">
+                                    <p>Change Password</p>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="passChange">
+                            <div class="input_field">
+                                <p>Current Password</p><input type="password" placeholder="Password" class="input" name="password">
+                                    <p class="error" id="currPass"></p>
+                            </div>
+                            <div class="input_field">
+                                <p>New Password</p><input type="password" placeholder="Password" class="input" name="newPassword">
+                                <p class="error" id="newPass"></p>
+                            </div>
+                            <div class="input_field">
+                                <p>Confirm Password</p><input type="password" placeholder="Password" class="input" name="repPassword">
+                                <p class="error" id="repPass"></p>
+                            </div>
+                            <div class="btnChanges">
+                                <button class="btn btn-primary" id="savePassChangesBtn">
+                                    <p>Save Password Changes</p>
+                                </button>
+                                <button class="btn" id="backBtn">
+                                    <p>BACK</p>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="posts">
+                            
+                        </div>
                         <div class="photos"></div>
                     </div>
                 </div>
@@ -157,8 +207,10 @@
             </div>
 
             <div class="logout">
-                
             </div>
         </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/pocetna.js"></script>
     </body>
 </html>
