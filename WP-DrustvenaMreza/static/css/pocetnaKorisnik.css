@@ -240,7 +240,7 @@ nav .tabs ul li.active{
 
 .center .about,
 .center .passChange{
-    margin: 20px;
+    margin: 15px;
 }
 .center .input_field{
     margin-bottom: 25px;
@@ -265,9 +265,10 @@ background: #ecebeb;
     margin-left: 4%;
 }
 
-.center .passChange .error{
+.center .passChange .error,
+.center .about .error{
     color: red;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .wrapper .right .content{

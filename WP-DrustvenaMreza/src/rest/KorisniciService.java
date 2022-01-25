@@ -10,11 +10,6 @@ public class KorisniciService {
 	public KorisniciService() {
 	}
 
-	public String login() {
-		return null;
-
-	}
-
 	public static Korisnik login(String kIme, String lozinka, KorisnikDAO korisniciDAO) {
 		HashMap<String, Korisnik> korisnici = korisniciDAO.getKorisnici();
 		if (korisnici.containsKey(kIme) && korisnici.get(kIme).getLozinka().equals(lozinka)) {
@@ -35,6 +30,16 @@ public class KorisniciService {
 			return null;
 		}
 		korisnik.setLozinka(k.getLozinka());	// sacuvaj u bazu
+		return korisnik;
+	}
+
+	public static Korisnik update(Korisnik k, KorisnikDAO korisniciDAO) {
+		Korisnik korisnik = korisniciDAO.pronadjiKorisnika(k.getKorisnickoIme());
+		if (korisnik == null) return null;
+		korisnik.setEmail(k.getEmail());
+		korisnik.setIme(k.getIme());
+		korisnik.setPrezime(k.getPrezime());
+		korisnik.setDatumRodjenja(k.getDatumRodjenja());
 		return korisnik;
 	}
 }

@@ -210,9 +210,11 @@ function fillInformationsAboutUser() {
     $('input[name="name"]').val(userToShow.ime).attr('disabled', !editUser);
     $('input[name="lastName"]').val(userToShow.prezime).attr('disabled', !editUser);
     var date = new Date(userToShow.datumRodjenja);
-    var dan = date.getDay().toString();
+    var dan = date.getDate().toString();
+    var mesec = (date.getMonth() + 1).toString();
     dan = (dan.length == 1) ? '0' + dan : dan;
-    $('input[name="birthday"]').val(date.getFullYear() + '-' + date.getMonth() + '-' + dan).attr('disabled', !editUser);
+    mesec = (mesec.length == 1) ? '0' + mesec : mesec;
+    $('input[name="birthday"]').val(date.getFullYear() + '-' + mesec + '-' + dan).attr('disabled', !editUser);
 }
 
 function changePassword() {
@@ -286,37 +288,70 @@ function changeInfos() {
     let name = $('input[name="name"]').val();
     let lastName = $('input[name="lastName"]').val();
     let date = $('input[name="birthday"]').val();
-    alert(date);
     let err = false;
     if (!email) {
-        $('#email').text("Enter password");
+        $('#email').text("Enter E-Mail");
         err = true;
     }
     else 
         $('#email').text("");
     
     if (!name) {
-        $('#name').text("Enter password");
+        $('#name').text("Enter Name");
         err = true;
     }
     else 
         $('#name').text("");
     
     if (!lastName) {
-        $('#lastName').text("Enter password");
+        $('#lastName').text("Enter Last Name");
         err = true;
     }
     else $('#lastName').text('');
 
     if (!date) {
-        $('#date').text("Enter password");
+        $('#date').text("Pick a Date");
         err = true;
     }
     else $('#date').text('');
 
     if (err) return;
+
+    let data = JSON.stringify({
+        korisnickoIme: currentUser.korisnickoIme,
+        email: email,
+        ime: name,
+        prezime: lastName,
+        datumRodjenja: date
+    });
+
+    $.ajax({
+        type: "PUT",
+        url: "rest/korisnici/update",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "SUCCESS") {
+                alert("Informations are updated successfully!");
+                currentUser = response.data;
+                userToShow = currentUser;
+                window.location = window.location;
+            }
+            else {
+                alert(response.message);
+            }
+        },
+        error: function (response) {
+            alert(response.message);
+        }
+    });
 }
 
+// function onInfosChanged() {
+//     editUser = false;
+//     $('.about_li').click();
+//     fillInformationsAboutUser();
+// }
 
 $(document).ready(function () {
 

@@ -1,6 +1,7 @@
 package rest;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import beans.Korisnik;
 import beans.Uloga;
@@ -11,7 +12,8 @@ import spark.Session;
 
 public class KorisniciApi {
 
-	private static Gson g = new Gson();
+	private static Gson g = new GsonBuilder()
+			   .setDateFormat("yyyy-MM-dd").create();
 
 	public static Object getCurrentUser(Request req, Response res) {
 		res.type("application/json");
@@ -69,6 +71,18 @@ public class KorisniciApi {
 		}
 		else {
 			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Error while changing password!"));
+		}
+	}
+
+	public static Object update(Request req, Response res, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		Korisnik k = g.fromJson(req.body(), Korisnik.class);
+		k = KorisniciService.update(k, korisniciDAO);
+		if (k != null) {
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
+		}
+		else {
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Error while updating user!"));
 		}
 	}
 
