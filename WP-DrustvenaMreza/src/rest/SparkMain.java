@@ -37,6 +37,10 @@ public class SparkMain {
 		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res));
 
 		post("/rest/korisnici/login", (req, res) -> KorisniciApi.login(req, res, korisniciDAO));
+		
+		put("/rest/korisnici/changePass", (req, res) -> KorisniciApi.changePass(req, res, korisniciDAO));
+		
+		put("/rest/korisnici/update", (req,res) -> KorisniciApi.update(req, res, korisniciDAO));
 
 //		get("/rest/test", (req, res) -> {
 //		return "radi";

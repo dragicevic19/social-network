@@ -8,23 +8,61 @@
     text-decoration: none;
     list-style: none;
     font-family: 'Nunito', sans-serif;
-    border: 0;
-  }
+    border: 0;   
+    overflow:hidden;
+}
+* {
+    scrollbar-width: thin;
+    scrollbar-color: gray white;
+}
+  
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+width: 10px;
+}
+*::-webkit-scrollbar-track {
+background: #fff;
+}
+
+*::-webkit-scrollbar-thumb {
+background-color: #494f57;
+border-radius: 20px;
+border: 2px solid #fff;
+}
 
 .container{
-    width: 85%;
+    width: 95%;
     margin: 0 auto;
+}
+
+.btn{
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    font-weight: 500;
+    border-radius: 2rem;
+    cursor: pointer;
+    transition: all 300ms ease;
+    font-size: 0.9rem;
+}
+.btn:hover{
+    opacity: 0.8;
+}
+.btn-primary{
+    background: lightblue;
 }
   
 nav{
     width: 100%;
-    background-color: lightgrey;
-    padding: 0.7rem 0;
+    background-color: lightseagreen;
+    padding: 0.3rem 0;
     position:fixed;
     top: 0;
     z-index: 10;
 }
 
+body{
+    padding-top: 57px;
+}
 
 nav .container{
     display: flex;
@@ -71,8 +109,245 @@ nav .tabs ul li.active{
   border-bottom: 2px solid #494f57;
 }
 
-
 .wrapper{
-    background-color: #494f57;
-    color: #494f57;
+    display: flex;
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    /* top: 10%;
+    left:1%;
+    right: 1%; */
+    /*
+    transform: translate(-50%,-50%); */
+}
+
+.wrapper .left,
+.wrapper .right{
+    width: 25%;
+    height: 100%;
+    padding: 20px;
+    background: #343536;
+    overflow: auto;
+}
+
+.wrapper .left .tabs ul,
+.wrapper .right .tabs ul{
+    text-align: center;
+}
+
+.wrapper .left .tabs ul li,
+.wrapper .right .tabs ul li{
+    display: inline-block;
+    margin:5px;
+    padding: 5px 20px;
+    font-size: 19px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.wrapper .left .tabs ul li.active,
+.wrapper .right .tabs ul li.active{
+  border-bottom: 2px solid #fff;
+}
+
+.left .friends_content{
+    height: max-content;
+    position: sticky;
+    top:-18rem;
+    bottom: 0;
+}
+
+.left .friends{
+    margin-top: 1rem;
+}
+
+.left .friend{
+    display: flex;
+    gap: 1rem;
+    background: #fff;
+    padding: 0.5rem;
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+    align-items: center;
+    cursor: pointer;
+}
+
+.left .friend .info{
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    /* margin-bottom: 1rem; */
+}
+
+.wrapper .center{
+    width: 50%;
+    height: 100%;
+    padding: 20px;
+    background: #fff;
+    text-align: center;
+
+}
+
+.wrapper .center .header{
+    overflow: hidden;
+}
+
+.wrapper .center .center_content{
+    overflow: auto;
+}
+
+.wrapper .center .myprofile .avatar{
+    vertical-align: middle;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+.center .myprofile .name_last_name{
+    display: inline-flex;
+    align-items: center;
+}
+.center .myprofile .edit{
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.center .myprofile .edit:hover{
+    opacity: 0.8;
+}
+
+.wrapper .center .tabs{
+    width: 100%;
+    background-color: whitesmoke;
+    margin-top: 20px;
+    text-align: center;
+}
+.wrapper .center .tabs ul li{
+    display: inline-block;
+    margin:5px;
+    padding: 5px 80px;
+    font-size: 19px;
+    color: #343536;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+.wrapper .center .tabs ul li.active{
+    border-bottom: 2px solid #343536;
+}
+
+.center .about,
+.center .passChange{
+    margin: 15px;
+}
+.center .input_field{
+    margin-bottom: 25px;
+}
+
+.center p
+{
+    font-size: 18px;
+}
+  
+.center .input_field .input{
+margin-left: 30px;
+width: 50%;
+padding: 10px 15px;
+border: 0;
+font-size: 15px;
+background: #ecebeb;
+}
+
+.center .about .btnChanges{
+    margin-top: 50px;
+    margin-left: 4%;
+}
+
+.center .passChange .error,
+.center .about .error{
+    color: red;
+    font-size: 14px;
+}
+
+.wrapper .right .content{
+    height: max-content;
+    position: sticky;
+    top:-18rem;
+    bottom: 0;
+}
+
+.wrapper .right .messages{
+    margin-top: 1rem;
+}
+
+.wrapper .right .profile-photo,
+.wrapper .left .profile-photo{
+   width: 45px;
+   height: 45px;
+}
+.wrapper .right img,
+.wrapper .left img{
+    width: 45px;
+    height: 45px;
+    display: block;
+    width: 100%;
+    border-radius: 50%;
+}
+
+.wrapper .right .messages .message{
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+    background: rgb(92, 87, 87);
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.wrapper .right .messages .message:hover,
+.wrapper .left .friends .friend:hover{
+    opacity: 0.8;
+}
+
+.right .messages .message:last-child{
+    margin: 0;
+}
+
+.right .messages .message p{
+    font-size: 1rem;
+}
+
+.right .requests{
+    margin-top: 1rem;
+}
+
+.right .requests h4{
+    color: gray;
+    margin: 1rem;
+}
+
+.right .request{
+    background: #fff;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.right .request .info{
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    /* margin-bottom: 1rem; */
+}
+
+.right .request .action{
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.text-muted{
+    font-size: 15px;
 }
