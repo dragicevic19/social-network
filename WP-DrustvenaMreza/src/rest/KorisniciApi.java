@@ -130,4 +130,22 @@ public class KorisniciApi {
 //		List<ZahtevDTO> zahtevi = zahteviDAO.getZahteviNaCekanjuZaKorisnika(zahtev.getPrimalac().getKorisnickoIme());
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
 	}
+
+	public static Object getFriendsForUser(Request req, Response res, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		String username = req.queryParams("username");
+		List<Korisnik> prijatelji = KorisniciService.getFriendsForUser(username, korisniciDAO);
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(prijatelji)));
+	}
+	
+	public static Object getUserForUsername(Request req, Response res, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		String username = req.queryParams("username");
+		Korisnik k = korisniciDAO.pronadjiKorisnika(username);
+		if (k != null) {
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
+		} else {
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "User not found!"));
+		}
+	}
 }

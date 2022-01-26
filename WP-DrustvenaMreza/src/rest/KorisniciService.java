@@ -1,6 +1,7 @@
 package rest;
 
 import java.util.HashMap;
+import java.util.List;
 
 import beans.Korisnik;
 import beans.Status;
@@ -51,6 +52,11 @@ public class KorisniciService {
 		zahtev.setStatus(Status.PRIHVACENO);	
 		primalac.getPrijatelji().add(posiljalac.getKorisnickoIme());
 		posiljalac.getPrijatelji().add(primalac.getKorisnickoIme());
+	}
+
+	public static List<Korisnik> getFriendsForUser(String username, KorisnikDAO korisniciDAO) {
+		Korisnik k = korisniciDAO.pronadjiKorisnika(username);
+		return korisniciDAO.pronadjiPrijateljeZaKorisnika(k);
 	}
 
 }

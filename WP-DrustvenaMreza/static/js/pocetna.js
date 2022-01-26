@@ -4,12 +4,16 @@ let editUser = false;
 
 function navSetting() {
     $('.logout').hide();
-    $('.myprofile_li').addClass('active');
+    if (userToShow == currentUser) {
+        $('.myprofile_li').addClass('active');
+    }
     let navActiveLi = $('.myprofile_li');
     let navActiveDiv = $('.myprofile');
 
-    $('.myprofile_li').click(function () {  // dodati da se ovde vraca na svoj
-        if (navActiveLi.is(this)) {         // profil ako je bio na necijem
+    $('.myprofile_li').click(function () {  
+        window.sessionStorage.setItem('userToShow', '');
+        window.location = window.location;
+        if (navActiveLi.is(this)) {
             return;
         }
         $(this).addClass('active');
@@ -40,8 +44,10 @@ function leftSettings() {
     let leftActiveDiv = $('.friends');
     $('.mutuals').hide();
     if (currentUser == userToShow) {
+        getFriends(currentUser);
         return;
     }
+    getFriends(userToShow);
     var mutualsLi = $('<li class="mutual_friends_li"></li>').text('Mutual friends');
     $('.left .tabs ul').append(mutualsLi);
 
@@ -67,6 +73,75 @@ function leftSettings() {
         $('.mutuals').show(300);
         $(leftActiveDiv).hide(300);
         leftActiveDiv = $('.mutuals');
+    });
+}
+
+function getFriends(user) {
+    $.ajax({
+        type: "GET",
+        url: "rest/korisnici/friends?username=" + user.korisnickoIme,
+        success: function (response) {            
+            let friends = response.data;
+            fillFriends(friends);
+            bindFriends();
+        },
+        error: function (response) {
+            alert("error getFriends");
+        }
+    });
+}
+
+function fillFriends(friends) {
+    for (let i = 0; i < friends.length; i++){
+        let divRequest = $("<div class='friend' data-index='" + friends[i].korisnickoIme +"'></div>");
+        let divInfo = $('<div class="info"></div>');
+        let divPhoto = $('<div class="profile-photo"></div>');
+        let picPath = "pics/avatar.png";
+        if (friends[i].profilnaSlika) {
+            if (!friends[i].profilnaSlika.obrisana) {
+                picPath = friends[i].profilnaSlika.putanja;
+            }
+        }
+        let img = $('<img src=' + picPath + '>');
+        divPhoto.append(img);
+        let div = $('<div></div>');
+        let text = $('<h3>' + friends[i].ime + ' ' + friends[i].prezime + '</h3>');
+        div.append(text);
+
+        divInfo.append(divPhoto);
+        divInfo.append(div);
+
+        divRequest.append(divInfo);
+        $('.friends').append(divRequest);
+    }
+}
+
+function bindFriends() {
+    let friends = $('.friends');
+    for (let i = 0; i < friends.length; i++){
+        $(friends[i]).find(".friend").click(function () {
+            showUserProfile($(this).attr('data-index'));
+        });
+    }
+}
+
+function showUserProfile(username) {
+    $.ajax({
+        type: "GET",
+        url: "rest/korisnici/user?username=" + username,
+        success: function (response) {          
+            if (response.status == "SUCCESS") {
+                userToShow = response.data;
+                window.sessionStorage.setItem('userToShow', JSON.stringify(userToShow));
+                window.location = window.location;
+            }
+            else {
+                alert(response.message);
+            }
+        },
+        error: function (response) {
+            alert("error show user profile");
+        }
     });
 }
 //  ======================================================= END LEFT =======================================================
@@ -202,7 +277,7 @@ function getFriendRequests() {
             bindButtons();
         },
         error: function (response) {
-            alert("error");
+            alert("error getFriendRequests");
         }
     });
 }
@@ -489,7 +564,14 @@ $(document).ready(function () {
         url: "rest/korisnici/loggedIn",
         success: function (response) {
             currentUser = response.data;
-            userToShow = currentUser;
+            userToShow = window.sessionStorage.getItem('userToShow');
+            if (!userToShow) {
+                userToShow = currentUser;
+            }
+            else {
+                userToShow = JSON.parse(userToShow);
+            }
+
             navSetting();
             leftSettings();
             rightSettings();
