@@ -1,19 +1,25 @@
 package rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import beans.Korisnik;
+import beans.Status;
 import beans.Uloga;
+import beans.ZahtevZaPrijateljstvo;
 import dao.KorisnikDAO;
+import dao.ZahteviDAO;
+import dto.ZahtevDTO;
 import spark.Request;
 import spark.Response;
 import spark.Session;
 
 public class KorisniciApi {
 
-	private static Gson g = new GsonBuilder()
-			   .setDateFormat("yyyy-MM-dd").create();
+	private static Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
 	public static Object getCurrentUser(Request req, Response res) {
 		res.type("application/json");
@@ -33,15 +39,14 @@ public class KorisniciApi {
 		if (k.getUloga() == Uloga.GOST) {
 			ss.attribute("currentUser", k);
 			res.redirect("./static/pocetnaGost.html");
-			return g.toJson(new StandardResponse(StatusResponse.SUCCESS,"pocetnaGost.html", g.toJsonTree(k)));
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, "pocetnaGost.html", g.toJsonTree(k)));
 		}
 		k = KorisniciService.login(k.getKorisnickoIme(), k.getLozinka(), korisniciDAO);
 		if (k != null) {
 			ss.attribute("currentUser", k);
 			if (k.getUloga() == Uloga.KORISNIK) {
 				return g.toJson(new StandardResponse(StatusResponse.SUCCESS, "pocetnaKorisnik.html", g.toJsonTree(k)));
-			}
-			else {
+			} else {
 				return g.toJson(new StandardResponse(StatusResponse.SUCCESS, "pocetnaAdmin.html", g.toJsonTree(k)));
 			}
 		} else {
@@ -68,8 +73,7 @@ public class KorisniciApi {
 		k = KorisniciService.changePassword(k, korisniciDAO);
 		if (k != null) {
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
-		}
-		else {
+		} else {
 			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Error while changing password!"));
 		}
 	}
@@ -80,8 +84,7 @@ public class KorisniciApi {
 		k = KorisniciService.update(k, korisniciDAO);
 		if (k != null) {
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
-		}
-		else {
+		} else {
 			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Error while updating user!"));
 		}
 	}
@@ -90,7 +93,7 @@ public class KorisniciApi {
 		res.type("application/json");
 		Session ss = req.session(true);
 		Korisnik korisnik = ss.attribute("currentUser");
-		
+
 		if (korisnik != null) {
 			ss.invalidate();
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
@@ -98,4 +101,33 @@ public class KorisniciApi {
 		return g.toJson(new StandardResponse(StatusResponse.ERROR, "Logout error"));
 	}
 
+	public static Object getFriendRequestsForUser(Request req, Response res, ZahteviDAO zahteviDAO) {
+		res.type("application/json");
+		String username = req.queryParams("username");
+		List<ZahtevDTO> zahtevi = zahteviDAO.getZahteviNaCekanjuZaKorisnika(username);
+
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(zahtevi)));
+	}
+
+	public static Object acceptFriendRequest(Request req, Response res, ZahteviDAO zahteviDAO,
+			KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		String idZahteva = req.queryParams("id");
+		ZahtevZaPrijateljstvo zahtev = zahteviDAO.pronadjiZahtev(idZahteva);
+		KorisniciService.acceptRequest(zahtev);
+
+//		List<ZahtevDTO> zahtevi = zahteviDAO.getZahteviNaCekanjuZaKorisnika(zahtev.getPrimalac().getKorisnickoIme());
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
+	}
+
+	public static Object declineFriendRequest(Request req, Response res, ZahteviDAO zahteviDAO,
+			KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		String idZahteva = req.queryParams("id");
+		ZahtevZaPrijateljstvo zahtev = zahteviDAO.pronadjiZahtev(idZahteva);
+		zahtev.setStatus(Status.ODBIJENO);
+
+//		List<ZahtevDTO> zahtevi = zahteviDAO.getZahteviNaCekanjuZaKorisnika(zahtev.getPrimalac().getKorisnickoIme());
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
+	}
 }

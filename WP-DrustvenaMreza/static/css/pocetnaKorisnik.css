@@ -327,10 +327,10 @@ background: #ecebeb;
     margin-top: 1rem;
 }
 
-.right .requests h4{
+/* .right .requests h4{
     color: gray;
     margin: 1rem;
-}
+} */
 
 .right .request{
     background: #fff;
@@ -347,6 +347,8 @@ background: #ecebeb;
 }
 
 .right .request .action{
+    margin-left: 15%;
+    margin-right: 0%;
     align-items: center;
     display: flex;
     gap: 0.5rem;

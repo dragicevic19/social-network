@@ -38,6 +38,13 @@ public class SparkMain {
 		put("/rest/korisnici/update", (req,res) -> KorisniciApi.update(req, res, korisniciDAO));
 		
 		get("/rest/korisnici/logout", (req,res) -> KorisniciApi.logout(req, res));
+		
+		get("rest/korisnici/friendRequests", (req,res) -> KorisniciApi.getFriendRequestsForUser(req, res, zahteviDAO));
+		
+		get("rest/korisnici/acceptFriendRequest", (req,res) -> KorisniciApi.acceptFriendRequest(req,res,zahteviDAO, korisniciDAO));
+		
+		get("rest/korisnici/declineFriendRequest", (req,res) -> KorisniciApi.declineFriendRequest(req,res,zahteviDAO, korisniciDAO));
+
 
 //		get("/rest/test", (req, res) -> {
 //		return "radi";
