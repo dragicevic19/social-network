@@ -2,7 +2,6 @@ package rest;
 
 import static spark.Spark.staticFiles;
 import static spark.Spark.port;
-import static spark.Spark.path;
 import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.put;
@@ -10,15 +9,11 @@ import static spark.Spark.put;
 import java.io.File;
 import java.io.IOException;
 
-import com.google.gson.Gson;
-
-import beans.Korisnik;
 import dao.KomentariDAO;
 import dao.KorisnikDAO;
 import dao.ObjaveDAO;
 import dao.SlikeDAO;
 import dao.ZahteviDAO;
-import spark.Session;
 
 public class SparkMain {
 	static String dataPath = "./static/data";
@@ -41,6 +36,8 @@ public class SparkMain {
 		put("/rest/korisnici/changePass", (req, res) -> KorisniciApi.changePass(req, res, korisniciDAO));
 		
 		put("/rest/korisnici/update", (req,res) -> KorisniciApi.update(req, res, korisniciDAO));
+		
+		get("/rest/korisnici/logout", (req,res) -> KorisniciApi.logout(req, res));
 
 //		get("/rest/test", (req, res) -> {
 //		return "radi";
