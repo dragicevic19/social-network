@@ -30,6 +30,7 @@ function navSetting() {
         $('.logout').show(300);
         $(navActiveDiv).hide(300);
         navActiveDiv = $('.logout');
+        openLogoutDialog();
     });
 }
 
@@ -171,12 +172,38 @@ function centerSettings() {
     $('#savePassChangesBtn').click(function () {
         changePassword(); 
     });
+
+    $("#btnYes").click(function () {
+        $.ajax({
+            type: "GET",
+            url: "rest/korisnici/logout",
+            success: function (response) {
+                if (response.status == "SUCCESS") {
+                    currentUser = null;
+                    userToShow = null;
+                    window.location = 'index.html';
+                }
+                else {
+                    alert("error ovde " + response.message);
+                }
+            },
+            error: function (response) {
+                alert(response.message);
+            }
+        });
+    });
+
+    $("#btnNo").click(function () {
+        $('.myprofile_li').click();
+    });
 }
 
 function addProfilePictureAndName() {
-    let picPath = userToShow.profilnaSlika.putanja;
-    if (userToShow.profilnaSlika.obrisana) {
-        picPath = "pics/avatar.png";
+    let picPath = "pics/avatar.png";
+    if (userToShow.profilnaSlika) {
+        if (!userToShow.profilnaSlika.obrisana) {
+            picPath = userToShow.profilnaSlika.putanja;
+        }
     }
     var profile_pic = $('<img src=' + picPath + ' class="avatar">'); 
     $('.myprofile .profile_pic').append(profile_pic)
@@ -347,11 +374,10 @@ function changeInfos() {
     });
 }
 
-// function onInfosChanged() {
-//     editUser = false;
-//     $('.about_li').click();
-//     fillInformationsAboutUser();
-// }
+function openLogoutDialog() {
+
+
+}
 
 $(document).ready(function () {
 

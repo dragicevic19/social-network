@@ -86,4 +86,16 @@ public class KorisniciApi {
 		}
 	}
 
+	public static Object logout(Request req, Response res) {
+		res.type("application/json");
+		Session ss = req.session(true);
+		Korisnik korisnik = ss.attribute("currentUser");
+		
+		if (korisnik != null) {
+			ss.invalidate();
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
+		}
+		return g.toJson(new StandardResponse(StatusResponse.ERROR, "Logout error"));
+	}
+
 }
