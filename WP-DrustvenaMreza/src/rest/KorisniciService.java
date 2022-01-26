@@ -3,6 +3,8 @@ package rest;
 import java.util.HashMap;
 
 import beans.Korisnik;
+import beans.Status;
+import beans.ZahtevZaPrijateljstvo;
 import dao.KorisnikDAO;
 
 public class KorisniciService {
@@ -42,4 +44,13 @@ public class KorisniciService {
 		korisnik.setDatumRodjenja(k.getDatumRodjenja());
 		return korisnik;
 	}
+
+	public static void acceptRequest(ZahtevZaPrijateljstvo zahtev) {
+		Korisnik primalac = zahtev.getPrimalac();
+		Korisnik posiljalac = zahtev.getPosiljalac();
+		zahtev.setStatus(Status.PRIHVACENO);	
+		primalac.getPrijatelji().add(posiljalac.getKorisnickoIme());
+		posiljalac.getPrijatelji().add(primalac.getKorisnickoIme());
+	}
+
 }

@@ -4,15 +4,18 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import beans.Korisnik;
 import beans.Slika;
 import beans.Status;
 import beans.ZahtevZaPrijateljstvo;
+import dto.ZahtevDTO;
 
 public class ZahteviDAO {
 
@@ -57,7 +60,8 @@ public class ZahteviDAO {
 				zahtevi.put(id, new ZahtevZaPrijateljstvo(id, poslao, primio, status, datumZahteva));
 			}
 
-		//	korisniciDAO.onUcitaniZahtevi(zahtevi.values()); // da se popune zahtevi za sve korisnike
+			// korisniciDAO.onUcitaniZahtevi(zahtevi.values()); // da se popune zahtevi za
+			// sve korisnike
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -101,6 +105,21 @@ public class ZahteviDAO {
 		for (ZahtevZaPrijateljstvo z : zahtevi.values()) {
 			System.out.println(z);
 		}
+	}
+
+	public List<ZahtevDTO> getZahteviNaCekanjuZaKorisnika(String korisnickoIme) {
+		List<ZahtevDTO> retList = new ArrayList<ZahtevDTO>();
+		for (ZahtevZaPrijateljstvo zahtev : zahtevi.values()) {
+			if (zahtev.getPrimalac().getKorisnickoIme().equals(korisnickoIme)) {
+				if (zahtev.getStatus() == Status.NA_CEKANJU) {
+					ZahtevDTO z = new ZahtevDTO(zahtev.getId(), zahtev.getPosiljalac().getKorisnickoIme(),
+							zahtev.getPosiljalac().getIme(), zahtev.getPosiljalac().getPrezime(),
+							zahtev.getPosiljalac().getPrijatelji(), zahtev.getPosiljalac().getProfilnaSlika());
+					retList.add(z);
+				}
+			}
+		}
+		return retList;
 	}
 
 }
