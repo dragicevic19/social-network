@@ -1,6 +1,5 @@
 package rest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -147,5 +146,14 @@ public class KorisniciApi {
 		} else {
 			return g.toJson(new StandardResponse(StatusResponse.ERROR, "User not found!"));
 		}
+	}
+
+	public static Object getMutualFriends(Request req, Response res, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		String usernameOne = req.queryParams("userOne");
+		String usernameTwo = req.queryParams("userTwo");
+		
+		List<Korisnik> zajednickiPrijatelji = KorisniciService.getMutualFriends(usernameOne, usernameTwo, korisniciDAO);
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(zajednickiPrijatelji)));
 	}
 }

@@ -11,8 +11,10 @@ function navSetting() {
     let navActiveDiv = $('.myprofile');
 
     $('.myprofile_li').click(function () {  
-        window.sessionStorage.setItem('userToShow', '');
-        window.location = window.location;
+        if (userToShow != currentUser) {
+            window.sessionStorage.setItem('userToShow', '');
+            window.location = window.location;
+        }
         if (navActiveLi.is(this)) {
             return;
         }
@@ -47,9 +49,11 @@ function leftSettings() {
         getFriends(currentUser);
         return;
     }
+    $('.friends_li').text(userToShow.ime + "'s friends");
     getFriends(userToShow);
     var mutualsLi = $('<li class="mutual_friends_li"></li>').text('Mutual friends');
     $('.left .tabs ul').append(mutualsLi);
+    getMutuals(userToShow);
 
     $('.friends_li').click(function () {
         if (leftActiveLi.is(this)) {
@@ -143,6 +147,46 @@ function showUserProfile(username) {
             alert("error show user profile");
         }
     });
+}
+
+function getMutuals(userToShow) {
+    $.ajax({
+        type: "GET",
+        url: "rest/korisnici/mutualFriends?userOne=" + currentUser.korisnickoIme + "&userTwo=" + userToShow.korisnickoIme,
+        success: function (response) {            
+            let friends = response.data;
+            fillMutualFriends(friends);
+            // bindFriends();
+        },
+        error: function (response) {
+            alert("error getMutuals");
+        }
+    });
+}
+
+function fillMutualFriends(friends) {
+    for (let i = 0; i < friends.length; i++){
+        let divRequest = $("<div class='friend' data-index='" + friends[i].korisnickoIme +"'></div>");
+        let divInfo = $('<div class="info"></div>');
+        let divPhoto = $('<div class="profile-photo"></div>');
+        let picPath = "pics/avatar.png";
+        if (friends[i].profilnaSlika) {
+            if (!friends[i].profilnaSlika.obrisana) {
+                picPath = friends[i].profilnaSlika.putanja;
+            }
+        }
+        let img = $('<img src=' + picPath + '>');
+        divPhoto.append(img);
+        let div = $('<div></div>');
+        let text = $('<h3>' + friends[i].ime + ' ' + friends[i].prezime + '</h3>');
+        div.append(text);
+
+        divInfo.append(divPhoto);
+        divInfo.append(div);
+
+        divRequest.append(divInfo);
+        $('.mutuals').append(divRequest);
+    }
 }
 //  ======================================================= END LEFT =======================================================
 
@@ -403,7 +447,10 @@ function addButtonForEdit() {
         $('.about_li').click();
         fillInformationsAboutUser();
     });
+}
 
+function addButtonsForOtherUser() {
+    
 }
 
 function fillInformationsAboutUser() {

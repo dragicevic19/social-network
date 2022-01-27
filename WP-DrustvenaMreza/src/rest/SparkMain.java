@@ -48,6 +48,8 @@ public class SparkMain {
 		get("rest/korisnici/friends", (req,res) -> KorisniciApi.getFriendsForUser(req, res, korisniciDAO));
 		
 		get("rest/korisnici/user", (req,res) -> KorisniciApi.getUserForUsername(req, res, korisniciDAO));
+		
+		get("rest/korisnici/mutualFriends", (req,res) -> KorisniciApi.getMutualFriends(req, res, korisniciDAO));
 
 
 //		get("/rest/test", (req, res) -> {
