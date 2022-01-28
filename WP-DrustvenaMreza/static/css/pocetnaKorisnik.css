@@ -311,7 +311,7 @@ background: #ecebeb;
 }
 
 .wrapper .right .messages .message:hover,
-.wrapper .left .friends .friend:hover{
+.wrapper .left .friend:hover{
     opacity: 0.8;
 }
 

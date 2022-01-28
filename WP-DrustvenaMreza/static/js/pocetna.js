@@ -87,7 +87,7 @@ function getFriends(user) {
         success: function (response) {            
             let friends = response.data;
             fillFriends(friends);
-            bindFriends();
+            bindFriends('friends');
         },
         error: function (response) {
             alert("error getFriends");
@@ -120,8 +120,8 @@ function fillFriends(friends) {
     }
 }
 
-function bindFriends() {
-    let friends = $('.friends');
+function bindFriends(className) {
+    let friends = $('.' + className);
     for (let i = 0; i < friends.length; i++){
         $(friends[i]).find(".friend").click(function () {
             showUserProfile($(this).attr('data-index'));
@@ -156,7 +156,7 @@ function getMutuals(userToShow) {
         success: function (response) {            
             let friends = response.data;
             fillMutualFriends(friends);
-            // bindFriends();
+            bindFriends('mutuals');
         },
         error: function (response) {
             alert("error getMutuals");
@@ -633,7 +633,4 @@ $(document).ready(function () {
             window.location = "index.html";
         }
     });
-
-
-
 });
