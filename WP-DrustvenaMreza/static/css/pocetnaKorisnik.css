@@ -209,12 +209,12 @@ nav .tabs ul li.active{
     display: inline-flex;
     align-items: center;
 }
-.center .myprofile .edit{
+.center .myprofile i{
     margin-left: 20px;
     cursor: pointer;
 }
 
-.center .myprofile .edit:hover{
+.center .myprofile i{
     opacity: 0.8;
 }
 

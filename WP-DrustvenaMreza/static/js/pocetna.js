@@ -1,6 +1,8 @@
 let currentUser = null;
 let userToShow = null;
 let editUser = false;
+let recievedRequests = null;
+let sentRequests = null;
 
 function navSetting() {
     $('.logout').hide();
@@ -224,28 +226,28 @@ function rightSettings() {
 
 }
 
-function fillRequests(friendRequests) {
-    for (let i = 0; i < friendRequests.length; i++){
-        let divRequest = $("<div class='request' data-index='" + friendRequests[i].korisnickoIme +"'></div>");
+function fillRequests() {
+    for (let i = 0; i < recievedRequests.length; i++){
+        let divRequest = $("<div class='request' data-index='" + recievedRequests[i].korisnickoIme +"'></div>");
         let divInfo = $('<div class="info"></div>');
         let divPhoto = $('<div class="profile-photo"></div>');
         let picPath = "pics/avatar.png";
-        if (friendRequests[i].profilnaSlika) {
-            if (!friendRequests[i].profilnaSlika.obrisana) {
-                picPath = friendRequests[i].profilnaSlika.putanja;
+        if (recievedRequests[i].profilnaSlika) {
+            if (!recievedRequests[i].profilnaSlika.obrisana) {
+                picPath = recievedRequests[i].profilnaSlika.putanja;
             }
         }
         let img = $('<img src=' + picPath + '>');
         divPhoto.append(img);
         let div = $('<div></div>');
-        let text = $('<h4>' + friendRequests[i].ime + ' ' + friendRequests[i].prezime + '</h4>');
-        let mutuals = $('<p class="text-muted">' + getNumOfMutualFriends(friendRequests[i]) + '</p>');
+        let text = $('<h4>' + recievedRequests[i].ime + ' ' + recievedRequests[i].prezime + '</h4>');
+        let mutuals = $('<p class="text-muted">' + getNumOfMutualFriends(recievedRequests[i]) + '</p>');
         div.append(text);
         div.append(mutuals);
 
         let divAction = $('<div class="action"></div>');
-        let btnAccept = $('<button class="btn btn-primary acceptBtn" data-index=' + friendRequests[i].idZahteva + '>Accept</button>');
-        let btnDecline = $('<button class="btn declineBtn" data-index='+ friendRequests[i].idZahteva +'>Decline</button>');
+        let btnAccept = $('<button class="btn btn-primary acceptBtn" data-index=' + recievedRequests[i].idZahteva + '>Accept</button>');
+        let btnDecline = $('<button class="btn declineBtn" data-index='+ recievedRequests[i].idZahteva +'>Decline</button>');
         divAction.append(btnAccept);
         divAction.append(btnDecline);
 
@@ -315,9 +317,10 @@ function getFriendRequests() {
     $.ajax({
         type: "GET",
         url: "rest/korisnici/friendRequests?username=" + currentUser.korisnickoIme,
-        success: function (response) {            
-            let friendRequests = response.data;
-            fillRequests(friendRequests);
+        success: function (response) {
+            recievedRequests = response.data[0];
+            sentRequests = response.data[1];
+            fillRequests();
             bindButtons();
         },
         error: function (response) {
@@ -450,7 +453,82 @@ function addButtonForEdit() {
 }
 
 function addButtonsForOtherUser() {
-    
+    if (!isFriends(userToShow, currentUser)) {
+        if (!isUserInSentRequests(userToShow)) {
+            var addFriendIcon = $('<i class="fas fa-user-plus add"></i>'); 
+            $('.myprofile .name_last_name').append(addFriendIcon); 
+            
+            $('.add').unbind().click(function () {
+                sendFriendRequest();
+            });
+        }
+        else {
+            var requestPending = $('<i class="fas fa-user-clock pending"></i>');
+            $('.myprofile .name_last_name').append(requestPending);
+        }
+    }
+    else {
+        var removeFriendIcon = $('<i class="fas fa-user-minus remove"></i>');
+        var sendMsgIcon = $('<i class="fas fa-envelope message"></i>');
+        $('.myprofile .name_last_name').append(removeFriendIcon);
+        $('.myprofile .name_last_name').append(sendMsgIcon);
+
+        $('.remove').unbind().click(function () {
+            removeFriend();
+        });
+        $('.message').unbind().click(function () {
+            sendMessage();
+        });
+    }
+}
+
+function isUserInSentRequests() {
+    if (!sentRequests) return false;
+    for (let i = 0; i < sentRequests.length; i++){
+        if (sentRequests[i].korisnickoIme == userToShow.korisnickoIme) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function isFriends(showUser, mainUser) {
+    for (let i = 0; i < mainUser.prijatelji.length; i++){
+        if (mainUser.prijatelji[i] == showUser.korisnickoIme) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function sendFriendRequest() {
+    data = JSON.stringify({
+        id: '',
+        posiljalac: {
+            korisnickoIme: currentUser.korisnickoIme
+        },
+        primalac: {
+            korisnickoIme: userToShow.korisnickoIme
+        },
+        status: 'NA_CEKANJU'
+    });
+    $.ajax({
+        type: "POST",
+        url: "rest/zahtevi/",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "SUCCESS") {
+                window.location = window.location;
+            }
+            else {
+                alert("error sendFriendRequest " + response.message);
+            }
+        },
+        error: function (response) {
+            alert(response.message);
+        }
+    });
 }
 
 function fillInformationsAboutUser() {
@@ -589,6 +667,7 @@ function changeInfos() {
         success: function (response) {
             if (response.status == "SUCCESS") {
                 alert("Informations are updated successfully!");
+                editUser = false;
                 currentUser = response.data;
                 userToShow = currentUser;
                 window.location = window.location;

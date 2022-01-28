@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -115,6 +116,21 @@ public class ZahteviDAO {
 					ZahtevDTO z = new ZahtevDTO(zahtev.getId(), zahtev.getPosiljalac().getKorisnickoIme(),
 							zahtev.getPosiljalac().getIme(), zahtev.getPosiljalac().getPrezime(),
 							zahtev.getPosiljalac().getPrijatelji(), zahtev.getPosiljalac().getProfilnaSlika());
+					retList.add(z);
+				}
+			}
+		}
+		return retList;
+	}
+
+	public List<ZahtevDTO> getPoslatiZahteviNaCekanjuZaKorisnika(String korisnickoIme) {
+		List<ZahtevDTO> retList = new ArrayList<ZahtevDTO>();
+		for (ZahtevZaPrijateljstvo zahtev : zahtevi.values()) {
+			if (zahtev.getPosiljalac().getKorisnickoIme().equals(korisnickoIme)) {
+				if (zahtev.getStatus() == Status.NA_CEKANJU) {
+					ZahtevDTO z = new ZahtevDTO(zahtev.getId(), zahtev.getPrimalac().getKorisnickoIme(),
+							zahtev.getPrimalac().getIme(), zahtev.getPrimalac().getPrezime(),
+							zahtev.getPrimalac().getPrijatelji(), zahtev.getPrimalac().getProfilnaSlika());
 					retList.add(z);
 				}
 			}

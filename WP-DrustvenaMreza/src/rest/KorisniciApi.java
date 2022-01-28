@@ -1,5 +1,6 @@
 package rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -104,8 +105,11 @@ public class KorisniciApi {
 		res.type("application/json");
 		String username = req.queryParams("username");
 		List<ZahtevDTO> zahtevi = zahteviDAO.getZahteviNaCekanjuZaKorisnika(username);
-
-		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(zahtevi)));
+		List<ZahtevDTO> poslatiZahtevi = zahteviDAO.getPoslatiZahteviNaCekanjuZaKorisnika(username);
+		List<List<ZahtevDTO>> list = new ArrayList<List<ZahtevDTO>>();
+		list.add(zahtevi);
+		list.add(poslatiZahtevi);
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(list)));
 	}
 
 	public static Object acceptFriendRequest(Request req, Response res, ZahteviDAO zahteviDAO,
