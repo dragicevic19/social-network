@@ -178,6 +178,15 @@ public class KorisnikDAO {
 		}
 	}
 
+	public List<Korisnik> pronadjiPrijateljeZaKorisnika(Korisnik k) {
+		List<Korisnik> retList = new ArrayList<Korisnik>();
+		if (k.getPrijatelji() == null) return retList;
+		for (String kIme : k.getPrijatelji()) {
+			retList.add(korisnici.get(kIme));
+		}
+		return retList;
+	}
+
 //	public Korisnik update(Korisnik k, Korisnik noviKorisnik) {
 //		k.setLozinka(noviKorisnik.getLozinka());
 //		k.setEmail(noviKorisnik.getEmail());

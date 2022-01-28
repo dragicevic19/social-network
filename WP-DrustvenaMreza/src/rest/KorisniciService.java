@@ -1,6 +1,8 @@
 package rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import beans.Korisnik;
 import beans.Status;
@@ -51,6 +53,26 @@ public class KorisniciService {
 		zahtev.setStatus(Status.PRIHVACENO);	
 		primalac.getPrijatelji().add(posiljalac.getKorisnickoIme());
 		posiljalac.getPrijatelji().add(primalac.getKorisnickoIme());
+	}
+
+	public static List<Korisnik> getFriendsForUser(String username, KorisnikDAO korisniciDAO) {
+		Korisnik k = korisniciDAO.pronadjiKorisnika(username);
+		return korisniciDAO.pronadjiPrijateljeZaKorisnika(k);
+	}
+
+	public static List<Korisnik> getMutualFriends(String usernameOne, String usernameTwo, KorisnikDAO korisniciDAO) {
+		List<Korisnik> retList = new ArrayList<Korisnik>();
+		Korisnik userOne = korisniciDAO.pronadjiKorisnika(usernameOne);
+		Korisnik userTwo = korisniciDAO.pronadjiKorisnika(usernameTwo);
+		for (String friendOne : userOne.getPrijatelji()) {
+			for (String friendTwo : userTwo.getPrijatelji()) {
+				if (friendOne.equals(friendTwo)) {
+					retList.add(korisniciDAO.pronadjiKorisnika(friendOne));
+					break;
+				}
+			}	
+		}
+		return retList;
 	}
 
 }

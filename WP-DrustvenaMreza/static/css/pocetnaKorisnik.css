@@ -99,14 +99,14 @@ nav .tabs ul li{
     margin: 5px;
     padding: 5px 10px;
     font-size: 19px;
-    color: #494f57;
+    /* color: #494f57; */
     text-transform: uppercase;
     letter-spacing: 2px;
     cursor: pointer;
 }
 
 nav .tabs ul li.active{
-  border-bottom: 2px solid #494f57;
+  border-bottom: 2px solid;
 }
 
 .wrapper{
@@ -139,7 +139,7 @@ nav .tabs ul li.active{
 .wrapper .left .tabs ul li,
 .wrapper .right .tabs ul li{
     display: inline-block;
-    margin:5px;
+    margin:2px;
     padding: 5px 20px;
     font-size: 19px;
     color: #fff;
@@ -311,7 +311,7 @@ background: #ecebeb;
 }
 
 .wrapper .right .messages .message:hover,
-.wrapper .left .friends .friend:hover{
+.wrapper .left .friend:hover{
     opacity: 0.8;
 }
 

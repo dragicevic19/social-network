@@ -4,12 +4,18 @@ let editUser = false;
 
 function navSetting() {
     $('.logout').hide();
-    $('.myprofile_li').addClass('active');
+    if (userToShow == currentUser) {
+        $('.myprofile_li').addClass('active');
+    }
     let navActiveLi = $('.myprofile_li');
     let navActiveDiv = $('.myprofile');
 
-    $('.myprofile_li').click(function () {  // dodati da se ovde vraca na svoj
-        if (navActiveLi.is(this)) {         // profil ako je bio na necijem
+    $('.myprofile_li').click(function () {  
+        if (userToShow != currentUser) {
+            window.sessionStorage.setItem('userToShow', '');
+            window.location = window.location;
+        }
+        if (navActiveLi.is(this)) {
             return;
         }
         $(this).addClass('active');
@@ -40,10 +46,14 @@ function leftSettings() {
     let leftActiveDiv = $('.friends');
     $('.mutuals').hide();
     if (currentUser == userToShow) {
+        getFriends(currentUser);
         return;
     }
+    $('.friends_li').text(userToShow.ime + "'s friends");
+    getFriends(userToShow);
     var mutualsLi = $('<li class="mutual_friends_li"></li>').text('Mutual friends');
     $('.left .tabs ul').append(mutualsLi);
+    getMutuals(userToShow);
 
     $('.friends_li').click(function () {
         if (leftActiveLi.is(this)) {
@@ -68,6 +78,115 @@ function leftSettings() {
         $(leftActiveDiv).hide(300);
         leftActiveDiv = $('.mutuals');
     });
+}
+
+function getFriends(user) {
+    $.ajax({
+        type: "GET",
+        url: "rest/korisnici/friends?username=" + user.korisnickoIme,
+        success: function (response) {            
+            let friends = response.data;
+            fillFriends(friends);
+            bindFriends('friends');
+        },
+        error: function (response) {
+            alert("error getFriends");
+        }
+    });
+}
+
+function fillFriends(friends) {
+    for (let i = 0; i < friends.length; i++){
+        let divRequest = $("<div class='friend' data-index='" + friends[i].korisnickoIme +"'></div>");
+        let divInfo = $('<div class="info"></div>');
+        let divPhoto = $('<div class="profile-photo"></div>');
+        let picPath = "pics/avatar.png";
+        if (friends[i].profilnaSlika) {
+            if (!friends[i].profilnaSlika.obrisana) {
+                picPath = friends[i].profilnaSlika.putanja;
+            }
+        }
+        let img = $('<img src=' + picPath + '>');
+        divPhoto.append(img);
+        let div = $('<div></div>');
+        let text = $('<h3>' + friends[i].ime + ' ' + friends[i].prezime + '</h3>');
+        div.append(text);
+
+        divInfo.append(divPhoto);
+        divInfo.append(div);
+
+        divRequest.append(divInfo);
+        $('.friends').append(divRequest);
+    }
+}
+
+function bindFriends(className) {
+    let friends = $('.' + className);
+    for (let i = 0; i < friends.length; i++){
+        $(friends[i]).find(".friend").click(function () {
+            showUserProfile($(this).attr('data-index'));
+        });
+    }
+}
+
+function showUserProfile(username) {
+    $.ajax({
+        type: "GET",
+        url: "rest/korisnici/user?username=" + username,
+        success: function (response) {          
+            if (response.status == "SUCCESS") {
+                userToShow = response.data;
+                window.sessionStorage.setItem('userToShow', JSON.stringify(userToShow));
+                window.location = window.location;
+            }
+            else {
+                alert(response.message);
+            }
+        },
+        error: function (response) {
+            alert("error show user profile");
+        }
+    });
+}
+
+function getMutuals(userToShow) {
+    $.ajax({
+        type: "GET",
+        url: "rest/korisnici/mutualFriends?userOne=" + currentUser.korisnickoIme + "&userTwo=" + userToShow.korisnickoIme,
+        success: function (response) {            
+            let friends = response.data;
+            fillMutualFriends(friends);
+            bindFriends('mutuals');
+        },
+        error: function (response) {
+            alert("error getMutuals");
+        }
+    });
+}
+
+function fillMutualFriends(friends) {
+    for (let i = 0; i < friends.length; i++){
+        let divRequest = $("<div class='friend' data-index='" + friends[i].korisnickoIme +"'></div>");
+        let divInfo = $('<div class="info"></div>');
+        let divPhoto = $('<div class="profile-photo"></div>');
+        let picPath = "pics/avatar.png";
+        if (friends[i].profilnaSlika) {
+            if (!friends[i].profilnaSlika.obrisana) {
+                picPath = friends[i].profilnaSlika.putanja;
+            }
+        }
+        let img = $('<img src=' + picPath + '>');
+        divPhoto.append(img);
+        let div = $('<div></div>');
+        let text = $('<h3>' + friends[i].ime + ' ' + friends[i].prezime + '</h3>');
+        div.append(text);
+
+        divInfo.append(divPhoto);
+        divInfo.append(div);
+
+        divRequest.append(divInfo);
+        $('.mutuals').append(divRequest);
+    }
 }
 //  ======================================================= END LEFT =======================================================
 
@@ -202,7 +321,7 @@ function getFriendRequests() {
             bindButtons();
         },
         error: function (response) {
-            alert("error");
+            alert("error getFriendRequests");
         }
     });
 }
@@ -328,7 +447,10 @@ function addButtonForEdit() {
         $('.about_li').click();
         fillInformationsAboutUser();
     });
+}
 
+function addButtonsForOtherUser() {
+    
 }
 
 function fillInformationsAboutUser() {
@@ -489,7 +611,14 @@ $(document).ready(function () {
         url: "rest/korisnici/loggedIn",
         success: function (response) {
             currentUser = response.data;
-            userToShow = currentUser;
+            userToShow = window.sessionStorage.getItem('userToShow');
+            if (!userToShow) {
+                userToShow = currentUser;
+            }
+            else {
+                userToShow = JSON.parse(userToShow);
+            }
+
             navSetting();
             leftSettings();
             rightSettings();
@@ -504,7 +633,4 @@ $(document).ready(function () {
             window.location = "index.html";
         }
     });
-
-
-
 });

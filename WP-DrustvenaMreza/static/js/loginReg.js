@@ -1,4 +1,7 @@
-$(document).ready(function(){
+$(document).ready(function () {
+    
+    window.sessionStorage.setItem('userToShow', '');
+
     $(':input')
         .not(':checkbox, :radio, select').val('');
 
