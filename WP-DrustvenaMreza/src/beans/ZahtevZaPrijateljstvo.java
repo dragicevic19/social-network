@@ -76,11 +76,11 @@ public class ZahtevZaPrijateljstvo {
 		this.status = status;
 	}
 
-	public LocalDate getDatum() {
+	public Date getDatum() {
 		return datum;
 	}
 
-	public void setDatum(LocalDate datum) {
+	public void setDatum(Date datum) {
 		this.datum = datum;
 	}
 
