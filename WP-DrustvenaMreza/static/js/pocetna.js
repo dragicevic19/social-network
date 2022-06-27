@@ -570,6 +570,7 @@ function fillInformationsAboutUser() {
     else {
         $('.btnChanges').hide(100);
     }
+    $('.input_field.email').attr('hidden', currentUser.korisnickoIme != userToShow.korisnickoIme);
     $('input[name="email"]').val(userToShow.email).attr('disabled', !editUser);
     $('input[name="name"]').val(userToShow.ime).attr('disabled', !editUser);
     $('input[name="lastName"]').val(userToShow.prezime).attr('disabled', !editUser);
