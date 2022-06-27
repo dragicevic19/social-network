@@ -169,4 +169,20 @@ public class KorisniciApi {
 		List<Korisnik> zajednickiPrijatelji = KorisniciService.getMutualFriends(usernameOne, usernameTwo, korisniciDAO);
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(zajednickiPrijatelji)));
 	}
+
+	public static Object removeFriend(Request req, Response res, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		String userOne = req.queryParams("userOne");
+		String userTwo = req.queryParams("userTwo");
+		
+		if (KorisniciService.removeFriend(userOne, userTwo, korisniciDAO)) {
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
+		}
+		else {
+			res.status(400);
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Bad request!"));
+		}
+		
+		
+	}
 }

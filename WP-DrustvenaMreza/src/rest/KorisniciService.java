@@ -33,13 +33,14 @@ public class KorisniciService {
 		if (korisnik == null) {
 			return null;
 		}
-		korisnik.setLozinka(k.getLozinka());	// sacuvaj u bazu
+		korisnik.setLozinka(k.getLozinka()); // sacuvaj u bazu
 		return korisnik;
 	}
 
 	public static Korisnik update(Korisnik k, KorisnikDAO korisniciDAO) {
 		Korisnik korisnik = korisniciDAO.pronadjiKorisnika(k.getKorisnickoIme());
-		if (korisnik == null) return null;
+		if (korisnik == null)
+			return null;
 		korisnik.setEmail(k.getEmail());
 		korisnik.setIme(k.getIme());
 		korisnik.setPrezime(k.getPrezime());
@@ -50,7 +51,7 @@ public class KorisniciService {
 	public static void acceptRequest(ZahtevZaPrijateljstvo zahtev) {
 		Korisnik primalac = zahtev.getPrimalac();
 		Korisnik posiljalac = zahtev.getPosiljalac();
-		zahtev.setStatus(Status.PRIHVACENO);	
+		zahtev.setStatus(Status.PRIHVACENO);
 		primalac.getPrijatelji().add(posiljalac.getKorisnickoIme());
 		posiljalac.getPrijatelji().add(primalac.getKorisnickoIme());
 	}
@@ -70,9 +71,30 @@ public class KorisniciService {
 					retList.add(korisniciDAO.pronadjiKorisnika(friendOne));
 					break;
 				}
-			}	
+			}
 		}
 		return retList;
+	}
+
+	public static boolean removeFriend(String userOne, String userTwo, KorisnikDAO korisniciDAO) {
+		Korisnik k1 = korisniciDAO.pronadjiKorisnika(userOne);
+		Korisnik k2 = korisniciDAO.pronadjiKorisnika(userTwo);
+
+		boolean found = false;
+		for (String kIme : k1.getPrijatelji()) {
+			if (kIme.equals(k2.getKorisnickoIme())) {
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+			return false;
+
+		k1.getPrijatelji().remove(k2.getKorisnickoIme());
+		k2.getPrijatelji().remove(k1.getKorisnickoIme());
+
+		return true;
 	}
 
 }

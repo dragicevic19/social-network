@@ -543,6 +543,24 @@ function sendFriendRequest() {
     });
 }
 
+function removeFriend() {
+    $.ajax({
+        type: "GET",
+        url: "rest/korisnici/removeFriend?userOne=" + currentUser.korisnickoIme + "&userTwo=" + userToShow.korisnickoIme,
+        success: function (response) {
+            if (response.status == "SUCCESS") {
+                window.location = window.location;
+            }
+            else {
+                alert("error remove friends: " + response.message);
+            }
+        },
+        error: function (response) {
+            alert(response.message);
+        }
+    });
+}
+
 function fillInformationsAboutUser() {
     $('.about').show();
     $('.passChange').hide();

@@ -52,9 +52,9 @@ public class SparkMain {
 		get("rest/korisnici/mutualFriends", (req,res) -> KorisniciApi.getMutualFriends(req, res, korisniciDAO));
 		
 		post("rest/zahtevi/", (req,res)-> ZahteviApi.newFriendRequest(req, res, korisniciDAO, zahteviDAO));
+		
+		get("rest/korisnici/removeFriend", (req,res)-> KorisniciApi.removeFriend(req, res, korisniciDAO));
 
-//		get("/rest/test", (req, res) -> {
-//		return "radi";
-//	});
+
 	}
 }
