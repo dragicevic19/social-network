@@ -1,5 +1,8 @@
 package beans;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class ZahtevZaPrijateljstvo {
@@ -28,7 +31,19 @@ public class ZahtevZaPrijateljstvo {
 		this.status = status;
 		this.datum = datum;
 	}
-
+	
+	public ZahtevZaPrijateljstvo(String id, Korisnik posiljalac, Korisnik primalac, Status status) {
+		super();
+		this.id = id;
+		this.posiljalac = posiljalac;
+		this.primalac = primalac;
+		this.status = status;
+		try {
+			this.datum = new SimpleDateFormat("dd/MM/yyyy").parse("12/12/2022");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
 	public String getId() {
 		return id;
 	}

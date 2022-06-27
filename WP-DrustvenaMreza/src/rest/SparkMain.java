@@ -29,7 +29,7 @@ public class SparkMain {
 
 		post("/rest/korisnici/register", (req, res) -> KorisniciApi.register(req, res, korisniciDAO));
 
-		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res));
+		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res, zahteviDAO));
 
 		post("/rest/korisnici/login", (req, res) -> KorisniciApi.login(req, res, korisniciDAO));
 		
@@ -50,7 +50,8 @@ public class SparkMain {
 		get("rest/korisnici/user", (req,res) -> KorisniciApi.getUserForUsername(req, res, korisniciDAO));
 		
 		get("rest/korisnici/mutualFriends", (req,res) -> KorisniciApi.getMutualFriends(req, res, korisniciDAO));
-
+		
+		post("rest/zahtevi/", (req,res)-> ZahteviApi.newFriendRequest(req, res, korisniciDAO, zahteviDAO));
 
 //		get("/rest/test", (req, res) -> {
 //		return "radi";
