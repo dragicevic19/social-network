@@ -183,4 +183,27 @@ public class Korisnik {
 				+ prijatelji + ", zahteviZaPrijateljstvo=" + zahteviZaPrijateljstvo + ", privatan=" + privatan
 				+ ", obrisan=" + obrisan + "]";
 	}
+
+	public boolean search(String query, String options) {
+		try {
+			String[] selectedOptions = options.split(",");
+			
+			for(String option : selectedOptions) {
+				if (option.equalsIgnoreCase("name")) {
+					if (ime.toLowerCase().contains(query.toLowerCase())) return true;
+				}
+				if (option.equalsIgnoreCase("lastName")) {
+					if (prezime.toLowerCase().contains(query.toLowerCase())) return true;
+				}
+			}
+			
+			return false;
+		
+		}
+		catch(Exception e) {
+			if (ime.toLowerCase().contains(query.toLowerCase())) return true;
+			if (prezime.toLowerCase().contains(query.toLowerCase())) return true;
+			return false;
+		}
+	}
 }

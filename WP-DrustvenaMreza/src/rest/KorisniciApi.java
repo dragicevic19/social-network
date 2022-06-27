@@ -185,4 +185,20 @@ public class KorisniciApi {
 		
 		
 	}
+
+	public static Object search(Request req, Response res, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		String query = req.queryParams("query");
+		String options = req.queryParams("options");
+		try {
+			List<Korisnik> searchRes = KorisniciService.search(query, options, korisniciDAO);
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(searchRes)));
+
+		}
+		catch(Exception e) {
+			res.status(500);
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Internal server error!"));
+		}
+		
+	}
 }
