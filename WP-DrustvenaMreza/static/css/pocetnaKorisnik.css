@@ -71,6 +71,9 @@ nav .container{
 }
 
 nav .search-bar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: whitesmoke;
     border-radius: 2rem;
     padding: 0.6rem 1rem;
@@ -282,12 +285,20 @@ background: #ecebeb;
     bottom: 0;
 }
 
+.wrapper .center .search-res {
+    height: max-content;
+    position: sticky;
+    top:-18rem;
+    bottom: 0;
+}
+
 .wrapper .right .messages{
     margin-top: 1rem;
 }
 
 .wrapper .right .profile-photo,
-.wrapper .left .profile-photo{
+.wrapper .left .profile-photo,
+.searchItem .profile-photo{
    width: 45px;
    height: 45px;
 }
@@ -311,8 +322,9 @@ background: #ecebeb;
 }
 
 .wrapper .right .messages .message:hover,
-.wrapper .left .friend:hover{
-    opacity: 0.8;
+.wrapper .left .friend:hover,
+.searchItem:hover {
+    opacity: 0.9;
 }
 
 .right .messages .message:last-child{
@@ -325,6 +337,42 @@ background: #ecebeb;
 
 .right .requests{
     margin-top: 1rem;
+}
+
+.searchResult {
+    margin-top: 1rem;
+}
+
+
+.search-options{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.searchResult img {
+    width: 45px;
+    height: 45px;
+    display: block;
+    width: 100%;
+    border-radius: 50%;
+}
+
+.searchItem {
+    background: #343536;
+    color: #fff;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    text-align: left;
+}
+
+.searchItem .info{
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 
 /* .right .requests h4{

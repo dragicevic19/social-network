@@ -97,4 +97,14 @@ public class KorisniciService {
 		return true;
 	}
 
+	public static List<Korisnik> search(String query, String options, KorisnikDAO korisniciDAO) {
+		List<Korisnik> searchRes = new ArrayList();
+
+		for (Korisnik k : korisniciDAO.getKorisnici().values()) {
+			if (k.search(query, options)) searchRes.add(k);
+		}
+		
+		return searchRes;
+	}
+
 }

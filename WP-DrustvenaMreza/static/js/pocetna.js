@@ -4,6 +4,84 @@ let editUser = false;
 let recievedRequests = null;
 let sentRequests = null;
 
+$(".search-input").keydown(function (event) { 
+    if (event.which == 13) { 
+        event.preventDefault();
+        let query = $('input[name="searchInput"]').val();
+        var searchOptions = [];
+        $.each($("input[name='searchOption']:checked"), function() {
+            searchOptions.push($(this).val());
+        });
+        if (searchOptions.length != 0) { 
+            query += '&options=' + searchOptions.join(",");
+        }
+        $.ajax({
+            type: "GET",
+            url: "rest/korisnici/search?query=" + query,
+            success: function (response) {          
+                if (response.status == "SUCCESS") {
+                    $('.searchResult').empty();
+                    $(".myprofile").hide(300);
+                    $(".search-res").show(300);
+                    const searchRes = response.data;
+                    if (searchRes.length == 0){
+                        let divNoRes = $("<div class='nores'><h2>No results</h2></div>")
+                        $('.searchResult').append(divNoRes);
+                        return;
+                    }
+                    
+                    for (let i = 0; i < searchRes.length; i++){
+                        let divRequest = $("<div class='searchItem' data-index='" + searchRes[i].korisnickoIme +"'></div>");
+                        let divInfo = $('<div class="info"></div>');
+                        let divPhoto = $('<div class="profile-photo"></div>');
+                        let picPath = "pics/avatar.png";
+                        if (searchRes[i].profilnaSlika) {
+                            if (!searchRes[i].profilnaSlika.obrisana) {
+                                picPath = searchRes[i].profilnaSlika.putanja;
+                            }
+                        }
+                        let img = $('<img src=' + picPath + '>');
+                        divPhoto.append(img);
+                        let div = $('<div></div>');
+                        let text = $('<h4>' + searchRes[i].ime + ' ' + searchRes[i].prezime + '</h4>');
+                        let t = (currentUser.korisnickoIme == searchRes[i].korisnickoIme) ? 'You' : getNumOfMutalFriendsUser(searchRes[i]);
+                        let mutuals = $('<p class="text-muted">' + t + '</p>');
+                        div.append(text);
+                        div.append(mutuals);
+                
+                        divInfo.append(divPhoto);
+                        divInfo.append(div);
+                
+                        divRequest.append(divInfo);
+                
+                        $('.searchResult').append(divRequest);
+                    }
+
+                    bindSearchRes('searchResult');
+                }
+                else {
+                    alert(response.message);
+                }
+            },
+            error: function (response) {
+                alert("error show user profile");
+            }
+        });
+
+
+        
+    } 
+});
+
+function bindSearchRes(className) {
+    let results = $('.' + className);
+    for (let i = 0; i < results.length; i++){
+        $(results[i]).find(".searchItem").click(function () {
+            showUserProfile($(this).attr('data-index'));
+        });
+    }
+}
+
 function navSetting() {
     $('.logout').hide();
     if (userToShow == currentUser) {
@@ -24,6 +102,7 @@ function navSetting() {
         $(navActiveLi).removeClass('active');
         navActiveLi = $(this);
         $('.myprofile').show(300);
+        $('')
         $(navActiveDiv).hide(300);
         navActiveDiv = $('.myprofile');
     });
@@ -36,6 +115,7 @@ function navSetting() {
         $(navActiveLi).removeClass('active');
         navActiveLi = $(this);
         $('.logout').show(300);
+        $(".search-res").hide(300);
         $(navActiveDiv).hide(300);
         navActiveDiv = $('.logout');
     });
@@ -299,6 +379,20 @@ function declineRequest(reqId) {
             alert("ERROR DECLINE REQUEST");
         }
     });
+}
+
+function getNumOfMutalFriendsUser(user) {
+    let numOfMutualFriends = 0;
+    for (let i = 0; i < currentUser.prijatelji.length; i++){
+        for (let j = 0; j < user.prijatelji.length; j++){
+            if (user.prijatelji[j] === currentUser.prijatelji[i]) {
+                numOfMutualFriends++;
+            }
+        }
+    }
+    let retStr = (numOfMutualFriends != 0) ? numOfMutualFriends.toString() + ' mutual friend' : '';
+    if (numOfMutualFriends > 1) retStr += 's';
+    return retStr;
 }
 
 function getNumOfMutualFriends(friendRequest) {
@@ -570,6 +664,7 @@ function fillInformationsAboutUser() {
     else {
         $('.btnChanges').hide(100);
     }
+    $('.input_field.email').attr('hidden', currentUser.korisnickoIme != userToShow.korisnickoIme);
     $('input[name="email"]').val(userToShow.email).attr('disabled', !editUser);
     $('input[name="name"]').val(userToShow.ime).attr('disabled', !editUser);
     $('input[name="lastName"]').val(userToShow.prezime).attr('disabled', !editUser);

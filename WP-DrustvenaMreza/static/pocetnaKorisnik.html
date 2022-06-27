@@ -8,12 +8,10 @@
     <body>
         <nav>
             <div class="container">
-                <h2 class="log">
-                    WP - Social Network
-                </h2>
+                <h2 class="title">WP - Social Network</h2>
                 <div class="search-bar">
-                    <i class="uil uil-serach"></i>
-                    <input type="search" placeholder="Find user"/>
+                    <i class="fa fa-search"></i>
+                    <input type="search" class="search-input" placeholder="Find user" name="searchInput"/>
                 </div>
                 <div class="tabs">
                     <ul>
@@ -108,8 +106,26 @@
                         </div>
                         <div class="photos"></div>
                     </div>
-                </div>
 
+                </div>
+            
+                <div class="search-res" hidden="true">
+                    <div class="content">
+                        <div class="search-options">
+                            <label>Search by:</label>
+                            <div class="option">
+                                <label>Name</label>
+                                <input type="checkbox" value="name" name="searchOption"/>
+                            </div>
+                            <div class="option">
+                                <label>Last Name</label>
+                                <input type="checkbox" value="lastName" name="searchOption"/>
+                            </div>
+                        </div>
+                        <div class="searchResult">
+                        </div>
+                        </div>
+                </div>
                 <div class="logout">
                     <h2>Are you sure you want to log out?</h2>
                     <div class="yesNoBtns">
@@ -123,6 +139,8 @@
                     
                 </div>
             </div>
+
+
 
             <div class="right">
                 <div class="tabs">

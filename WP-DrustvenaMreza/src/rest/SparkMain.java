@@ -55,6 +55,6 @@ public class SparkMain {
 		
 		get("rest/korisnici/removeFriend", (req,res)-> KorisniciApi.removeFriend(req, res, korisniciDAO));
 
-
+		get("rest/korisnici/search", (req, res) -> KorisniciApi.search(req, res, korisniciDAO));
 	}
 }
