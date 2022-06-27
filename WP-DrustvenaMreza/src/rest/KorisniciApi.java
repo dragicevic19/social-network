@@ -12,6 +12,7 @@ import beans.Uloga;
 import beans.ZahtevZaPrijateljstvo;
 import dao.KorisnikDAO;
 import dao.ZahteviDAO;
+import dto.UlogovaniKorisnikDTO;
 import dto.ZahtevDTO;
 import spark.Request;
 import spark.Response;
@@ -21,15 +22,23 @@ public class KorisniciApi {
 
 	private static Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
-	public static Object getCurrentUser(Request req, Response res) {
+	public static Object getCurrentUser(Request req, Response res, ZahteviDAO zahteviDAO) {
 		res.type("application/json");
 		Session ss = req.session(true);
 		Korisnik k = ss.attribute("currentUser");
+		
 		if (k == null) {
 			res.status(401);
 			return g.toJson(new StandardResponse(StatusResponse.ERROR));
 		}
-		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
+		
+		List<ZahtevDTO> zahtevi = zahteviDAO.getZahteviNaCekanjuZaKorisnika(k.getKorisnickoIme());
+		List<ZahtevDTO> poslatiZahtevi = zahteviDAO.getPoslatiZahteviNaCekanjuZaKorisnika(k.getKorisnickoIme());
+		List<List<ZahtevDTO>> list = new ArrayList<List<ZahtevDTO>>();
+		list.add(zahtevi);
+		list.add(poslatiZahtevi);
+		UlogovaniKorisnikDTO korisnik = new  UlogovaniKorisnikDTO(k, list);
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(korisnik)));
 	}
 
 	public static Object login(Request req, Response res, KorisnikDAO korisniciDAO) {

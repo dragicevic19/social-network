@@ -29,7 +29,7 @@ public class SparkMain {
 
 		post("/rest/korisnici/register", (req, res) -> KorisniciApi.register(req, res, korisniciDAO));
 
-		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res));
+		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res, zahteviDAO));
 
 		post("/rest/korisnici/login", (req, res) -> KorisniciApi.login(req, res, korisniciDAO));
 		

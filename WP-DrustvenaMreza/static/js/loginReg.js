@@ -105,7 +105,7 @@ function register() {
                 toast(response.message);
             }
             else {
-                window.location = "pocetna.html";
+                window.location = "pocetnaKorisnik.html";
             }
         }
     });

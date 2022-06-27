@@ -199,7 +199,9 @@ function rightSettings() {
 
     let rightActiveLi = $('.requests_li');
     let rightActiveDiv = $('.requests');
-    getFriendRequests();
+    fillRequests();
+    bindButtons();
+    //getFriendRequests();
 
     $('.requests_li').click(function () {
         if (rightActiveLi.is(this)) {
@@ -377,7 +379,7 @@ function centerSettings() {
     });
 
     addProfilePictureAndName();
-    if (currentUser != userToShow) {
+    if (currentUser.korisnickoIme != userToShow.korisnickoIme) {
         addButtonsForOtherUser();
     }
     else {
@@ -454,7 +456,7 @@ function addButtonForEdit() {
 
 function addButtonsForOtherUser() {
     if (!isFriends(userToShow, currentUser)) {
-        if (!isUserInSentRequests(userToShow)) {
+        if (!isUserInSentRequests(userToShow) && !isUserInRecievedRequests(userToShow)) {
             var addFriendIcon = $('<i class="fas fa-user-plus add"></i>'); 
             $('.myprofile .name_last_name').append(addFriendIcon); 
             
@@ -463,7 +465,7 @@ function addButtonsForOtherUser() {
             });
         }
         else {
-            var requestPending = $('<i class="fas fa-user-clock pending"></i>');
+            var requestPending = $('<i class="fas fa-user-clock pending"> Pending...</i>');
             $('.myprofile .name_last_name').append(requestPending);
         }
     }
@@ -482,10 +484,20 @@ function addButtonsForOtherUser() {
     }
 }
 
-function isUserInSentRequests() {
-    if (!sentRequests) return false;
+function isUserInSentRequests() {  // sentRequests i recieved requests budu null jer se prvo pozove ova funkcija pa  
+    if (!sentRequests) return false;        // tek onda dovuce sa beka zahteve
     for (let i = 0; i < sentRequests.length; i++){
         if (sentRequests[i].korisnickoIme == userToShow.korisnickoIme) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function isUserInRecievedRequests() {
+    if(!recievedRequests) return false;
+    for (let i = 0; i < recievedRequests.length; i++){
+        if (recievedRequests[i].korisnickoIme == userToShow.korisnickoIme) {
             return true;
         }
     }
@@ -690,6 +702,8 @@ $(document).ready(function () {
         url: "rest/korisnici/loggedIn",
         success: function (response) {
             currentUser = response.data;
+            recievedRequests = response.data.poslatiIPrimljeniZahtevi[0];
+            sentRequests = response.data.poslatiIPrimljeniZahtevi[1];
             userToShow = window.sessionStorage.getItem('userToShow');
             if (!userToShow) {
                 userToShow = currentUser;
