@@ -6,21 +6,41 @@ body{
   background-color: #222;
   color: #fff;
   font-family: sans-serif;
-  max-width: 1080px;
-  align-content: center;
+  display: flex;
+  justify-content: center;
 }
 
+.wrapper{
+  height: 50px;
+  background-color: #003580;
+
+}
+
+nav {
+  position:fixed;
+  width: 900px;
+  background-color: lightseagreen;
+  top:0;
+  padding:20px 10px;
+  border-radius: 5px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #555;
+}
 
 form {
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
+  /* position:fixed; */
+  width: 900px;
+  /* bottom:0; */
+  /* left:0; */
+  /* right:0; */
   padding:20px;
 }
 
 .messages {
-  height: 100px;
+  height: 800px;
   overflow-y: auto;
 }
 
@@ -37,12 +57,18 @@ input{
   border-radius: 20px;
   background-color:#444;
   margin:4px;
-  padding: 5px 10px;
+  padding: 10px 12px;
   display: inline-block;
 }
 .message-row.mine{
   text-align:right;
 }
 .message-row.mine .bubble{
-  background-color: #07c;
+  background-color: lightseagreen;
+}
+
+.sender {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #222;
 }

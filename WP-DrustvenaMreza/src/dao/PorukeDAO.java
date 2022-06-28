@@ -12,19 +12,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import beans.DirektnaPoruka;
 import beans.Korisnik;
 import beans.Status;
 import beans.ZahtevZaPrijateljstvo;
 import dto.GrupisanePorukeDTO;
+import dto.PorukaDTO;
 import dto.ZahtevDTO;
 
 public class PorukeDAO {
 
-	private HashMap<String, DirektnaPoruka> poruke = new HashMap<String, DirektnaPoruka>();
+	private Map<String, DirektnaPoruka> poruke = new LinkedHashMap<String, DirektnaPoruka>();
 	private KorisnikDAO korisniciDAO;
 	private String contextPath;
 
@@ -58,7 +62,7 @@ public class PorukeDAO {
 					id = st.nextToken().trim();
 					idPoslao = st.nextToken().trim();
 					idPrimio = st.nextToken().trim();
-					//datumSlanja = LocalDateTime.parse(st.nextToken().trim());
+					// datumSlanja = LocalDateTime.parse(st.nextToken().trim());
 					poruka = st.nextToken().trim();
 					poslao = korisniciDAO.pronadjiKorisnika(idPoslao);
 					primio = korisniciDAO.pronadjiKorisnika(idPrimio);
@@ -159,16 +163,37 @@ public class PorukeDAO {
 			List<GrupisanePorukeDTO> grupisanePoruke) {
 
 		for (GrupisanePorukeDTO grupisana : grupisanePoruke) {
-			if (grupisana.getPrimalac().getKorisnickoIme().equals(primalac.getKorisnickoIme()) 
+			if (grupisana.getPrimalac().getKorisnickoIme().equals(primalac.getKorisnickoIme())
 					&& grupisana.getPosiljalac().getKorisnickoIme().equals(posiljalac.getKorisnickoIme())) {
 				return grupisana;
 			}
-			
-			if (grupisana.getPrimalac().getKorisnickoIme().equals(posiljalac.getKorisnickoIme()) 
+
+			if (grupisana.getPrimalac().getKorisnickoIme().equals(posiljalac.getKorisnickoIme())
 					&& grupisana.getPosiljalac().getKorisnickoIme().equals(primalac.getKorisnickoIme())) {
 				return grupisana;
-			}		
+			}
 		}
 		return null;
+	}
+
+	public List<PorukaDTO> getChat(Korisnik userOne, Korisnik userTwo) {
+
+		List<PorukaDTO> retPoruke = new ArrayList<PorukaDTO>();
+
+		for (DirektnaPoruka poruka : poruke.values()) {
+			if (poruka.getPosiljalac().getKorisnickoIme().equals(userOne.getKorisnickoIme())
+					&& poruka.getPrimalac().getKorisnickoIme().equals(userTwo.getKorisnickoIme())) {
+				retPoruke.add(new PorukaDTO(poruka));
+			}
+
+			else if (poruka.getPosiljalac().getKorisnickoIme().equals(userTwo.getKorisnickoIme())
+					&& poruka.getPrimalac().getKorisnickoIme().equals(userOne.getKorisnickoIme())) {
+				retPoruke.add(new PorukaDTO(poruka));
+			}
+
+		}
+
+		return retPoruke;
+
 	}
 }

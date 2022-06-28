@@ -66,5 +66,7 @@ public class SparkMain {
 		
 		
 		post("rest/poruke" , (req, res) -> PorukeApi.newMessage(req, res, porukeDAO, korisniciDAO));
+		
+		get("rest/poruke/razgovor", (req, res) -> PorukeApi.getChat(req, res, porukeDAO, korisniciDAO));
 	}
 }

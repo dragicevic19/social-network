@@ -8,6 +8,10 @@
 </head>
 <body>
   <div class="wrapper">
+    <nav>
+      <a href="./pocetnaKorisnik.html">Back</a>
+      <label id="title"></label>
+    </nav>
     <div id="messages"></div>
     <form>
         <input type="text" placeholder="Your message...">
@@ -26,6 +30,39 @@
             </div>
           `;
         }
+
+        function fillMessages() {
+          document.getElementById("title").innerHTML += ` | Chat with ${chatWith}`;
+
+
+          for(const mess of messages) {
+            if (mess.posiljalac == currentUser){
+              showMessage('You', mess.poruka, true);
+            }
+            else{
+              showMessage(mess.posiljalac, mess.poruka);
+            }
+          }
+        }
+
+        let messages = null;
+        $(document).ready(function () {
+
+          $.ajax({
+              type: "GET",
+              url: `rest/poruke/razgovor?userOne=${window.sessionStorage.getItem('currentUser')}&userTwo=${window.sessionStorage.getItem('chatWith')}`,
+              success: function (response) {
+                  messages = response.data;
+                  fillMessages();
+                  window.scroll(0, document.documentElement.offsetHeight);
+              },
+              error: function (response) {
+                  alert("You need to login first!");
+                  window.location = "index.html";
+              }
+          });
+        });
+
         const ws = new WebSocket('ws://localhost:8080/ws');
         const currentUser = window.sessionStorage.getItem('currentUser');
         const chatWith = window.sessionStorage.getItem('chatWith');
@@ -42,7 +79,7 @@
           if (input.value){
             input.value = currentUser + "|" + chatWith + "|" + input.value;
             ws.send(input.value);
-            showMessage('Me', input.value.split('|')[2], true);
+            showMessage('You', input.value.split('|')[2], true);
             saveMessage(input.value);
             input.value = '';
           }
