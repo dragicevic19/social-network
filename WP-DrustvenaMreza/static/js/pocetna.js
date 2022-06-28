@@ -3,6 +3,19 @@ let userToShow = null;
 let editUser = false;
 let recievedRequests = null;
 let sentRequests = null;
+let messages = null;
+
+// $(".message").click(function (){
+//         // let username = $(this).attr('data-index');
+//     let username = "mika";
+//     window.sessionStorage.setItem('chatWith', username);
+//     window.location = "chat.html";
+// });
+
+function goToMessages(chatWith){
+    window.sessionStorage.setItem('chatWith', chatWith);
+    window.location = "chat.html";
+}
 
 $(".search-input").keydown(function (event) { 
     if (event.which == 13) { 
@@ -67,13 +80,10 @@ $(".search-input").keydown(function (event) {
                 alert("error show user profile");
             }
         });
-
-
-        
     } 
 });
 
-function bindSearchRes(className) {
+function bindSearchRes(className) { // ovako mozda isto za poruke?
     let results = $('.' + className);
     for (let i = 0; i < results.length; i++){
         $(results[i]).find(".searchItem").click(function () {
@@ -281,6 +291,9 @@ function rightSettings() {
     let rightActiveDiv = $('.requests');
     fillRequests();
     bindButtons();
+
+    fillMessages();
+    bindMessages();
     //getFriendRequests();
 
     $('.requests_li').click(function () {
@@ -354,6 +367,44 @@ function bindButtons() {
         });
     }
 }
+
+
+function fillMessages() {
+    for (const message of messages){
+        const user = (message.posiljalac.korisnickoIme === currentUser.korisnickoIme) ? message.primalac : message.posiljalac;
+        console.log(user);
+        let divMessage = $("<div class='message' data-index='" + user.korisnickoIme +"'></div>");
+        let divPhoto = $('<div class="profile-photo"></div>');
+        let picPath = "pics/avatar.png";
+        if (user.profilnaSlika) {
+            if (!user.profilnaSlika.obrisana) {
+                picPath = user.profilnaSlika.putanja;
+            }
+        }
+        let img = $('<img src=' + picPath + '>');
+        divPhoto.append(img);
+        let div = $('<div class="message-body"></div>');
+        let text = $('<h4>' + user.ime + ' ' + user.prezime + '</h4>');
+        let messagePara = $('<p class="text-muted">' + message.poslednjaPoruka + '</p>');
+        div.append(text);
+        div.append(messagePara);
+
+        divMessage.append(divPhoto);
+        divMessage.append(div);
+
+        $('.messages').append(divMessage);
+    }
+}
+
+function bindMessages() {
+    let messages = $('.message');
+    for (let i = 0; i < messages.length; i++){
+        $(messages[i]).click(function () {
+            goToMessages($(this).attr('data-index'));
+        });
+    }
+}
+
 
 function acceptRequest(reqId) {
     $.ajax({
@@ -573,7 +624,7 @@ function addButtonsForOtherUser() {
             removeFriend();
         });
         $('.message').unbind().click(function () {
-            sendMessage();
+            goToMessages(userToShow.korisnickoIme);
         });
     }
 }
@@ -817,6 +868,8 @@ $(document).ready(function () {
             currentUser = response.data;
             recievedRequests = response.data.poslatiIPrimljeniZahtevi[0];
             sentRequests = response.data.poslatiIPrimljeniZahtevi[1];
+            messages = response.data.poruke;
+            window.sessionStorage.setItem('currentUser', currentUser.korisnickoIme);
             userToShow = window.sessionStorage.getItem('userToShow');
             if (!userToShow) {
                 userToShow = currentUser;

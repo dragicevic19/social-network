@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Messages</title>
+<script src="js/jquery.min.js"></script>
+<link rel="stylesheet" href="/css/chat.css">
+</head>
+<body>
+  <div class="wrapper">
+    <div id="messages"></div>
+    <form>
+        <input type="text" placeholder="Your message...">
+    </form>
+  </div>
+    <script>
+        function showMessage(sender,text,isMine = false) {
+          document.getElementById("messages").innerHTML += `
+            <div class="message-row ${isMine?'mine':'theirs'}">
+                <div class="bubble">
+                  <div class="sender">
+                    ${sender}  
+                  </div>
+                  ${text}
+                </div>
+            </div>
+          `;
+        }
+        const ws = new WebSocket('ws://localhost:8080/ws');
+        const currentUser = window.sessionStorage.getItem('currentUser');
+        const chatWith = window.sessionStorage.getItem('chatWith');
+
+        ws.onmessage = function(msg){
+          let messageParts = msg.data.split('|'); // [0] sender, [1] reciever, [2] text
+          if (messageParts[1] == currentUser && messageParts[0] == chatWith)
+            showMessage(messageParts[0], messageParts[2]);
+        }
+        
+        document.querySelector('form').onsubmit = ev => {
+          ev.preventDefault();
+          const input = document.querySelector('input');
+          if (input.value){
+            input.value = currentUser + "|" + chatWith + "|" + input.value;
+            ws.send(input.value);
+            showMessage('Me', input.value.split('|')[2], true);
+            saveMessage(input.value);
+            input.value = '';
+          }
+        }
+
+        // ws.addEventListener('message', ev => {
+        //   ev.data.text().then(showMessage);
+        // });
+
+        function saveMessage(message) {
+          data = JSON.stringify({
+            posiljalac: currentUser,
+            primalac: chatWith,
+            poruka: message.split('|')[2]
+          });
+          $.ajax({
+            type: "POST",
+            url: "rest/poruke",
+            data: data,
+            contentType: 'application/json',
+          success: function (response) {
+            if (response.status == "SUCCESS") {
+              console.log(response);
+            }
+            else {
+                alert("error saveMessaeg " + response.message);
+            }
+          },
+          error: function (response) {
+            alert("error save messages");
+          }
+          });
+        }
+    </script>
+</body>
+</html>
