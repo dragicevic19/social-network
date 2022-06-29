@@ -10,13 +10,25 @@ public class GrupisanePorukeDTO {
 	private Korisnik posiljalac;
 	private Korisnik primalac;
 	private String poslednjaPoruka;
-
+	private boolean withAdmin;
+	
 	public GrupisanePorukeDTO() {}
 	
-	public GrupisanePorukeDTO(Korisnik p, Korisnik prim, String poruka) {
+	public GrupisanePorukeDTO(Korisnik p, Korisnik prim, String poruka, boolean withAdmin) {
 		this.posiljalac = p;
 		this.primalac = prim;
 		this.poslednjaPoruka = poruka;
+		this.withAdmin = withAdmin;
+	}
+	
+	
+
+	public boolean isWithAdmin() {
+		return withAdmin;
+	}
+
+	public void setWithAdmin(boolean withAdmin) {
+		this.withAdmin = withAdmin;
 	}
 
 	public Korisnik getPosiljalac() {

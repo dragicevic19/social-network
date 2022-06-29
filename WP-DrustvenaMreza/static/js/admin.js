@@ -5,15 +5,7 @@ let recievedRequests = null;
 let sentRequests = null;
 let messages = null;
 
-// $(".message").click(function (){
-//         // let username = $(this).attr('data-index');
-//     let username = "mika";
-//     window.sessionStorage.setItem('chatWith', username);
-//     window.location = "chat.html";
-// });
-
 function goToMessages(chatWith){
-    console.log(chatWith);
     window.sessionStorage.setItem('chatWith', chatWith);
     window.location = "chat.html";
 }
@@ -46,7 +38,6 @@ $(".search-input").keydown(function (event) {
                     }
                     
                     for (let i = 0; i < searchRes.length; i++){
-                        if (searchRes[i].uloga === "ADMINISTRATOR") continue;
                         let divRequest = $("<div class='searchItem' data-index='" + searchRes[i].korisnickoIme +"'></div>");
                         let divInfo = $('<div class="info"></div>');
                         let divPhoto = $('<div class="profile-photo"></div>');
@@ -60,15 +51,25 @@ $(".search-input").keydown(function (event) {
                         divPhoto.append(img);
                         let div = $('<div></div>');
                         let text = $('<h4>' + searchRes[i].ime + ' ' + searchRes[i].prezime + '</h4>');
-                        let t = (currentUser.korisnickoIme == searchRes[i].korisnickoIme) ? 'You' : getNumOfMutalFriendsUser(searchRes[i]);
-                        let mutuals = $('<p class="text-muted">' + t + '</p>');
                         div.append(text);
-                        div.append(mutuals);
+                        
+                        let divAction = $('<div class="action"></div>');
+                        if (searchRes[i].uloga !== "ADMINISTRATOR") {
+                          let btnBlock;
+                          if (searchRes[i].blokiran) 
+                            btnBlock = $('<button class="btn btn-primary unblockBtn" data-index=' + searchRes[i].korisnickoIme + '>Unblock</button>');
+                          else 
+                            btnBlock = $('<button class="btn blockBtn" data-index=' + searchRes[i].korisnickoIme + '>Block</button>');
+
+                          divAction.append(btnBlock);
+                        }
                 
                         divInfo.append(divPhoto);
                         divInfo.append(div);
                 
                         divRequest.append(divInfo);
+                        divRequest.append(divAction);
+
                 
                         $('.searchResult').append(divRequest);
                     }
@@ -86,13 +87,58 @@ $(".search-input").keydown(function (event) {
     } 
 });
 
-function bindSearchRes(className) {
+function bindSearchRes(className) { // ovako mozda isto za poruke?
     let results = $('.' + className);
     for (let i = 0; i < results.length; i++){
-        $(results[i]).find(".searchItem").click(function () {
+        $(results[i]).find(".unblockBtn").click(function () {
+          unblockUser($(this).attr('data-index'));
+          $(this).removeClass('unblockBtn');
+          $(this).addClass('blockBtn');
+          $('.search-input').trigger({ type: 'keydown', which: 13 });
+
+        });
+        $(results[i]).find(".blockBtn").click(function () {
+          blockUser($(this).attr('data-index'));
+          $(this).removeClass('blockBtn');
+          $(this).addClass('unblockBtn');
+          $('.search-input').trigger({ type: 'keydown', which: 13 });
+
+        });
+        $(results[i]).find(".searchItem").click(function (e) {
+            let classList = $(e.target).attr("class");
+            let classArr = classList.split(/\s+/);
+            if (classArr.includes("unblockBtn") || classArr.includes("blockBtn")){
+              return; // ne radi nista
+            }
             showUserProfile($(this).attr('data-index'));
         });
     }
+}
+
+function unblockUser(username) {
+  $.ajax({
+    type: "PUT",
+    url: "rest/korisnici/unblock?username=" + username,
+    success: function (response) {
+        // window.location = window.location; ??
+    },
+    error: function (response) {
+        alert("ERROR ACCEPT REQUEST");
+    }
+  });
+}
+
+function blockUser(username) {
+  $.ajax({
+    type: "PUT",
+    url: "rest/korisnici/block?username=" + username,
+    success: function (response) {
+        // window.location = window.location; ??
+    },
+    error: function (response) {
+        alert("ERROR ACCEPT REQUEST");
+    }
+  });
 }
 
 function navSetting() {
@@ -133,96 +179,7 @@ function navSetting() {
         navActiveDiv = $('.logout');
     });
 }
-//  ======================================================= LEFT =======================================================
 
-function leftSettings() {
-    $('.friends_li').addClass('active');
-    let leftActiveLi = $('.friends_li');
-    let leftActiveDiv = $('.friends');
-    $('.mutuals').hide();
-    if (currentUser == userToShow) {
-        getFriends(currentUser);
-        return;
-    }
-    $('.friends_li').text(userToShow.ime + "'s friends");
-    getFriends(userToShow);
-    var mutualsLi = $('<li class="mutual_friends_li"></li>').text('Mutual friends');
-    $('.left .tabs ul').append(mutualsLi);
-    getMutuals(userToShow);
-
-    $('.friends_li').click(function () {
-        if (leftActiveLi.is(this)) {
-            return;
-        }
-        $(this).addClass('active');
-        $(leftActiveLi).removeClass('active');
-        leftActiveLi = $(this);
-        $('.friends').show(300);
-        $(leftActiveDiv).hide(300);
-        leftActiveDiv = $('.friends');
-    });
-
-    $('.mutual_friends_li').click(function () {
-        if (leftActiveLi.is(this)) {
-            return;
-        }
-        $(this).addClass('active');
-        $(leftActiveLi).removeClass('active');
-        leftActiveLi = $(this);
-        $('.mutuals').show(300);
-        $(leftActiveDiv).hide(300);
-        leftActiveDiv = $('.mutuals');
-    });
-}
-
-function getFriends(user) {
-    $.ajax({
-        type: "GET",
-        url: "rest/korisnici/friends?username=" + user.korisnickoIme,
-        success: function (response) {            
-            let friends = response.data;
-            fillFriends(friends);
-            bindFriends('friends');
-        },
-        error: function (response) {
-            alert("error getFriends");
-        }
-    });
-}
-
-function fillFriends(friends) {
-    for (let i = 0; i < friends.length; i++){
-        let divRequest = $("<div class='friend' data-index='" + friends[i].korisnickoIme +"'></div>");
-        let divInfo = $('<div class="info"></div>');
-        let divPhoto = $('<div class="profile-photo"></div>');
-        let picPath = "pics/avatar.png";
-        if (friends[i].profilnaSlika) {
-            if (!friends[i].profilnaSlika.obrisana) {
-                picPath = friends[i].profilnaSlika.putanja;
-            }
-        }
-        let img = $('<img src=' + picPath + '>');
-        divPhoto.append(img);
-        let div = $('<div></div>');
-        let text = $('<h3>' + friends[i].ime + ' ' + friends[i].prezime + '</h3>');
-        div.append(text);
-
-        divInfo.append(divPhoto);
-        divInfo.append(div);
-
-        divRequest.append(divInfo);
-        $('.friends').append(divRequest);
-    }
-}
-
-function bindFriends(className) {
-    let friends = $('.' + className);
-    for (let i = 0; i < friends.length; i++){
-        $(friends[i]).find(".friend").click(function () {
-            showUserProfile($(this).attr('data-index'));
-        });
-    }
-}
 
 function showUserProfile(username) {
     $.ajax({
@@ -244,119 +201,10 @@ function showUserProfile(username) {
     });
 }
 
-function getMutuals(userToShow) {
-    $.ajax({
-        type: "GET",
-        url: "rest/korisnici/mutualFriends?userOne=" + currentUser.korisnickoIme + "&userTwo=" + userToShow.korisnickoIme,
-        success: function (response) {            
-            let friends = response.data;
-            fillMutualFriends(friends);
-            bindFriends('mutuals');
-        },
-        error: function (response) {
-            alert("error getMutuals");
-        }
-    });
-}
-
-function fillMutualFriends(friends) {
-    for (let i = 0; i < friends.length; i++){
-        let divRequest = $("<div class='friend' data-index='" + friends[i].korisnickoIme +"'></div>");
-        let divInfo = $('<div class="info"></div>');
-        let divPhoto = $('<div class="profile-photo"></div>');
-        let picPath = "pics/avatar.png";
-        if (friends[i].profilnaSlika) {
-            if (!friends[i].profilnaSlika.obrisana) {
-                picPath = friends[i].profilnaSlika.putanja;
-            }
-        }
-        let img = $('<img src=' + picPath + '>');
-        divPhoto.append(img);
-        let div = $('<div></div>');
-        let text = $('<h3>' + friends[i].ime + ' ' + friends[i].prezime + '</h3>');
-        div.append(text);
-
-        divInfo.append(divPhoto);
-        divInfo.append(div);
-
-        divRequest.append(divInfo);
-        $('.mutuals').append(divRequest);
-    }
-}
-//  ======================================================= END LEFT =======================================================
-
 //  ======================================================= RIGHT =======================================================
 function rightSettings() {
-    $('.requests').hide();
-    $('.messages_li').addClass('active');
-
-    let rightActiveLi = $('.messages_li');
-    let rightActiveDiv = $('.messages');
-    
     fillMessages();
     bindMessages();
-
-    fillRequests();
-    bindButtons();
-
-    $('.requests_li').click(function () {
-        if (rightActiveLi.is(this)) {
-            return;
-        }
-        $(this).addClass('active');
-        $(rightActiveLi).removeClass('active');
-        rightActiveLi = $(this);
-        $('.requests').show(300);
-        $(rightActiveDiv).hide(300);
-        rightActiveDiv = $('.requests');
-    });
-    $('.messages_li').click(function () {
-        if (rightActiveLi.is(this)) {
-            return;
-        }
-        $(this).addClass('active');
-        $(rightActiveLi).removeClass('active');
-        rightActiveLi = $(this);
-        $('.messages').show(300);
-        $(rightActiveDiv).hide(300);
-        rightActiveDiv = $('.messages');
-    });
-}
-
-function fillRequests() {
-    for (let i = 0; i < recievedRequests.length; i++){
-        let divRequest = $("<div class='request' data-index='" + recievedRequests[i].korisnickoIme +"'></div>");
-        let divInfo = $('<div class="info"></div>');
-        let divPhoto = $('<div class="profile-photo"></div>');
-        let picPath = "pics/avatar.png";
-        if (recievedRequests[i].profilnaSlika) {
-            if (!recievedRequests[i].profilnaSlika.obrisana) {
-                picPath = recievedRequests[i].profilnaSlika.putanja;
-            }
-        }
-        let img = $('<img src=' + picPath + '>');
-        divPhoto.append(img);
-        let div = $('<div></div>');
-        let text = $('<h4>' + recievedRequests[i].ime + ' ' + recievedRequests[i].prezime + '</h4>');
-        let mutuals = $('<p class="text-muted">' + getNumOfMutualFriends(recievedRequests[i]) + '</p>');
-        div.append(text);
-        div.append(mutuals);
-
-        let divAction = $('<div class="action"></div>');
-        let btnAccept = $('<button class="btn btn-primary acceptBtn" data-index=' + recievedRequests[i].idZahteva + '>Accept</button>');
-        let btnDecline = $('<button class="btn declineBtn" data-index='+ recievedRequests[i].idZahteva +'>Decline</button>');
-        divAction.append(btnAccept);
-        divAction.append(btnDecline);
-
-        divInfo.append(divPhoto);
-        divInfo.append(div);
-
-        divRequest.append(divInfo);
-        divRequest.append(divAction);
-
-
-        $('.requests').append(divRequest);
-    }
 }
 
 function bindButtons() {
@@ -370,7 +218,6 @@ function bindButtons() {
         });
     }
 }
-
 
 function fillMessages() {
     for (const message of messages){
@@ -386,8 +233,7 @@ function fillMessages() {
         let img = $('<img src=' + picPath + '>');
         divPhoto.append(img);
         let div = $('<div class="message-body"></div>');
-        let adminClass = (message.withAdmin) ? 'admin' : '';
-        let text = $(`<h4 class=${adminClass}>` + user.ime + ' ' + user.prezime + '</h4>');
+        let text = $('<h4>' + user.ime + ' ' + user.prezime + '</h4>');
         let you = (message.posiljalac.korisnickoIme === currentUser.korisnickoIme) ? 'You: ' : '';
         console.log(message.posiljalac);
         let messagePara = $('<p class="text-muted">' + you + message.poslednjaPoruka + '</p>');
@@ -409,78 +255,6 @@ function bindMessages() {
         });
     }
 }
-
-
-function acceptRequest(reqId) {
-    $.ajax({
-        type: "GET",
-        url: "rest/korisnici/acceptFriendRequest?id=" + reqId,
-        success: function (response) {
-            window.location = window.location;
-        },
-        error: function (response) {
-            alert("ERROR ACCEPT REQUEST");
-        }
-    });
-}
-
-function declineRequest(reqId) {
-    $.ajax({
-        type: "GET",
-        url: "rest/korisnici/declineFriendRequest?id=" + reqId,
-        success: function (response) {
-            window.location = window.location;
-        },
-        error: function (response) {
-            alert("ERROR DECLINE REQUEST");
-        }
-    });
-}
-
-function getNumOfMutalFriendsUser(user) {
-    let numOfMutualFriends = 0;
-    for (let i = 0; i < currentUser.prijatelji.length; i++){
-        for (let j = 0; j < user.prijatelji.length; j++){
-            if (user.prijatelji[j] === currentUser.prijatelji[i]) {
-                numOfMutualFriends++;
-            }
-        }
-    }
-    let retStr = (numOfMutualFriends != 0) ? numOfMutualFriends.toString() + ' mutual friend' : '';
-    if (numOfMutualFriends > 1) retStr += 's';
-    return retStr;
-}
-
-function getNumOfMutualFriends(friendRequest) {
-    let numOfMutualFriends = 0;
-    for (let i = 0; i < currentUser.prijatelji.length; i++){
-        for (let j = 0; j < friendRequest.prijateljiPosiljaoca.length; j++){
-            if (friendRequest.prijateljiPosiljaoca[j] === currentUser.prijatelji[i]) {
-                numOfMutualFriends++;
-            }
-        }
-    }
-    let retStr = (numOfMutualFriends != 0) ? numOfMutualFriends.toString() + ' mutual friend' : '';
-    if (numOfMutualFriends > 1) retStr += 's';
-    return retStr;
-}
-
-function getFriendRequests() {
-    $.ajax({
-        type: "GET",
-        url: "rest/korisnici/friendRequests?username=" + currentUser.korisnickoIme,
-        success: function (response) {
-            recievedRequests = response.data[0];
-            sentRequests = response.data[1];
-            fillRequests();
-            bindButtons();
-        },
-        error: function (response) {
-            alert("error getFriendRequests");
-        }
-    });
-}
-
 //  ======================================================= END RIGHT =======================================================
 //  ======================================================= CENTER =======================================================
 function centerSettings() {
@@ -565,7 +339,7 @@ function centerSettings() {
                     window.location = 'index.html';
                 }
                 else {
-                    alert("error ovde " + response.message);
+                    alert("error logout " + response.message);
                 }
             },
             error: function (response) {
@@ -605,109 +379,12 @@ function addButtonForEdit() {
 }
 
 function addButtonsForOtherUser() {
-    if (!isFriends(userToShow, currentUser)) {
-        if (!isUserInSentRequests(userToShow) && !isUserInRecievedRequests(userToShow)) {
-            var addFriendIcon = $('<i class="fas fa-user-plus add"></i>'); 
-            $('.myprofile .name_last_name').append(addFriendIcon); 
-            
-            $('.add').unbind().click(function () {
-                sendFriendRequest();
-            });
-        }
-        else {
-            var requestPending = $('<i class="fas fa-user-clock pending"> Pending...</i>');
-            $('.myprofile .name_last_name').append(requestPending);
-        }
-    }
-    else {
-        var removeFriendIcon = $('<i class="fas fa-user-minus remove"></i>');
-        var sendMsgIcon = $('<i class="fas fa-envelope messageIcon"></i>');
-        $('.myprofile .name_last_name').append(removeFriendIcon);
-        $('.myprofile .name_last_name').append(sendMsgIcon);
 
-        $('.remove').unbind().click(function () {
-            removeFriend();
-        });
-        $('.messageIcon').unbind().click(function () {
-            goToMessages(userToShow.korisnickoIme);
-        });
-    }
-}
+    var sendMsgIcon = $('<i class="fas fa-envelope messageIcon"></i>');
+    $('.myprofile .name_last_name').append(sendMsgIcon);
 
-function isUserInSentRequests() {
-    if (!sentRequests) return false;
-    for (let i = 0; i < sentRequests.length; i++){
-        if (sentRequests[i].korisnickoIme == userToShow.korisnickoIme) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function isUserInRecievedRequests() {
-    if(!recievedRequests) return false;
-    for (let i = 0; i < recievedRequests.length; i++){
-        if (recievedRequests[i].korisnickoIme == userToShow.korisnickoIme) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function isFriends(showUser, mainUser) {
-    for (let i = 0; i < mainUser.prijatelji.length; i++){
-        if (mainUser.prijatelji[i] == showUser.korisnickoIme) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function sendFriendRequest() {
-    data = JSON.stringify({
-        id: '',
-        posiljalac: {
-            korisnickoIme: currentUser.korisnickoIme
-        },
-        primalac: {
-            korisnickoIme: userToShow.korisnickoIme
-        },
-        status: 'NA_CEKANJU'
-    });
-    $.ajax({
-        type: "POST",
-        url: "rest/zahtevi/",
-        data: data,
-        contentType: 'application/json',
-        success: function (response) {
-            if (response.status == "SUCCESS") {
-                window.location = window.location;
-            }
-            else {
-                alert("error sendFriendRequest " + response.message);
-            }
-        },
-        error: function (response) {
-            alert(response.message);
-        }
-    });
-}
-
-function removeFriend() {
-    $.ajax({
-        type: "GET",
-        url: "rest/korisnici/removeFriend?userOne=" + currentUser.korisnickoIme + "&userTwo=" + userToShow.korisnickoIme,
-        success: function (response) {
-            if (response.status == "SUCCESS") {
-                window.location = window.location;
-            }
-            else {
-                alert("error remove friends: " + response.message);
-            }
-        },
-        error: function (response) {
-            alert(response.message);
-        }
+    $('.messageIcon').unbind().click(function () {
+        goToMessages(userToShow.korisnickoIme);
     });
 }
 
@@ -883,17 +560,15 @@ $(document).ready(function () {
                 userToShow = JSON.parse(userToShow);
             }
 
-            if (currentUser.uloga == "ADMINISTRATOR"){
-                window.location = "pocetnaAdmin.html";
+            if (currentUser.uloga !== "ADMINISTRATOR") {
+              alert('You are not administrator!');
+              window.location = "index.html";
             }
-            else if (currentUser.uloga !== "KORISNIK"){
-                window.location = "index.html";
+            else {
+              navSetting();
+              rightSettings();
+              centerSettings();          
             }
-
-            navSetting();
-            leftSettings();
-            rightSettings();
-            centerSettings();
         },
         error: function (response) {
             alert("You need to login first!");

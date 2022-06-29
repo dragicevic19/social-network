@@ -35,7 +35,7 @@ public class SparkMain {
 
 		post("/rest/korisnici/register", (req, res) -> KorisniciApi.register(req, res, korisniciDAO));
 
-		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res, zahteviDAO, porukeDAO));
+		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res, zahteviDAO, porukeDAO, korisniciDAO));
 
 		post("/rest/korisnici/login", (req, res) -> KorisniciApi.login(req, res, korisniciDAO));
 		
@@ -66,5 +66,10 @@ public class SparkMain {
 		post("rest/poruke" , (req, res) -> PorukeApi.newMessage(req, res, porukeDAO, korisniciDAO));
 		
 		get("rest/poruke/razgovor", (req, res) -> PorukeApi.getChat(req, res, porukeDAO, korisniciDAO));
+		
+		put("rest/korisnici/block", (req, res) -> KorisniciApi.block(req, res, korisniciDAO));
+		
+		put("rest/korisnici/unblock", (req, res) -> KorisniciApi.unblock(req, res, korisniciDAO));
+
 	}
 }

@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import beans.DirektnaPoruka;
 import beans.Korisnik;
 import beans.Status;
+import beans.Uloga;
 import beans.ZahtevZaPrijateljstvo;
 import dto.GrupisanePorukeDTO;
 import dto.PorukaDTO;
@@ -135,7 +136,7 @@ public class PorukeDAO {
 		}
 	}
 
-	public List<GrupisanePorukeDTO> getGrupisanePorukeZaKorisnika(String korisnickoIme) {
+	public List<GrupisanePorukeDTO> getGrupisanePorukeZaKorisnika(String korisnickoIme, KorisnikDAO korisniciDAO) {
 		List<GrupisanePorukeDTO> grupisanePoruke = new ArrayList<GrupisanePorukeDTO>();
 
 		for (DirektnaPoruka poruka : poruke.values()) {
@@ -154,12 +155,22 @@ public class PorukeDAO {
 				}
 
 				else {
-					grupisana = new GrupisanePorukeDTO(posiljalac, primalac, poruka.getSadrzajPoruke());
+					boolean isAdmin = checkIfOtherUserIsAdmin(korisnickoIme, posiljalac, primalac, korisniciDAO);
+					grupisana = new GrupisanePorukeDTO(posiljalac, primalac, poruka.getSadrzajPoruke(), isAdmin);
 					grupisanePoruke.add(grupisana);
 				}
 			}
 		}
 		return grupisanePoruke;
+	}
+
+	private boolean checkIfOtherUserIsAdmin(String korisnickoIme, Korisnik posiljalac, Korisnik primalac, KorisnikDAO korisniciDAO) {
+		Korisnik user = korisniciDAO.pronadjiKorisnika(korisnickoIme);
+		if (user.getUloga() == Uloga.ADMINISTRATOR) return false;
+		
+		if (posiljalac.getUloga() == Uloga.ADMINISTRATOR || primalac.getUloga() == Uloga.ADMINISTRATOR) return true;
+		
+		return false;
 	}
 
 	private GrupisanePorukeDTO findInGrupisane(Korisnik posiljalac, Korisnik primalac,

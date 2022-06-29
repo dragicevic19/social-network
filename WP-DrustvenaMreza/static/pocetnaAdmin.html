@@ -10,14 +10,15 @@
     <body>
         <nav>
             <div class="container">
-                <h2 class="title">WP - Social Network</h2>
+                <h2 class="title">WP - Social Network - Admin</h2>
                 <div class="search-bar">
                     <i class="fa fa-search"></i>
                     <input type="search" class="search-input" placeholder="Find user" name="searchInput"/>
                 </div>
                 <div class="tabs">
                     <ul>
-                      <li class="login_li">Login / Register</li>
+                        <li class="myprofile_li">My Profile</li>
+                        <li class="logout_li">Log Out</li>
                     </ul>
                 </div>
             </div>
@@ -28,12 +29,12 @@
                     <ul>
                         <li class="friends_li">My Friends</li>
                         <!-- <li class="mutual_friends_li">Mutual friends</li> -->
-                    <!-- </ul>
+                    <!--</ul>
                 </div>
                 <div class="friends_content">
                     <div class="friends"></div>
                     <div class="mutuals"></div>
-                </div> --> 
+                </div> -->
             </div>
             
             <div class="center">
@@ -53,6 +54,10 @@
                     </div>
                     <div class="center_content">
                         <div class="about">
+                            <div class="input_field email">
+                                <p>E-Mail</p><input type="text" placeholder="E-mail" class="input" name="email">
+                                <p class="error" id="email"></p>
+                            </div>
                             <div class="input_field">
                                 <p>Name</p><input type="text" placeholder="Name" class="input" name="name">
                                 <p class="error" id="name"></p>
@@ -64,6 +69,37 @@
                             <div class="input_field">
                                 <p>Birthday</p><input type="date" placeholder="Birthday" class="input" name="birthday">
                                 <p class="error" id="date"></p>
+                            </div>
+                            <div class="btnChanges">
+                                <button class="btn btn-primary" id="saveChangesBtn">
+                                    <p>Save Changes</p>
+                                </button>
+                                <button class="btn" id="changePasswordBtn">
+                                    <p>Change Password</p>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="passChange">
+                            <div class="input_field">
+                                <p>Current Password</p><input type="password" placeholder="Password" class="input" name="password">
+                                    <p class="error" id="currPass"></p>
+                            </div>
+                            <div class="input_field">
+                                <p>New Password</p><input type="password" placeholder="Password" class="input" name="newPassword">
+                                <p class="error" id="newPass"></p>
+                            </div>
+                            <div class="input_field">
+                                <p>Confirm Password</p><input type="password" placeholder="Password" class="input" name="repPassword">
+                                <p class="error" id="repPass"></p>
+                            </div>
+                            <div class="btnChanges">
+                                <button class="btn btn-primary" id="savePassChangesBtn">
+                                    <p>Save Password Changes</p>
+                                </button>
+                                <button class="btn" id="backBtn">
+                                    <p>BACK</p>
+                                </button>
                             </div>
                         </div>
 
@@ -80,51 +116,52 @@
                         <div class="search-options">
                             <label>Search by:</label>
                             <div class="option">
-                                <label>Name</label>
-                                <input type="checkbox" value="name" name="searchOption"/>
+                              <label>Name</label>
+                              <input type="checkbox" value="name" name="searchOption"/>
                             </div>
                             <div class="option">
-                                <label>Last Name</label>
-                                <input type="checkbox" value="lastName" name="searchOption"/>
+                              <label>Last Name</label>
+                              <input type="checkbox" value="lastName" name="searchOption"/>
+                            </div>
+                            <div class="option">
+                              <label>Email</label>
+                              <input type="checkbox" value="email" name="searchOption"/>
                             </div>
                         </div>
                         <div class="searchResult">
                         </div>
                         </div>
                 </div>
-                <div class="login">
-                    <h2 style="margin-bottom: 10px;">Do you want more? Register on SocialNetwork!</h2>
+                <div class="logout">
+                    <h2>Are you sure you want to log out?</h2>
                     <div class="yesNoBtns">
                         <button class="btn btn-primary" id="btnYes">
-                            <p>REGISTER</p>
+                            <p>LOGOUT</p>
+                        </button>
+                        <button class="btn" id="btnNo">
+                            <p>CANCEL</p>
                         </button>
                     </div>
                     
                 </div>
             </div>
 
-
-
             <div class="right">
-                <!-- <div class="tabs">
+                <div class="tabs">
                     <ul>
-                        <li class="requests_li">Requests</li>
                         <li class="messages_li">Messages</li>
                     </ul>
                 </div>
                 <div class="content">
-                    <div class="requests">
-                        <!-- Filled in JS -->
-                    </div>
                     <div class="messages">
                         <!-- Filled in JS -->
                     </div>
-                </div> -->
+                </div>
             </div>
 
         </div>
     <script src="js/jquery.min.js"></script>
     <script src="js/toast.js"></script>
-    <script src="js/gost.js"></script>
+    <script src="js/admin.js"></script>
     </body>
 </html>

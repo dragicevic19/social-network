@@ -327,6 +327,10 @@ background: #ecebeb;
     cursor: pointer;
 }
 
+.wrapper .right .messages .message .admin{
+    color: red;
+}
+
 .wrapper .right .messages .message:hover,
 .wrapper .left .friend:hover,
 .searchItem:hover {
@@ -377,6 +381,8 @@ background: #ecebeb;
     margin-bottom: 0.5rem;
     cursor: pointer;
     text-align: left;
+    display: flex;
+    justify-content: space-between;
 }
 
 .searchItem .info{
@@ -395,6 +401,8 @@ background: #ecebeb;
     padding: 0.8rem;
     border-radius: 1rem;
     margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
 }
 
 .right .request .info{

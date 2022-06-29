@@ -21,6 +21,7 @@ public class Korisnik {
 	private List<String> zahteviZaPrijateljstvo;
 	private boolean privatan;
 	private boolean obrisan;	
+	private boolean blokiran;
 
 	public Korisnik() {
 		this.objave = new ArrayList<String>();
@@ -31,7 +32,7 @@ public class Korisnik {
 
 	public Korisnik(String korisnickoIme, String lozinka, String email, String ime, String prezime, Date datumRodjenja,
 			Pol pol, Uloga uloga, Slika profilnaSlika, List<String> objave, List<Slika> slike,
-			List<String> zahteviZaPrijateljstvo, List<String> prijatelji, boolean privatan, boolean obrisan) {
+			List<String> zahteviZaPrijateljstvo, List<String> prijatelji, boolean privatan, boolean obrisan, boolean blokiran) {
 		this();
 		this.korisnickoIme = korisnickoIme;
 		this.lozinka = lozinka;
@@ -48,6 +49,7 @@ public class Korisnik {
 		this.zahteviZaPrijateljstvo = zahteviZaPrijateljstvo;
 		this.privatan = privatan;
 		this.obrisan = obrisan;
+		this.blokiran = blokiran;
 	}
 
 	public Korisnik(String kIme) {
@@ -174,6 +176,16 @@ public class Korisnik {
 	public void setObrisan(boolean obrisan) {
 		this.obrisan = obrisan;
 	}
+	
+	
+
+	public boolean isBlokiran() {
+		return blokiran;
+	}
+
+	public void setBlokiran(boolean blokiran) {
+		this.blokiran = blokiran;
+	}
 
 	@Override
 	public String toString() {
@@ -194,6 +206,9 @@ public class Korisnik {
 				}
 				if (option.equalsIgnoreCase("lastName")) {
 					if (prezime.toLowerCase().contains(query.toLowerCase())) return true;
+				}
+				if (option.equalsIgnoreCase("email")) {
+					if (email.toLowerCase().contains(query.toLowerCase())) return true;
 				}
 			}
 			
