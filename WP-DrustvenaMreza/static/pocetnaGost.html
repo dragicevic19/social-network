@@ -1,0 +1,128 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="css/unicons.css">
+        <link rel="stylesheet" href="css/pocetnaKorisnik.css">
+        <script src="https://kit.fontawesome.com/74f64ccb8e.js" crossorigin="anonymous"></script>
+        <title>Home page</title>
+    </head>
+    <body>
+        <nav>
+            <div class="container">
+                <h2 class="title">WP - Social Network</h2>
+                <div class="search-bar">
+                    <i class="fa fa-search"></i>
+                    <input type="search" class="search-input" placeholder="Find user" name="searchInput"/>
+                </div>
+                <div class="tabs">
+                    <ul>
+                      <li class="login_li">Login / Register</li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="wrapper">
+            <div class="left">
+                <!-- <div class="tabs">
+                    <ul>
+                        <li class="friends_li">My Friends</li>
+                        <!-- <li class="mutual_friends_li">Mutual friends</li> -->
+                    <!-- </ul>
+                </div>
+                <div class="friends_content">
+                    <div class="friends"></div>
+                    <div class="mutuals"></div>
+                </div> --> 
+            </div>
+            
+            <div class="center">
+                <div class="myprofile">
+                    <div class="header">
+                        <div class="profile_pic">
+                        </div>
+                        <div class="name_last_name">
+                        </div> 
+                        <div class="tabs">
+                            <ul>
+                                <li class="about_li">About</li>
+                                <li class="posts_li">Posts</li>
+                                <li class="photos_li">Photos</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="center_content">
+                        <div class="about">
+                            <div class="input_field">
+                                <p>Name</p><input type="text" placeholder="Name" class="input" name="name">
+                                <p class="error" id="name"></p>
+                            </div>
+                            <div class="input_field">
+                                <p>Last Name</p><input type="text" placeholder="Last name" class="input" name="lastName">
+                                <p class="error" id="lastName"></p>
+                            </div>
+                            <div class="input_field">
+                                <p>Birthday</p><input type="date" placeholder="Birthday" class="input" name="birthday">
+                                <p class="error" id="date"></p>
+                            </div>
+                        </div>
+
+                        <div class="posts">
+                            
+                        </div>
+                        <div class="photos"></div>
+                    </div>
+
+                </div>
+            
+                <div class="search-res" hidden="true">
+                    <div class="content">
+                        <div class="search-options">
+                            <label>Search by:</label>
+                            <div class="option">
+                                <label>Name</label>
+                                <input type="checkbox" value="name" name="searchOption"/>
+                            </div>
+                            <div class="option">
+                                <label>Last Name</label>
+                                <input type="checkbox" value="lastName" name="searchOption"/>
+                            </div>
+                        </div>
+                        <div class="searchResult">
+                        </div>
+                        </div>
+                </div>
+                <div class="login">
+                    <h2 style="margin-bottom: 10px;">Do you want more? Register on SocialNetwork!</h2>
+                    <div class="yesNoBtns">
+                        <button class="btn btn-primary" id="btnYes">
+                            <p>REGISTER</p>
+                        </button>
+                    </div>
+                    
+                </div>
+            </div>
+
+
+
+            <div class="right">
+                <!-- <div class="tabs">
+                    <ul>
+                        <li class="requests_li">Requests</li>
+                        <li class="messages_li">Messages</li>
+                    </ul>
+                </div>
+                <div class="content">
+                    <div class="requests">
+                        <!-- Filled in JS -->
+                    </div>
+                    <div class="messages">
+                        <!-- Filled in JS -->
+                    </div>
+                </div> -->
+            </div>
+
+        </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/gost.js"></script>
+    </body>
+</html>

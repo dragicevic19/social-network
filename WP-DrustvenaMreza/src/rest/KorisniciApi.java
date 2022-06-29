@@ -187,8 +187,6 @@ public class KorisniciApi {
 			res.status(400);
 			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Bad request!"));
 		}
-		
-		
 	}
 
 	public static Object search(Request req, Response res, KorisnikDAO korisniciDAO) {
