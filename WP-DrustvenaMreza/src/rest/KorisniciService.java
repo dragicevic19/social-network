@@ -12,6 +12,7 @@ import beans.Status;
 import beans.Uloga;
 import beans.ZahtevZaPrijateljstvo;
 import dao.KorisnikDAO;
+import dao.ZahteviDAO;
 import dto.RegistracijaKorisnikDTO;
 
 public class KorisniciService {
@@ -60,6 +61,7 @@ public class KorisniciService {
 			return null;
 		}
 		korisnik.setLozinka(k.getLozinka()); // sacuvaj u bazu
+		korisniciDAO.upisiUFajl();
 		return korisnik;
 	}
 
@@ -71,15 +73,19 @@ public class KorisniciService {
 		korisnik.setIme(k.getIme());
 		korisnik.setPrezime(k.getPrezime());
 		korisnik.setDatumRodjenja(k.getDatumRodjenja());
+		korisniciDAO.upisiUFajl();
 		return korisnik;
 	}
 
-	public static void acceptRequest(ZahtevZaPrijateljstvo zahtev) {
+	public static void acceptRequest(ZahtevZaPrijateljstvo zahtev, KorisnikDAO korisniciDAO, ZahteviDAO zahteviDAO) {
 		Korisnik primalac = zahtev.getPrimalac();
 		Korisnik posiljalac = zahtev.getPosiljalac();
 		zahtev.setStatus(Status.PRIHVACENO);
 		primalac.getPrijatelji().add(posiljalac.getKorisnickoIme());
 		posiljalac.getPrijatelji().add(primalac.getKorisnickoIme());
+		
+		zahteviDAO.sacuvajUFajl();
+		korisniciDAO.upisiUFajl();
 	}
 
 	public static List<Korisnik> getFriendsForUser(String username, KorisnikDAO korisniciDAO) {
@@ -120,6 +126,8 @@ public class KorisniciService {
 		k1.getPrijatelji().remove(k2.getKorisnickoIme());
 		k2.getPrijatelji().remove(k1.getKorisnickoIme());
 
+		korisniciDAO.upisiUFajl();
+		
 		return true;
 	}
 

@@ -1,5 +1,7 @@
 package rest;
 
+import java.util.Date;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -17,7 +19,7 @@ public class ZahteviApi {
 		ZahtevZaPrijateljstvo z = g.fromJson(req.body(), ZahtevZaPrijateljstvo.class);
 		z.setPosiljalac(korisniciDAO.pronadjiKorisnika(z.getPosiljalac().getKorisnickoIme()));
 		z.setPrimalac(korisniciDAO.pronadjiKorisnika(z.getPrimalac().getKorisnickoIme()));
-		
+		z.setDatum(new Date());
 		z = zahteviDAO.sacuvaj(z);
 		if (z != null) {
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(z)));

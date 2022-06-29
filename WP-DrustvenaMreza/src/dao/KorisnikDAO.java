@@ -71,7 +71,7 @@ public class KorisnikDAO {
 		return upisiUFajl() ? korisnik : null;
 	}
 	
-	private boolean upisiUFajl() {
+	public boolean upisiUFajl() {
 		try {
 			File csvFile = new File(contextPath + "/korisnici.csv");
 			Writer upis = new BufferedWriter(new FileWriter(csvFile, false));

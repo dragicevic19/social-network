@@ -1,8 +1,12 @@
 package dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,6 +26,9 @@ public class ZahteviDAO {
 
 	private HashMap<String, ZahtevZaPrijateljstvo> zahtevi = new HashMap<String, ZahtevZaPrijateljstvo>();
 	private KorisnikDAO korisniciDAO;
+	private String contextPath;
+	DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
 
 	public ZahteviDAO() {
 
@@ -33,6 +40,7 @@ public class ZahteviDAO {
 	}
 
 	private void ucitajZahteve(String contextPath) {
+		this.contextPath = contextPath;
 		BufferedReader in = null;
 		try {
 			File file = new File(contextPath + "/zahtevi.csv");
@@ -90,8 +98,9 @@ public class ZahteviDAO {
 		maxId++;
 		zahtev.setId(maxId.toString());
 		zahtevi.put(zahtev.getId(), zahtev);
-		// DODAJ U FAJL
-		return zahtev; // ok
+
+		
+		return sacuvajUFajl() ? zahtev : null;
 	}
 
 	public Collection<ZahtevZaPrijateljstvo> pronadjiSve() {
@@ -136,6 +145,37 @@ public class ZahteviDAO {
 			}
 		}
 		return retList;
+	}
+
+	public boolean sacuvajUFajl() {
+		try {
+			File csvFile = new File(contextPath + "/zahtevi.csv");
+			Writer upis = new BufferedWriter(new FileWriter(csvFile, false));
+			
+			for(ZahtevZaPrijateljstvo z : zahtevi.values()) {
+				
+				upis.append(z.getId());
+				upis.append(";");
+				upis.append(z.getPosiljalac().getKorisnickoIme());
+				upis.append(";");
+				upis.append(z.getPrimalac().getKorisnickoIme());
+				upis.append(";");
+				upis.append(z.getStatus().name());
+				upis.append(";");
+				
+				upis.append(df.format(z.getDatum()));
+				upis.append("\n");
+			}
+			
+			upis.flush();
+			upis.close();
+			
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
 	}
 
 }

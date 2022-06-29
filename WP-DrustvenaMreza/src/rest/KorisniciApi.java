@@ -42,6 +42,7 @@ public class KorisniciApi {
 		list.add(poslatiZahtevi);
 		
 		List<GrupisanePorukeDTO> poruke = porukeDAO.getGrupisanePorukeZaKorisnika(k.getKorisnickoIme());
+		
 		UlogovaniKorisnikDTO korisnik = new  UlogovaniKorisnikDTO(k, list, poruke);
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(korisnik)));
 	}
@@ -131,9 +132,8 @@ public class KorisniciApi {
 		res.type("application/json");
 		String idZahteva = req.queryParams("id");
 		ZahtevZaPrijateljstvo zahtev = zahteviDAO.pronadjiZahtev(idZahteva);
-		KorisniciService.acceptRequest(zahtev);
-
-//		List<ZahtevDTO> zahtevi = zahteviDAO.getZahteviNaCekanjuZaKorisnika(zahtev.getPrimalac().getKorisnickoIme());
+		KorisniciService.acceptRequest(zahtev, korisniciDAO, zahteviDAO);
+		
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
 	}
 
@@ -143,8 +143,8 @@ public class KorisniciApi {
 		String idZahteva = req.queryParams("id");
 		ZahtevZaPrijateljstvo zahtev = zahteviDAO.pronadjiZahtev(idZahteva);
 		zahtev.setStatus(Status.ODBIJENO);
-
-//		List<ZahtevDTO> zahtevi = zahteviDAO.getZahteviNaCekanjuZaKorisnika(zahtev.getPrimalac().getKorisnickoIme());
+		
+		zahteviDAO.sacuvajUFajl();
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
 	}
 

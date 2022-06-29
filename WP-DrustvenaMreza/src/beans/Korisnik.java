@@ -20,7 +20,7 @@ public class Korisnik {
 	private List<String> prijatelji;
 	private List<String> zahteviZaPrijateljstvo;
 	private boolean privatan;
-	private boolean obrisan;
+	private boolean obrisan;	
 
 	public Korisnik() {
 		this.objave = new ArrayList<String>();
