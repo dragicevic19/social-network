@@ -23,7 +23,9 @@ public class KorisniciService {
 	public static Korisnik login(String kIme, String lozinka, KorisnikDAO korisniciDAO) {
 		HashMap<String, Korisnik> korisnici = korisniciDAO.getKorisnici();
 		if (korisnici.containsKey(kIme) && korisnici.get(kIme).getLozinka().equals(lozinka)) {
-			return korisnici.get(kIme);
+			Korisnik k = korisnici.get(kIme);
+			if (k.isBlokiran()) return null;
+			return k;
 		} else {
 			return null;
 		}
@@ -139,6 +141,17 @@ public class KorisniciService {
 		}
 		
 		return searchRes;
+	}
+
+	public static void block(Korisnik k, KorisnikDAO korisniciDAO) {
+		k.setBlokiran(true);
+		korisniciDAO.upisiUFajl();
+		
+	}
+
+	public static void unblock(Korisnik k, KorisnikDAO korisniciDAO) {
+		k.setBlokiran(false);
+		korisniciDAO.upisiUFajl();
 	}
 
 }

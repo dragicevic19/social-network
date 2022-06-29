@@ -25,7 +25,7 @@ public class KorisniciApi {
 
 	private static Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
-	public static Object getCurrentUser(Request req, Response res, ZahteviDAO zahteviDAO, PorukeDAO porukeDAO) {
+	public static Object getCurrentUser(Request req, Response res, ZahteviDAO zahteviDAO, PorukeDAO porukeDAO, KorisnikDAO korisniciDAO) {
 		res.type("application/json");
 		Session ss = req.session(true);
 		Korisnik k = ss.attribute("currentUser");
@@ -41,7 +41,7 @@ public class KorisniciApi {
 		list.add(zahtevi);
 		list.add(poslatiZahtevi);
 		
-		List<GrupisanePorukeDTO> poruke = porukeDAO.getGrupisanePorukeZaKorisnika(k.getKorisnickoIme());
+		List<GrupisanePorukeDTO> poruke = porukeDAO.getGrupisanePorukeZaKorisnika(k.getKorisnickoIme(), korisniciDAO);
 		
 		UlogovaniKorisnikDTO korisnik = new  UlogovaniKorisnikDTO(k, list, poruke);
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(korisnik)));
@@ -202,6 +202,35 @@ public class KorisniciApi {
 			res.status(500);
 			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Internal server error!"));
 		}
+	}
+
+	public static Object block(Request req, Response res, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		String username = req.queryParams("username");
 		
+		Korisnik k = korisniciDAO.pronadjiKorisnika(username);
+		if (k == null) {
+			res.status(400);
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Bad request!"));
+		}
+		
+		KorisniciService.block(k, korisniciDAO);
+		
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
+	}
+	
+	public static Object unblock(Request req, Response res, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		String username = req.queryParams("username");
+		
+		Korisnik k = korisniciDAO.pronadjiKorisnika(username);
+		if (k == null) {
+			res.status(400);
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Bad request!"));
+		}
+		
+		KorisniciService.unblock(k, korisniciDAO);
+		
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
 	}
 }

@@ -35,7 +35,7 @@ public class WsHandler extends WebSocketHandler {
 
 	@OnWebSocketMessage
 	public void message(Session session, String message) throws IOException {
-		System.out.println("Got: " + message); // Print message
+		//System.out.println("Got: " + message); // Print message
 		postMessage(message, session);
 	}
 
