@@ -63,7 +63,8 @@ public class PorukeDAO {
 					idPoslao = st.nextToken().trim();
 					idPrimio = st.nextToken().trim();
 					// datumSlanja = LocalDateTime.parse(st.nextToken().trim());
-					poruka = st.nextToken().trim();
+					
+					poruka = st.nextToken().trim().replace("/ff", ",");
 					poslao = korisniciDAO.pronadjiKorisnika(idPoslao);
 					primio = korisniciDAO.pronadjiKorisnika(idPrimio);
 				}
@@ -147,6 +148,8 @@ public class PorukeDAO {
 				GrupisanePorukeDTO grupisana = findInGrupisane(posiljalac, primalac, grupisanePoruke);
 
 				if (grupisana != null) {
+					grupisana.setPosiljalac(poruka.getPosiljalac());
+					grupisana.setPrimalac(poruka.getPrimalac());
 					grupisana.setPoslednjaPoruka(poruka.getSadrzajPoruke());
 				}
 

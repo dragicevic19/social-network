@@ -23,6 +23,17 @@ public class PorukeApi {
 
 		res.type("application/json");
 		PorukaPayload p = g.fromJson(req.body(), PorukaPayload.class);
+		
+		Korisnik user = korisniciDAO.pronadjiKorisnika(p.getPosiljalac());
+		
+		Session ss = req.session(true);
+		Korisnik k = ss.attribute("currentUser");
+		
+		if (k == null || !k.getKorisnickoIme().equals(user.getKorisnickoIme())) {
+			res.status(401);
+			return g.toJson(new StandardResponse(StatusResponse.ERROR));
+		}
+		
 		DirektnaPoruka poruka = PorukeService.newMessage(p, porukeDAO, korisniciDAO);
 		if (poruka != null) {
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(poruka)));
@@ -38,6 +49,14 @@ public class PorukeApi {
 		String two = req.queryParams("userTwo");
 		Korisnik userOne = korisniciDAO.pronadjiKorisnika(one);
 		Korisnik userTwo = korisniciDAO.pronadjiKorisnika(two);
+		
+		Session ss = req.session(true);
+		Korisnik k = ss.attribute("currentUser");
+		
+		if (k == null || !k.getKorisnickoIme().equals(userOne.getKorisnickoIme())) {
+			res.status(401);
+			return g.toJson(new StandardResponse(StatusResponse.ERROR));
+		}
 
 		List<PorukaDTO> poruke = PorukeService.getChat(userOne, userTwo, porukeDAO);
 

@@ -8,14 +8,20 @@
 </head>
 <body>
   <div class="wrapper">
+  <header>
     <nav>
       <a href="./pocetnaKorisnik.html">Back</a>
       <label id="title"></label>
     </nav>
+  </header>
+  <main>
     <div id="messages"></div>
+  </main>
+  <footer>
     <form>
         <input type="text" placeholder="Your message...">
     </form>
+  </footer>
   </div>
     <script>
         function showMessage(sender,text,isMine = false) {
@@ -69,8 +75,11 @@
 
         ws.onmessage = function(msg){
           let messageParts = msg.data.split('|'); // [0] sender, [1] reciever, [2] text
-          if (messageParts[1] == currentUser && messageParts[0] == chatWith)
+          if (messageParts[1] == currentUser && messageParts[0] == chatWith){
             showMessage(messageParts[0], messageParts[2]);
+            window.scroll(0, document.documentElement.offsetHeight);
+          
+          }
         }
         
         document.querySelector('form').onsubmit = ev => {
@@ -82,6 +91,8 @@
             showMessage('You', input.value.split('|')[2], true);
             saveMessage(input.value);
             input.value = '';
+            window.scroll(0, document.documentElement.offsetHeight);
+
           }
         }
 
@@ -102,14 +113,14 @@
             contentType: 'application/json',
           success: function (response) {
             if (response.status == "SUCCESS") {
-              console.log(response);
             }
             else {
                 alert("error saveMessaeg " + response.message);
             }
           },
           error: function (response) {
-            alert("error save messages");
+            alert("You need to login first!");
+            window.location = "index.html";
           }
           });
         }
