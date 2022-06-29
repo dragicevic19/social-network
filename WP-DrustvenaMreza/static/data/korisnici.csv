@@ -1,4 +1,6 @@
-pera;pera123;pera@gmail.com;Pera;Peric;12/12/2000;MUSKI;KORISNIK;mika;1;1;1,2;1;false;false
-mika;mika123;mika@gmail.com;Mika;Mikic;10/10/1999;MUSKI;KORISNIK;pera,jova,zika;1;1;/;/;false;false
-jova;jova123;jova@gmail.com;Jova;Jovic;02/02/2001;MUSKI;KORISNIK;mika,zika;/;/;/;/;false;false
-zika;zika123;zika@gmail.com;Zika;Zikanovic;03/03/2003;MUSKI;KORISNIK;mika,jova;1;1;/;/;false;false
+pera;pera123;pera@gmail.com;Pera;Peric;12/12/2000;MUSKI;KORISNIK;mika,zika,jova;1;1,;1,2;1;false;false
+mika;mika123;mika@gmail.com;Mika;Mikic;10/10/1999;MUSKI;KORISNIK;pera,jova,zika;1;1,;/;/;false;false
+jova;jova123;jova@gmail.com;Jova;Jovic;02/02/2001;MUSKI;KORISNIK;mika,zika,pera;/;1,;/;/;false;false
+test;test123;test@gmail.com;Tet;Test;01/01/1970;MUSKI;KORISNIK;/;/;1,;/;/;false;false
+zika;zika123;zika@gmail.com;Zika;Zikanovic;03/03/2003;MUSKI;KORISNIK;mika,jova,pera;1;1,;/;/;false;false
+marko;marko123;marko@gmail.com;Marko;Draicevic;03/03/2003;MUSKI;KORISNIK;/;/;1,;/;/;false;false

@@ -14,6 +14,7 @@ import dao.KorisnikDAO;
 import dao.PorukeDAO;
 import dao.ZahteviDAO;
 import dto.GrupisanePorukeDTO;
+import dto.RegistracijaKorisnikDTO;
 import dto.UlogovaniKorisnikDTO;
 import dto.ZahtevDTO;
 import spark.Request;
@@ -41,6 +42,7 @@ public class KorisniciApi {
 		list.add(poslatiZahtevi);
 		
 		List<GrupisanePorukeDTO> poruke = porukeDAO.getGrupisanePorukeZaKorisnika(k.getKorisnickoIme());
+		
 		UlogovaniKorisnikDTO korisnik = new  UlogovaniKorisnikDTO(k, list, poruke);
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(korisnik)));
 	}
@@ -69,14 +71,14 @@ public class KorisniciApi {
 
 	public static Object register(Request req, Response res, KorisnikDAO korisniciDAO) {
 		res.type("application/json");
-		Korisnik k = g.fromJson(req.body(), Korisnik.class);
+		RegistracijaKorisnikDTO k = g.fromJson(req.body(), RegistracijaKorisnikDTO.class);
 		Session ss = req.session(true);
-		k = KorisniciService.register(k, korisniciDAO);
-		if (k != null) {
-			ss.attribute("currentUser", k);
-			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
+		Korisnik newUser = KorisniciService.register(k, korisniciDAO);
+		if (newUser != null) {
+			ss.attribute("currentUser", newUser);
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(newUser)));
 		} else {
-			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username or Email already exists!"));
 		}
 	}
 
@@ -130,9 +132,8 @@ public class KorisniciApi {
 		res.type("application/json");
 		String idZahteva = req.queryParams("id");
 		ZahtevZaPrijateljstvo zahtev = zahteviDAO.pronadjiZahtev(idZahteva);
-		KorisniciService.acceptRequest(zahtev);
-
-//		List<ZahtevDTO> zahtevi = zahteviDAO.getZahteviNaCekanjuZaKorisnika(zahtev.getPrimalac().getKorisnickoIme());
+		KorisniciService.acceptRequest(zahtev, korisniciDAO, zahteviDAO);
+		
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
 	}
 
@@ -142,8 +143,8 @@ public class KorisniciApi {
 		String idZahteva = req.queryParams("id");
 		ZahtevZaPrijateljstvo zahtev = zahteviDAO.pronadjiZahtev(idZahteva);
 		zahtev.setStatus(Status.ODBIJENO);
-
-//		List<ZahtevDTO> zahtevi = zahteviDAO.getZahteviNaCekanjuZaKorisnika(zahtev.getPrimalac().getKorisnickoIme());
+		
+		zahteviDAO.sacuvajUFajl();
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
 	}
 
