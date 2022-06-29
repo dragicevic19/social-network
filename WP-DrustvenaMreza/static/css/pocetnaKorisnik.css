@@ -165,6 +165,8 @@ nav .tabs ul li.active{
 
 .left .friends{
     margin-top: 1rem;
+    height: 800px;
+    overflow-y: auto;
 }
 
 .left .friend{
@@ -294,6 +296,8 @@ background: #ecebeb;
 
 .wrapper .right .messages{
     margin-top: 1rem;
+    height: 800px;
+    overflow-y: auto;
 }
 
 .wrapper .right .profile-photo,
@@ -314,9 +318,10 @@ background: #ecebeb;
 .wrapper .right .messages .message{
     display: flex;
     gap: 1rem;
+    padding: 0.3rem;
     margin-bottom: 1rem;
     align-items: center;
-    background: rgb(92, 87, 87);
+    background: #fff;
     border-radius: 1rem;
     cursor: pointer;
 }
@@ -337,10 +342,14 @@ background: #ecebeb;
 
 .right .requests{
     margin-top: 1rem;
+    height: 800px;
+    overflow-y: auto;
 }
 
 .searchResult {
     margin-top: 1rem;
+    height: 820px;
+    overflow-y: auto;
 }
 
 

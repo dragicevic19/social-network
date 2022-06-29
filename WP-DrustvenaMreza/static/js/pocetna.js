@@ -3,6 +3,20 @@ let userToShow = null;
 let editUser = false;
 let recievedRequests = null;
 let sentRequests = null;
+let messages = null;
+
+// $(".message").click(function (){
+//         // let username = $(this).attr('data-index');
+//     let username = "mika";
+//     window.sessionStorage.setItem('chatWith', username);
+//     window.location = "chat.html";
+// });
+
+function goToMessages(chatWith){
+    console.log(chatWith);
+    window.sessionStorage.setItem('chatWith', chatWith);
+    window.location = "chat.html";
+}
 
 $(".search-input").keydown(function (event) { 
     if (event.which == 13) { 
@@ -67,13 +81,10 @@ $(".search-input").keydown(function (event) {
                 alert("error show user profile");
             }
         });
-
-
-        
     } 
 });
 
-function bindSearchRes(className) {
+function bindSearchRes(className) { // ovako mozda isto za poruke?
     let results = $('.' + className);
     for (let i = 0; i < results.length; i++){
         $(results[i]).find(".searchItem").click(function () {
@@ -274,14 +285,17 @@ function fillMutualFriends(friends) {
 
 //  ======================================================= RIGHT =======================================================
 function rightSettings() {
-    $('.messages').hide();
-    $('.requests_li').addClass('active');
+    $('.requests').hide();
+    $('.messages_li').addClass('active');
 
-    let rightActiveLi = $('.requests_li');
-    let rightActiveDiv = $('.requests');
+    let rightActiveLi = $('.messages_li');
+    let rightActiveDiv = $('.messages');
+    
+    fillMessages();
+    bindMessages();
+
     fillRequests();
     bindButtons();
-    //getFriendRequests();
 
     $('.requests_li').click(function () {
         if (rightActiveLi.is(this)) {
@@ -354,6 +368,45 @@ function bindButtons() {
         });
     }
 }
+
+
+function fillMessages() {
+    for (const message of messages){
+        const user = (message.posiljalac.korisnickoIme === currentUser.korisnickoIme) ? message.primalac : message.posiljalac;
+        let divMessage = $("<div class='message' data-index='" + user.korisnickoIme +"'></div>");
+        let divPhoto = $('<div class="profile-photo"></div>');
+        let picPath = "pics/avatar.png";
+        if (user.profilnaSlika) {
+            if (!user.profilnaSlika.obrisana) {
+                picPath = user.profilnaSlika.putanja;
+            }
+        }
+        let img = $('<img src=' + picPath + '>');
+        divPhoto.append(img);
+        let div = $('<div class="message-body"></div>');
+        let text = $('<h4>' + user.ime + ' ' + user.prezime + '</h4>');
+        let you = (message.posiljalac.korisnickoIme === currentUser.korisnickoIme) ? 'You: ' : '';
+        console.log(message.posiljalac);
+        let messagePara = $('<p class="text-muted">' + you + message.poslednjaPoruka + '</p>');
+        div.append(text);
+        div.append(messagePara);
+
+        divMessage.append(divPhoto);
+        divMessage.append(div);
+
+        $('.messages').append(divMessage);
+    }
+}
+
+function bindMessages() {
+    let messages = $('.message');
+    for (let i = 0; i < messages.length; i++){
+        $(messages[i]).click(function () {
+            goToMessages($(this).attr('data-index'));
+        });
+    }
+}
+
 
 function acceptRequest(reqId) {
     $.ajax({
@@ -565,21 +618,21 @@ function addButtonsForOtherUser() {
     }
     else {
         var removeFriendIcon = $('<i class="fas fa-user-minus remove"></i>');
-        var sendMsgIcon = $('<i class="fas fa-envelope message"></i>');
+        var sendMsgIcon = $('<i class="fas fa-envelope messageIcon"></i>');
         $('.myprofile .name_last_name').append(removeFriendIcon);
         $('.myprofile .name_last_name').append(sendMsgIcon);
 
         $('.remove').unbind().click(function () {
             removeFriend();
         });
-        $('.message').unbind().click(function () {
-            sendMessage();
+        $('.messageIcon').unbind().click(function () {
+            goToMessages(userToShow.korisnickoIme);
         });
     }
 }
 
-function isUserInSentRequests() {  // sentRequests i recieved requests budu null jer se prvo pozove ova funkcija pa  
-    if (!sentRequests) return false;        // tek onda dovuce sa beka zahteve
+function isUserInSentRequests() {
+    if (!sentRequests) return false;
     for (let i = 0; i < sentRequests.length; i++){
         if (sentRequests[i].korisnickoIme == userToShow.korisnickoIme) {
             return true;
@@ -817,6 +870,8 @@ $(document).ready(function () {
             currentUser = response.data;
             recievedRequests = response.data.poslatiIPrimljeniZahtevi[0];
             sentRequests = response.data.poslatiIPrimljeniZahtevi[1];
+            messages = response.data.poruke;
+            window.sessionStorage.setItem('currentUser', currentUser.korisnickoIme);
             userToShow = window.sessionStorage.getItem('userToShow');
             if (!userToShow) {
                 userToShow = currentUser;
