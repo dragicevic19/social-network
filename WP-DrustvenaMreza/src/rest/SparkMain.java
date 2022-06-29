@@ -63,8 +63,6 @@ public class SparkMain {
 
 		get("rest/korisnici/search", (req, res) -> KorisniciApi.search(req, res, korisniciDAO));
 		
-		
-		
 		post("rest/poruke" , (req, res) -> PorukeApi.newMessage(req, res, porukeDAO, korisniciDAO));
 		
 		get("rest/poruke/razgovor", (req, res) -> PorukeApi.getChat(req, res, porukeDAO, korisniciDAO));

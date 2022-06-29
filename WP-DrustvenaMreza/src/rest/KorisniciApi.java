@@ -14,6 +14,7 @@ import dao.KorisnikDAO;
 import dao.PorukeDAO;
 import dao.ZahteviDAO;
 import dto.GrupisanePorukeDTO;
+import dto.RegistracijaKorisnikDTO;
 import dto.UlogovaniKorisnikDTO;
 import dto.ZahtevDTO;
 import spark.Request;
@@ -69,14 +70,14 @@ public class KorisniciApi {
 
 	public static Object register(Request req, Response res, KorisnikDAO korisniciDAO) {
 		res.type("application/json");
-		Korisnik k = g.fromJson(req.body(), Korisnik.class);
+		RegistracijaKorisnikDTO k = g.fromJson(req.body(), RegistracijaKorisnikDTO.class);
 		Session ss = req.session(true);
-		k = KorisniciService.register(k, korisniciDAO);
-		if (k != null) {
-			ss.attribute("currentUser", k);
-			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(k)));
+		Korisnik newUser = KorisniciService.register(k, korisniciDAO);
+		if (newUser != null) {
+			ss.attribute("currentUser", newUser);
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(newUser)));
 		} else {
-			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username or Email already exists!"));
 		}
 	}
 

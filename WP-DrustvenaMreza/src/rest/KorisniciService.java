@@ -1,13 +1,18 @@
 package rest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import beans.Korisnik;
+import beans.Pol;
 import beans.Status;
+import beans.Uloga;
 import beans.ZahtevZaPrijateljstvo;
 import dao.KorisnikDAO;
+import dto.RegistracijaKorisnikDTO;
 
 public class KorisniciService {
 
@@ -23,9 +28,30 @@ public class KorisniciService {
 		}
 	}
 
-	public static Korisnik register(Korisnik k, KorisnikDAO korisniciDAO) {
-		return korisniciDAO.sacuvaj(k);
-		// u funkciji sacuvaj() se proverava da li vec postoji username
+	public static Korisnik register(RegistracijaKorisnikDTO k, KorisnikDAO korisniciDAO) {
+		Korisnik newUser = new Korisnik();
+		newUser.setEmail(k.getEmail());
+		newUser.setIme(k.getIme());
+		newUser.setPrezime(k.getPrezime());
+		newUser.setKorisnickoIme(k.getKorisnickoIme());
+		newUser.setLozinka(k.getLozinka());
+		newUser.setPol(Pol.valueOf(k.getPol()));
+		newUser.setUloga(Uloga.valueOf(k.getUloga()));
+		newUser.setObrisan(false);
+		newUser.setPrivatan(false);
+		newUser.setObjave(new ArrayList<>());
+		newUser.setPrijatelji(new ArrayList<>());
+		newUser.setZahteviZaPrijateljstvo(new ArrayList<>());
+		newUser.setSlike(new ArrayList<>());
+		try {
+			newUser.setDatumRodjenja(new SimpleDateFormat("dd/MM/yyyy").parse("01/01/1970"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return korisniciDAO.sacuvaj(newUser);
+		// u funkciji sacuvaj() se proverava da li vec postoji username i email
 	}
 
 	public static Korisnik changePassword(Korisnik k, KorisnikDAO korisniciDAO) {
