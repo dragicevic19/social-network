@@ -24,7 +24,7 @@ public class SparkMain {
 	private static ZahteviDAO zahteviDAO = new ZahteviDAO(dataPath, korisniciDAO);
 
 	public static void main(String[] args) throws IOException {
-		port(8080);
+		port(8888);
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 
 		post("/rest/korisnici/register", (req, res) -> KorisniciApi.register(req, res, korisniciDAO));
@@ -56,5 +56,9 @@ public class SparkMain {
 		get("rest/korisnici/removeFriend", (req,res)-> KorisniciApi.removeFriend(req, res, korisniciDAO));
 
 		get("rest/korisnici/search", (req, res) -> KorisniciApi.search(req, res, korisniciDAO));
+		
+		get("rest/objave/getObjave", (req, res) -> ObjaveApi.getObjaveForUser(req, res, korisniciDAO, objaveDAO));
+		
+		get("rest/objave/getSpecificObjava", (req, res) -> ObjaveApi.getObjava(req, res, objaveDAO));
 	}
 }

@@ -127,6 +127,7 @@ function leftSettings() {
     let leftActiveLi = $('.friends_li');
     let leftActiveDiv = $('.friends');
     $('.mutuals').hide();
+    console.log("Banana");
     if (currentUser == userToShow) {
         getFriends(currentUser);
         return;
@@ -434,12 +435,16 @@ function centerSettings() {
 
     let centerActiveLi = $('.about_li');
     let centerActiveDiv = $('.about');
+    console.log("Banana");
+    getPosts(userToShow);
+    
     fillInformationsAboutUser();
 
     $('.about_li').click(function () {
         if (centerActiveLi.is(this)) {
             return;
         }
+        wipePost()
         $(this).addClass('active');
         $(centerActiveLi).removeClass('active');
         centerActiveLi = $(this);
@@ -453,17 +458,20 @@ function centerSettings() {
         if (centerActiveLi.is(this)) {
             return;
         }
+
         $(this).addClass('active');
         $(centerActiveLi).removeClass('active');
         centerActiveLi = $(this);
         $('.posts').show(300);
         $(centerActiveDiv).hide(300);
         centerActiveDiv = $('.posts');
+
     });
     $('.photos_li').click(function () {
         if (centerActiveLi.is(this)) {
             return;
         }
+        wipePost()
         $(this).addClass('active');
         $(centerActiveLi).removeClass('active');
         centerActiveLi = $(this);
@@ -521,6 +529,140 @@ function centerSettings() {
     $("#btnNo").click(function () {
         $('.myprofile_li').click();
     });
+}
+function wipePost(){
+    let element = document.getElementById('showingPosts');
+    if (element){
+        element.remove();
+    }
+    
+}
+function getPosts(user){
+    $.ajax({
+        type: "GET",
+        url: "rest/objave/getObjave?username=" + user.korisnickoIme,
+        success: function (response) {
+            let objave = response.data;
+            fillPostInformation(objave);
+            bindButtonsPosts();
+
+        },
+        error: function (response) {
+            alert("error in fetching objave");
+        }
+})
+}
+function fillPostInformation(objave){
+    
+    for (let i = 0; i < objave.length; i++){
+        let divRequest = $("<div class='post' data-index='" + objave[i] +"'></div>");
+        let divInfo = $('<div class="info"></div>');
+        let divPhoto = $('<div class="photo"></div>');
+        let picPath = "pics/search.ico";
+        if (objave[i].slika) {
+
+            picPath = objave[i].slika;
+
+        }
+        let img = $('<img src=' + picPath + '>');
+        divPhoto.append(img);
+        let div = $('<div></div>');
+        let text = $('<p class="text-muted">' + objave[i].tekst + '</p>');
+        div.append(text);
+
+        let divAction = $('<div class="action"></div>');
+        let btnShow = $('<button class="btn btn-primary showBtn" data-index=' + objave[i].id + '>Show</button>');
+        let btnDelete = $('<button class="btn deleteBtn" data-index='+ objave[i].id +'>Delete</button>');
+        divAction.append(btnShow);
+        divAction.append(btnDelete);
+
+        divInfo.append(divPhoto);
+        divInfo.append(div);
+        divInfo.append(divAction);
+
+        divRequest.append(divInfo);
+
+        $('.posts').append(divRequest);
+    }
+}
+
+function bindButtonsPosts() {
+    let posts = $('.post');
+    console.log("ALLERTSESES");
+    for (let i = 0; i < posts.length; i++){
+        $(posts[i]).find(".showBtn").click(function () {
+
+            showPost(this.getAttribute("data-index"));
+        });
+        if (currentUser.korisnickoIme != userToShow.korisnickoIme){
+            $(".deleteBtn").hide();
+        };
+        $(posts[i]).find(".deleteBtn").click(function () {
+            console.log("Secoind ALLERTSESES");
+        });
+    }
+}
+function showPost(postId) {
+        $.ajax({
+        type: "GET",
+        url: "rest/objave/getSpecificObjava?objavaID=" + postId,
+        success: function (response) {
+            let objava = response.data;
+            showSpecificPost(objava);
+
+        },
+        error: function (response) {
+            alert("error in fetching objava");
+        }
+})
+}
+
+function showSpecificPost(objava){
+    $('.posts').hide(300);
+    let divRequest = $("<div class='singlePost' data-index='" + objava +"'></div>");
+    let divInfo = $('<div class="info"></div>');
+    let divPhoto = $('<div class="photo"></div>');
+    let picPath = "pics/search.ico";
+    if (objava.slika) {
+
+        picPath = objava.slika;
+
+    }
+    let img = $('<img src=' + picPath + '>');
+    divPhoto.append(img);
+    let div = $('<div></div>');
+    let text = $('<p class="text-muted">' + objava.tekst + '</p>');
+    div.append(text);
+
+    let divAction = $('<div class="action"></div>');
+    let textField = $('<textarea class="makeComment" data-index=' + objava.id +'rows="4" cols="50" placeholder="Enter Comment">');
+    let btnPost = $('<button class="btn postBtn" data-index='+ objava.id +'>Post</button>');
+    let btnBack = $('<button class="btn backBtn" data-index='+ objava.id +'>Back</button>');
+    divAction.append(textField);
+    divAction.append(btnPost);
+    divAction.append(btnBack);
+
+    let divKomentari = $('<div class="comments"></div>');
+    for (let i = 0; i < objava.komentari.length; i++){
+        if (!objava.komentari[i].obrisan)
+        {
+            let divKomment = $('<p class="text-comment">' + objava.komentari[i].tekst + '</p>');
+            divKomentari.append(divKomment);
+        }
+    }
+
+    divInfo.append(divPhoto);
+    divInfo.append(div);
+    divInfo.append(divAction);
+    divInfo.append(divKomentari);
+
+    divRequest.append(divInfo);
+
+    let singlePost = $('<div id="showingPosts" class="showingPost"></div>');
+
+    singlePost.append(divRequest);
+
+    $('.center_content').append(singlePost);
 }
 
 function addProfilePictureAndName() {
@@ -824,7 +966,7 @@ $(document).ready(function () {
             else {
                 userToShow = JSON.parse(userToShow);
             }
-
+            console.log("Banana Ultima");
             navSetting();
             leftSettings();
             rightSettings();
