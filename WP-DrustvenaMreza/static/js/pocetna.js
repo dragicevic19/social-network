@@ -35,7 +35,8 @@ $(".search-input").keydown(function (event) {
             success: function (response) {          
                 if (response.status == "SUCCESS") {
                     $('.searchResult').empty();
-                    $(".myprofile").hide(300);
+                    $(".myprofile").hide(300);  // probaj dok si na logout li da search
+                    $(".logout").hide(300);
                     $(".search-res").show(300);
                     const searchRes = response.data;
                     if (searchRes.length == 0){
@@ -113,7 +114,7 @@ function navSetting() {
         $(navActiveLi).removeClass('active');
         navActiveLi = $(this);
         $('.myprofile').show(300);
-        $('')
+        $('.serach-res').hide(300);
         $(navActiveDiv).hide(300);
         navActiveDiv = $('.myprofile');
     });

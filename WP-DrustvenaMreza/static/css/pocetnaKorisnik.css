@@ -276,7 +276,8 @@ background: #ecebeb;
     font-size: 14px;
 }
 
-.center .logout{
+.center .logout,
+.center .login {
     margin-top: 40%;
 }
 
