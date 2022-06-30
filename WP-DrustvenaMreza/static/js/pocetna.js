@@ -3,6 +3,20 @@ let userToShow = null;
 let editUser = false;
 let recievedRequests = null;
 let sentRequests = null;
+let messages = null;
+
+// $(".message").click(function (){
+//         // let username = $(this).attr('data-index');
+//     let username = "mika";
+//     window.sessionStorage.setItem('chatWith', username);
+//     window.location = "chat.html";
+// });
+
+function goToMessages(chatWith){
+    console.log(chatWith);
+    window.sessionStorage.setItem('chatWith', chatWith);
+    window.location = "chat.html";
+}
 
 $(".search-input").keydown(function (event) { 
     if (event.which == 13) { 
@@ -21,7 +35,8 @@ $(".search-input").keydown(function (event) {
             success: function (response) {          
                 if (response.status == "SUCCESS") {
                     $('.searchResult').empty();
-                    $(".myprofile").hide(300);
+                    $(".myprofile").hide(300);  // probaj dok si na logout li da search
+                    $(".logout").hide(300);
                     $(".search-res").show(300);
                     const searchRes = response.data;
                     if (searchRes.length == 0){
@@ -31,6 +46,7 @@ $(".search-input").keydown(function (event) {
                     }
                     
                     for (let i = 0; i < searchRes.length; i++){
+                        if (searchRes[i].uloga === "ADMINISTRATOR") continue;
                         let divRequest = $("<div class='searchItem' data-index='" + searchRes[i].korisnickoIme +"'></div>");
                         let divInfo = $('<div class="info"></div>');
                         let divPhoto = $('<div class="profile-photo"></div>');
@@ -67,9 +83,6 @@ $(".search-input").keydown(function (event) {
                 alert("error show user profile");
             }
         });
-
-
-        
     } 
 });
 
@@ -102,7 +115,7 @@ function navSetting() {
         $(navActiveLi).removeClass('active');
         navActiveLi = $(this);
         $('.myprofile').show(300);
-        $('')
+        $('.serach-res').hide(300);
         $(navActiveDiv).hide(300);
         navActiveDiv = $('.myprofile');
     });
@@ -274,14 +287,17 @@ function fillMutualFriends(friends) {
 
 //  ======================================================= RIGHT =======================================================
 function rightSettings() {
-    $('.messages').hide();
-    $('.requests_li').addClass('active');
+    $('.requests').hide();
+    $('.messages_li').addClass('active');
 
-    let rightActiveLi = $('.requests_li');
-    let rightActiveDiv = $('.requests');
+    let rightActiveLi = $('.messages_li');
+    let rightActiveDiv = $('.messages');
+    
+    fillMessages();
+    bindMessages();
+
     fillRequests();
     bindButtons();
-    //getFriendRequests();
 
     $('.requests_li').click(function () {
         if (rightActiveLi.is(this)) {
@@ -305,7 +321,6 @@ function rightSettings() {
         $(rightActiveDiv).hide(300);
         rightActiveDiv = $('.messages');
     });
-
 }
 
 function fillRequests() {
@@ -335,9 +350,10 @@ function fillRequests() {
 
         divInfo.append(divPhoto);
         divInfo.append(div);
-        divInfo.append(divAction);
 
         divRequest.append(divInfo);
+        divRequest.append(divAction);
+
 
         $('.requests').append(divRequest);
     }
@@ -354,6 +370,46 @@ function bindButtons() {
         });
     }
 }
+
+
+function fillMessages() {
+    for (const message of messages){
+        const user = (message.posiljalac.korisnickoIme === currentUser.korisnickoIme) ? message.primalac : message.posiljalac;
+        let divMessage = $("<div class='message' data-index='" + user.korisnickoIme +"'></div>");
+        let divPhoto = $('<div class="profile-photo"></div>');
+        let picPath = "pics/avatar.png";
+        if (user.profilnaSlika) {
+            if (!user.profilnaSlika.obrisana) {
+                picPath = user.profilnaSlika.putanja;
+            }
+        }
+        let img = $('<img src=' + picPath + '>');
+        divPhoto.append(img);
+        let div = $('<div class="message-body"></div>');
+        let adminClass = (message.withAdmin) ? 'admin' : '';
+        let text = $(`<h4 class=${adminClass}>` + user.ime + ' ' + user.prezime + '</h4>');
+        let you = (message.posiljalac.korisnickoIme === currentUser.korisnickoIme) ? 'You: ' : '';
+        console.log(message.posiljalac);
+        let messagePara = $('<p class="text-muted">' + you + message.poslednjaPoruka + '</p>');
+        div.append(text);
+        div.append(messagePara);
+
+        divMessage.append(divPhoto);
+        divMessage.append(div);
+
+        $('.messages').append(divMessage);
+    }
+}
+
+function bindMessages() {
+    let messages = $('.message');
+    for (let i = 0; i < messages.length; i++){
+        $(messages[i]).click(function () {
+            goToMessages($(this).attr('data-index'));
+        });
+    }
+}
+
 
 function acceptRequest(reqId) {
     $.ajax({
@@ -953,21 +1009,21 @@ function addButtonsForOtherUser() {
     }
     else {
         var removeFriendIcon = $('<i class="fas fa-user-minus remove"></i>');
-        var sendMsgIcon = $('<i class="fas fa-envelope message"></i>');
+        var sendMsgIcon = $('<i class="fas fa-envelope messageIcon"></i>');
         $('.myprofile .name_last_name').append(removeFriendIcon);
         $('.myprofile .name_last_name').append(sendMsgIcon);
 
         $('.remove').unbind().click(function () {
             removeFriend();
         });
-        $('.message').unbind().click(function () {
-            sendMessage();
+        $('.messageIcon').unbind().click(function () {
+            goToMessages(userToShow.korisnickoIme);
         });
     }
 }
 
-function isUserInSentRequests() {  // sentRequests i recieved requests budu null jer se prvo pozove ova funkcija pa  
-    if (!sentRequests) return false;        // tek onda dovuce sa beka zahteve
+function isUserInSentRequests() {
+    if (!sentRequests) return false;
     for (let i = 0; i < sentRequests.length; i++){
         if (sentRequests[i].korisnickoIme == userToShow.korisnickoIme) {
             return true;
@@ -1205,6 +1261,8 @@ $(document).ready(function () {
             currentUser = response.data;
             recievedRequests = response.data.poslatiIPrimljeniZahtevi[0];
             sentRequests = response.data.poslatiIPrimljeniZahtevi[1];
+            messages = response.data.poruke;
+            window.sessionStorage.setItem('currentUser', currentUser.korisnickoIme);
             userToShow = window.sessionStorage.getItem('userToShow');
             if (!userToShow) {
                 userToShow = currentUser;
@@ -1212,14 +1270,18 @@ $(document).ready(function () {
             else {
                 userToShow = JSON.parse(userToShow);
             }
+
+            if (currentUser.uloga == "ADMINISTRATOR"){
+                window.location = "pocetnaAdmin.html";
+            }
+            else if (currentUser.uloga !== "KORISNIK"){
+                window.location = "index.html";
+            }
+
             navSetting();
             leftSettings();
             rightSettings();
             centerSettings();
-            if (currentUser.uloga == "GOST") {
-            }
-            else {
-            }
         },
         error: function (response) {
             alert("You need to login first!");

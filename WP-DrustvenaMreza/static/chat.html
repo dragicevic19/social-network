@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Messages</title>
+<link rel="icon" href="pics/transparency.png" type="image/png">
+<script src="js/jquery.min.js"></script>
+<link rel="stylesheet" href="/css/chat.css">
+</head>
+<body>
+  <div class="wrapper">
+  <header>
+    <nav>
+      <a href="./pocetnaKorisnik.html">Back</a>
+      <label id="title"></label>
+    </nav>
+  </header>
+  <main>
+    <div id="messages"></div>
+  </main>
+  <footer>
+    <form>
+        <input type="text" placeholder="Your message...">
+    </form>
+  </footer>
+  </div>
+    <script>
+        function showMessage(sender,text,isMine = false) {
+          document.getElementById("messages").innerHTML += `
+            <div class="message-row ${isMine?'mine':'theirs'}">
+                <div class="bubble">
+                  <div class="sender">
+                    ${sender}  
+                  </div>
+                  ${text}
+                </div>
+            </div>
+          `;
+        }
+
+        function fillMessages() {
+          document.getElementById("title").innerHTML += ` | Chat with ${chatWith}`;
+
+
+          for(const mess of messages) {
+            if (mess.posiljalac == currentUser){
+              showMessage('You', mess.poruka, true);
+            }
+            else{
+              showMessage(mess.posiljalac, mess.poruka);
+            }
+          }
+        }
+
+        let messages = null;
+        $(document).ready(function () {
+
+          $.ajax({
+              type: "GET",
+              url: `rest/poruke/razgovor?userOne=${window.sessionStorage.getItem('currentUser')}&userTwo=${window.sessionStorage.getItem('chatWith')}`,
+              success: function (response) {
+                  messages = response.data;
+                  fillMessages();
+                  window.scroll(0, document.documentElement.offsetHeight);
+              },
+              error: function (response) {
+                  alert("You need to login first!");
+                  window.location = "index.html";
+              }
+          });
+        });
+
+        const ws = new WebSocket('ws://localhost:8080/ws');
+        const currentUser = window.sessionStorage.getItem('currentUser');
+        const chatWith = window.sessionStorage.getItem('chatWith');
+
+        ws.onmessage = function(msg){
+          let messageParts = msg.data.split('|'); // [0] sender, [1] reciever, [2] text
+          if (messageParts[1] == currentUser && messageParts[0] == chatWith){
+            showMessage(messageParts[0], messageParts[2]);
+            window.scroll(0, document.documentElement.offsetHeight);
+          
+          }
+        }
+        
+        document.querySelector('form').onsubmit = ev => {
+          ev.preventDefault();
+          const input = document.querySelector('input');
+          if (input.value){
+            input.value = currentUser + "|" + chatWith + "|" + input.value;
+            ws.send(input.value);
+            showMessage('You', input.value.split('|')[2], true);
+            saveMessage(input.value);
+            input.value = '';
+            window.scroll(0, document.documentElement.offsetHeight);
+
+          }
+        }
+
+        // ws.addEventListener('message', ev => {
+        //   ev.data.text().then(showMessage);
+        // });
+
+        function saveMessage(message) {
+          data = JSON.stringify({
+            posiljalac: currentUser,
+            primalac: chatWith,
+            poruka: message.split('|')[2]
+          });
+          $.ajax({
+            type: "POST",
+            url: "rest/poruke",
+            data: data,
+            contentType: 'application/json',
+          success: function (response) {
+            if (response.status == "SUCCESS") {
+            }
+            else {
+                alert("error saveMessaeg " + response.message);
+            }
+          },
+          error: function (response) {
+            alert("You need to login first!");
+            window.location = "index.html";
+          }
+          });
+        }
+    </script>
+</body>
+</html>

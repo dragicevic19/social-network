@@ -9,6 +9,7 @@ public class Test {
 		KomentariDAO komentariDAO = new KomentariDAO(dataPath, korisniciDAO);
 		ObjaveDAO objaveDAO = new ObjaveDAO(dataPath, korisniciDAO, komentariDAO);
 		ZahteviDAO zahteviDAO = new ZahteviDAO(dataPath, korisniciDAO);
+		
 
 		slikeDAO.ispisiSve();
 		korisniciDAO.ispisiSve();

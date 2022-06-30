@@ -17,24 +17,23 @@
                 </div>
                 <div class="tabs">
                     <ul>
-                        <li class="myprofile_li">My Profile</li>
-                        <li class="logout_li">Log Out</li>
+                      <li class="login_li">Login / Register</li>
                     </ul>
                 </div>
             </div>
         </nav>
         <div class="wrapper">
             <div class="left">
-                <div class="tabs">
+                <!-- <div class="tabs">
                     <ul>
                         <li class="friends_li">My Friends</li>
                         <!-- <li class="mutual_friends_li">Mutual friends</li> -->
-                    </ul>
+                    <!-- </ul>
                 </div>
                 <div class="friends_content">
                     <div class="friends"></div>
                     <div class="mutuals"></div>
-                </div>
+                </div> --> 
             </div>
             
             <div class="center">
@@ -54,10 +53,6 @@
                     </div>
                     <div class="center_content">
                         <div class="about">
-                            <div class="input_field email">
-                                <p>E-Mail</p><input type="text" placeholder="E-mail" class="input" name="email">
-                                <p class="error" id="email"></p>
-                            </div>
                             <div class="input_field">
                                 <p>Name</p><input type="text" placeholder="Name" class="input" name="name">
                                 <p class="error" id="name"></p>
@@ -69,37 +64,6 @@
                             <div class="input_field">
                                 <p>Birthday</p><input type="date" placeholder="Birthday" class="input" name="birthday">
                                 <p class="error" id="date"></p>
-                            </div>
-                            <div class="btnChanges">
-                                <button class="btn btn-primary" id="saveChangesBtn">
-                                    <p>Save Changes</p>
-                                </button>
-                                <button class="btn" id="changePasswordBtn">
-                                    <p>Change Password</p>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="passChange">
-                            <div class="input_field">
-                                <p>Current Password</p><input type="password" placeholder="Password" class="input" name="password">
-                                    <p class="error" id="currPass"></p>
-                            </div>
-                            <div class="input_field">
-                                <p>New Password</p><input type="password" placeholder="Password" class="input" name="newPassword">
-                                <p class="error" id="newPass"></p>
-                            </div>
-                            <div class="input_field">
-                                <p>Confirm Password</p><input type="password" placeholder="Password" class="input" name="repPassword">
-                                <p class="error" id="repPass"></p>
-                            </div>
-                            <div class="btnChanges">
-                                <button class="btn btn-primary" id="savePassChangesBtn">
-                                    <p>Save Password Changes</p>
-                                </button>
-                                <button class="btn" id="backBtn">
-                                    <p>BACK</p>
-                                </button>
                             </div>
                         </div>
 
@@ -128,14 +92,11 @@
                         </div>
                         </div>
                 </div>
-                <div class="logout">
-                    <h2>Are you sure you want to log out?</h2>
+                <div class="login">
+                    <h2 style="margin-bottom: 10px;">Do you want more? Register on SocialNetwork!</h2>
                     <div class="yesNoBtns">
                         <button class="btn btn-primary" id="btnYes">
-                            <p>LOGOUT</p>
-                        </button>
-                        <button class="btn" id="btnNo">
-                            <p>CANCEL</p>
+                            <p>REGISTER</p>
                         </button>
                     </div>
                     
@@ -145,7 +106,7 @@
 
 
             <div class="right">
-                <div class="tabs">
+                <!-- <div class="tabs">
                     <ul>
                         <li class="requests_li">Requests</li>
                         <li class="messages_li">Messages</li>
@@ -158,12 +119,12 @@
                     <div class="messages">
                         <!-- Filled in JS -->
                     </div>
-                </div>
+                </div> -->
             </div>
 
         </div>
     <script src="js/jquery.min.js"></script>
     <script src="js/toast.js"></script>
-    <script src="js/pocetna.js"></script>
+    <script src="js/gost.js"></script>
     </body>
 </html>

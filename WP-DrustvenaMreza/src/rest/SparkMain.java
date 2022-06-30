@@ -1,6 +1,7 @@
 package rest;
 
 import static spark.Spark.staticFiles;
+import static spark.Spark.webSocket;
 import static spark.Spark.port;
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -12,8 +13,10 @@ import java.io.IOException;
 import dao.KomentariDAO;
 import dao.KorisnikDAO;
 import dao.ObjaveDAO;
+import dao.PorukeDAO;
 import dao.SlikeDAO;
 import dao.ZahteviDAO;
+import ws.WsHandler;
 
 public class SparkMain {
 	static String dataPath = "./static/data";
@@ -22,14 +25,17 @@ public class SparkMain {
 	private static KomentariDAO komentariDAO = new KomentariDAO(dataPath, korisniciDAO);
 	private static ObjaveDAO objaveDAO = new ObjaveDAO(dataPath, korisniciDAO, komentariDAO);
 	private static ZahteviDAO zahteviDAO = new ZahteviDAO(dataPath, korisniciDAO);
+	private static PorukeDAO porukeDAO = new PorukeDAO(dataPath, korisniciDAO);
 
 	public static void main(String[] args) throws IOException {
 		port(8888);
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
+		
+		webSocket("/ws", WsHandler.class);
 
 		post("/rest/korisnici/register", (req, res) -> KorisniciApi.register(req, res, korisniciDAO));
 
-		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res, zahteviDAO));
+		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res, zahteviDAO, porukeDAO, korisniciDAO));
 
 		post("/rest/korisnici/login", (req, res) -> KorisniciApi.login(req, res, korisniciDAO));
 		
@@ -68,5 +74,14 @@ public class SparkMain {
 		put("rest/objave/delete", (req, res) -> ObjaveApi.deleteObjava(req, res, objaveDAO));
 		
 		post("/rest/komentari/newPost", (req, res) -> ObjaveApi.newObjava(req, res, objaveDAO, korisniciDAO));
+		
+		post("rest/poruke" , (req, res) -> PorukeApi.newMessage(req, res, porukeDAO, korisniciDAO));
+		
+		get("rest/poruke/razgovor", (req, res) -> PorukeApi.getChat(req, res, porukeDAO, korisniciDAO));
+		
+		put("rest/korisnici/block", (req, res) -> KorisniciApi.block(req, res, korisniciDAO));
+		
+		put("rest/korisnici/unblock", (req, res) -> KorisniciApi.unblock(req, res, korisniciDAO));
+
 	}
 }

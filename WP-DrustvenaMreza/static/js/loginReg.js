@@ -154,19 +154,5 @@ function login() {
 }
 
 function guestLogin() {
-    var data = JSON.stringify({
-        uloga: "GOST"
-    });
-    $.ajax({
-        type: "POST",
-        url: '/rest/korisnici/login',
-        data: data,
-        contentType: 'application/json',
-        success: function (response) {
-            if (response.status == "SUCCESS")
-                window.location = "pocetna.html";
-            else 
-                toast("Error");   
-        }
-    });
+    window.location = "pocetnaGost.html";
 }

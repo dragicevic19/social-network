@@ -1,13 +1,19 @@
 package rest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import beans.Korisnik;
+import beans.Pol;
 import beans.Status;
+import beans.Uloga;
 import beans.ZahtevZaPrijateljstvo;
 import dao.KorisnikDAO;
+import dao.ZahteviDAO;
+import dto.RegistracijaKorisnikDTO;
 
 public class KorisniciService {
 
@@ -17,15 +23,38 @@ public class KorisniciService {
 	public static Korisnik login(String kIme, String lozinka, KorisnikDAO korisniciDAO) {
 		HashMap<String, Korisnik> korisnici = korisniciDAO.getKorisnici();
 		if (korisnici.containsKey(kIme) && korisnici.get(kIme).getLozinka().equals(lozinka)) {
-			return korisnici.get(kIme);
+			Korisnik k = korisnici.get(kIme);
+			if (k.isBlokiran()) return null;
+			return k;
 		} else {
 			return null;
 		}
 	}
 
-	public static Korisnik register(Korisnik k, KorisnikDAO korisniciDAO) {
-		return korisniciDAO.sacuvaj(k);
-		// u funkciji sacuvaj() se proverava da li vec postoji username
+	public static Korisnik register(RegistracijaKorisnikDTO k, KorisnikDAO korisniciDAO) {
+		Korisnik newUser = new Korisnik();
+		newUser.setEmail(k.getEmail());
+		newUser.setIme(k.getIme());
+		newUser.setPrezime(k.getPrezime());
+		newUser.setKorisnickoIme(k.getKorisnickoIme());
+		newUser.setLozinka(k.getLozinka());
+		newUser.setPol(Pol.valueOf(k.getPol()));
+		newUser.setUloga(Uloga.valueOf(k.getUloga()));
+		newUser.setObrisan(false);
+		newUser.setPrivatan(false);
+		newUser.setObjave(new ArrayList<>());
+		newUser.setPrijatelji(new ArrayList<>());
+		newUser.setZahteviZaPrijateljstvo(new ArrayList<>());
+		newUser.setSlike(new ArrayList<>());
+		try {
+			newUser.setDatumRodjenja(new SimpleDateFormat("dd/MM/yyyy").parse("01/01/1970"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return korisniciDAO.sacuvaj(newUser);
+		// u funkciji sacuvaj() se proverava da li vec postoji username i email
 	}
 
 	public static Korisnik changePassword(Korisnik k, KorisnikDAO korisniciDAO) {
@@ -34,6 +63,7 @@ public class KorisniciService {
 			return null;
 		}
 		korisnik.setLozinka(k.getLozinka()); // sacuvaj u bazu
+		korisniciDAO.upisiUFajl();
 		return korisnik;
 	}
 
@@ -45,15 +75,19 @@ public class KorisniciService {
 		korisnik.setIme(k.getIme());
 		korisnik.setPrezime(k.getPrezime());
 		korisnik.setDatumRodjenja(k.getDatumRodjenja());
+		korisniciDAO.upisiUFajl();
 		return korisnik;
 	}
 
-	public static void acceptRequest(ZahtevZaPrijateljstvo zahtev) {
+	public static void acceptRequest(ZahtevZaPrijateljstvo zahtev, KorisnikDAO korisniciDAO, ZahteviDAO zahteviDAO) {
 		Korisnik primalac = zahtev.getPrimalac();
 		Korisnik posiljalac = zahtev.getPosiljalac();
 		zahtev.setStatus(Status.PRIHVACENO);
 		primalac.getPrijatelji().add(posiljalac.getKorisnickoIme());
 		posiljalac.getPrijatelji().add(primalac.getKorisnickoIme());
+		
+		zahteviDAO.sacuvajUFajl();
+		korisniciDAO.upisiUFajl();
 	}
 
 	public static List<Korisnik> getFriendsForUser(String username, KorisnikDAO korisniciDAO) {
@@ -94,6 +128,8 @@ public class KorisniciService {
 		k1.getPrijatelji().remove(k2.getKorisnickoIme());
 		k2.getPrijatelji().remove(k1.getKorisnickoIme());
 
+		korisniciDAO.upisiUFajl();
+		
 		return true;
 	}
 
@@ -105,6 +141,17 @@ public class KorisniciService {
 		}
 		
 		return searchRes;
+	}
+
+	public static void block(Korisnik k, KorisnikDAO korisniciDAO) {
+		k.setBlokiran(true);
+		korisniciDAO.upisiUFajl();
+		
+	}
+
+	public static void unblock(Korisnik k, KorisnikDAO korisniciDAO) {
+		k.setBlokiran(false);
+		korisniciDAO.upisiUFajl();
 	}
 
 }

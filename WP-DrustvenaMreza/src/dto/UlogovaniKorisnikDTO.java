@@ -27,11 +27,11 @@ public class UlogovaniKorisnikDTO {
 	private boolean obrisan;
 
 	private List<List<ZahtevDTO>> poslatiIPrimljeniZahtevi;
-	
+	private List<GrupisanePorukeDTO> poruke;
 	
 	public UlogovaniKorisnikDTO() {}
 
-	public UlogovaniKorisnikDTO(Korisnik korisnik, List<List<ZahtevDTO>> zahtevi) {
+	public UlogovaniKorisnikDTO(Korisnik korisnik, List<List<ZahtevDTO>> zahtevi, List<GrupisanePorukeDTO> poruke) {
 		this.korisnickoIme = korisnik.getKorisnickoIme();
 		this.lozinka = korisnik.getLozinka();
 		this.email = korisnik.getEmail();
@@ -49,6 +49,7 @@ public class UlogovaniKorisnikDTO {
 		this.obrisan = korisnik.isObrisan();
 		
 		this.poslatiIPrimljeniZahtevi = zahtevi;
+		this.poruke = poruke;
 	}
 
 }

@@ -1,8 +1,12 @@
 package dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import beans.DirektnaPoruka;
 import beans.Korisnik;
 import beans.Objava;
 import beans.Pol;
@@ -22,6 +27,8 @@ public class KorisnikDAO {
 
 	private HashMap<String, Korisnik> korisnici = new HashMap<String, Korisnik>();
 	private SlikeDAO slikeDAO;
+	private String contextPath;
+	DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
 	public KorisnikDAO() {
 	}
@@ -47,17 +54,91 @@ public class KorisnikDAO {
 		return korisnici.containsKey(kIme) ? korisnici.get(kIme) : null;
 	}
 
-	public Korisnik sacuvaj(Korisnik korisnik) {
-		if (korisnici.containsKey(korisnik.getKorisnickoIme())) {
-			return null; // greska
+	public Korisnik pronadjiKorisnikaPoEmail(String email) {
+		for (Korisnik k : korisnici.values()) {
+			if (k.getEmail().equalsIgnoreCase(email))
+				return k;
 		}
+		return null;
+	}
+
+	public Korisnik sacuvaj(Korisnik korisnik) {
+		if (korisnici.containsKey(korisnik.getKorisnickoIme()))
+			return null;
+
+		if (pronadjiKorisnikaPoEmail(korisnik.getEmail()) != null)
+			return null;
+
 		korisnici.put(korisnik.getKorisnickoIme(), korisnik);
 
-		// DODAJ U FAJL
-		return korisnik; // ok
+		return upisiUFajl() ? korisnik : null;
+	}
+
+	public boolean upisiUFajl() {
+		try {
+			File csvFile = new File(contextPath + "/korisnici.csv");
+			Writer upis = new BufferedWriter(new FileWriter(csvFile, false));
+
+			for (Korisnik k : korisnici.values()) {
+				upis.append(k.getKorisnickoIme());
+				upis.append(";");
+				upis.append(k.getLozinka());
+				upis.append(";");
+				upis.append(k.getEmail());
+				upis.append(";");
+				upis.append(k.getIme());
+				upis.append(";");
+				upis.append(k.getPrezime());
+				upis.append(";");
+				upis.append(df.format(k.getDatumRodjenja()));
+				upis.append(";");
+				upis.append(k.getPol().name());
+				upis.append(";");
+				upis.append(k.getUloga().name());
+				upis.append(";");
+				upis.append((k.getPrijatelji().size() == 0) ? "/" : String.join(",", k.getPrijatelji()));
+				upis.append(";");
+				upis.append((k.getProfilnaSlika() == null) ? "/" : k.getProfilnaSlika().getId());
+				upis.append(";");
+				if (k.getSlike().size() == 0) {
+					upis.append("/");
+				} else {
+					String slike = "";
+					for (Slika slika : k.getSlike()) {
+						slike += slika.getId() + ",";
+					}
+					slike = slike.substring(0, slike.length() - 1);
+					upis.append(slike);
+				}
+				upis.append(";");
+
+				upis.append((k.getObjave().size() == 0) ? "/" : String.join(",", k.getObjave()));
+				upis.append(";");
+
+				upis.append((k.getZahteviZaPrijateljstvo().size() == 0) ? "/"
+						: String.join(",", k.getZahteviZaPrijateljstvo()));
+				upis.append(";");
+
+				upis.append(String.valueOf(k.isPrivatan()));
+				upis.append(";");
+				upis.append(String.valueOf(k.isObrisan()));
+				upis.append(";");
+				upis.append(String.valueOf(k.isBlokiran()));
+				upis.append("\n");
+			}
+
+			upis.flush();
+			upis.close();
+
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	private void ucitajKorisnike(String contextPath) {
+		this.contextPath = contextPath;
 		BufferedReader in = null;
 		try {
 			File file = new File(contextPath + "/korisnici.csv");
@@ -65,19 +146,19 @@ public class KorisnikDAO {
 			in = new BufferedReader(new FileReader(file));
 			String line, korisnickoIme = "", lozinka = "", email = "", ime = "", prezime = "", sPol = "", sUloga = "",
 					idProfilnaSlika = "", idSvihSlika = "", idObjava = "", idZahteva = "", kImePrijatelja = "",
-					privatan = "", obrisan = "";
+					privatan = "", obrisan = "", blokiran = "";
 
 			Date datumRodjenja = null;
 			Pol pol = null;
 			Uloga uloga = null;
 			Slika profilnaSlika = new Slika();
-			List<Slika> slike = new ArrayList<Slika>();
 			StringTokenizer st;
 
 			while ((line = in.readLine()) != null) {
 				List<String> prijatelji = new ArrayList<String>();
 				List<String> objave = new ArrayList<String>();
 				List<String> zahtevi = new ArrayList<String>();
+				List<Slika> slike = new ArrayList<Slika>();
 
 				line = line.trim();
 				if (line.equals("") || line.indexOf('#') == 0)
@@ -99,10 +180,13 @@ public class KorisnikDAO {
 					idZahteva = st.nextToken().trim();
 					privatan = st.nextToken().trim();
 					obrisan = st.nextToken().trim();
+					blokiran = st.nextToken().trim();
 					pol = Pol.valueOf(sPol);
 					uloga = Uloga.valueOf(sUloga);
 
-					slike = slikeDAO.pronadjiSlike(idSvihSlika);
+					if (!idSvihSlika.equals("/"))
+						slike = slikeDAO.pronadjiSlike(idSvihSlika);
+					
 					profilnaSlika = slikeDAO.pronadjiSliku(idProfilnaSlika);
 
 					// lista prijatelja ce biti lista
@@ -119,7 +203,7 @@ public class KorisnikDAO {
 				korisnici.put(korisnickoIme,
 						new Korisnik(korisnickoIme, lozinka, email, ime, prezime, datumRodjenja, pol, uloga,
 								profilnaSlika, objave, slike, zahtevi, prijatelji, Boolean.parseBoolean(privatan),
-								Boolean.parseBoolean(obrisan)));
+								Boolean.parseBoolean(obrisan), Boolean.parseBoolean(blokiran)));
 			}
 
 		} catch (Exception e) {
@@ -180,7 +264,8 @@ public class KorisnikDAO {
 
 	public List<Korisnik> pronadjiPrijateljeZaKorisnika(Korisnik k) {
 		List<Korisnik> retList = new ArrayList<Korisnik>();
-		if (k.getPrijatelji() == null) return retList;
+		if (k.getPrijatelji() == null)
+			return retList;
 		for (String kIme : k.getPrijatelji()) {
 			retList.add(korisnici.get(kIme));
 		}
