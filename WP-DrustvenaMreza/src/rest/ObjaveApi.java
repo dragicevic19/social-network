@@ -10,6 +10,7 @@ import beans.Korisnik;
 import beans.Objava;
 import dao.KorisnikDAO;
 import dao.ObjaveDAO;
+import dto.KomentariDTO;
 import spark.Request;
 import spark.Response;
 
@@ -40,5 +41,19 @@ public class ObjaveApi {
 		Objava objava = objaveDAO.pronadjiObjavu(objavaID);
 		
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(objava)));
+	}
+
+	public static Object deleteObjava(Request req, Response res, ObjaveDAO objaveDAO) {
+		res.type("application/json");
+		Objava objava = g.fromJson(req.body(), Objava.class);
+		Objava modObj = objaveDAO.pronadjiObjavu(objava.getId());
+		modObj.setObrisana(true);
+		
+		modObj = ObjaveService.update(modObj, objaveDAO);
+		if (modObj != null) {
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(modObj)));
+		} else {
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
+		}
 	}
 }

@@ -556,34 +556,37 @@ function fillPostInformation(objave){
     let btnNewPost = $('<button class="btn makePostBtn" >Make Post</button>');
     $('.posts').append(btnNewPost);
     for (let i = 0; i < objave.length; i++){
-        let divRequest = $("<div class='post' data-index='" + objave[i] +"'></div>");
-        let divInfo = $('<div class="info"></div>');
-        let divPhoto = $('<div class="photo"></div>');
-        let picPath = "pics/search.ico";
-        if (objave[i].slika) {
+        if(!objave[i].obrisana){
+            let divRequest = $("<div class='post' data-index='" + objave[i] +"'></div>");
+            let divInfo = $('<div class="info"></div>');
+            let divPhoto = $('<div class="photo"></div>');
+            let picPath = "pics/search.ico";
+            if (objave[i].slika) {
 
-            picPath = objave[i].slika;
+                picPath = objave[i].slika;
 
+            }
+            let img = $('<img src=' + picPath + '>');
+            divPhoto.append(img);
+            let div = $('<div></div>');
+            let text = $('<p class="text-muted">' + objave[i].tekst + '</p>');
+            div.append(text);
+
+            let divAction = $('<div class="action"></div>');
+            let btnShow = $('<button class="btn btn-primary showBtn" data-index=' + objave[i].id + '>Show</button>');
+            let btnDelete = $('<button class="btn deleteBtn" data-index='+ objave[i].id +'>Delete</button>');
+            divAction.append(btnShow);
+            divAction.append(btnDelete);
+
+            divInfo.append(divPhoto);
+            divInfo.append(div);
+            divInfo.append(divAction);
+
+            divRequest.append(divInfo);
+
+            $('.posts').append(divRequest);
         }
-        let img = $('<img src=' + picPath + '>');
-        divPhoto.append(img);
-        let div = $('<div></div>');
-        let text = $('<p class="text-muted">' + objave[i].tekst + '</p>');
-        div.append(text);
-
-        let divAction = $('<div class="action"></div>');
-        let btnShow = $('<button class="btn btn-primary showBtn" data-index=' + objave[i].id + '>Show</button>');
-        let btnDelete = $('<button class="btn deleteBtn" data-index='+ objave[i].id +'>Delete</button>');
-        divAction.append(btnShow);
-        divAction.append(btnDelete);
-
-        divInfo.append(divPhoto);
-        divInfo.append(div);
-        divInfo.append(divAction);
-
-        divRequest.append(divInfo);
-
-        $('.posts').append(divRequest);
+        
     }
 }
 
@@ -599,9 +602,38 @@ function bindButtonsPosts() {
             $(".deleteBtn").hide();
         };
         $(posts[i]).find(".deleteBtn").click(function () {
-            console.log("Secoind ALLERTSESES");
+            deletePost(this.getAttribute('data-index'));
+            console.log("Secoind ALLERTSESES" + this.getAttribute('data-index'));
         });
     }
+}
+
+function deletePost(objavaID)
+{
+    let kObjava = objavaID;
+    var data = JSON.stringify({
+
+        id: kObjava,
+    });
+    $.ajax({
+        type: "PUT",
+        url: "rest/objave/delete",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "SUCCESS") {
+                alert("Objava deleted sucksefully!");
+                window.location = window.location;
+            }
+            else {
+                alert(response.message);
+            }
+        },
+        error: function (response) {
+            console.log(data);
+            alert("smolPP");
+        }
+    });
 }
 function showPost(postId) {
         $.ajax({
@@ -730,12 +762,12 @@ function deleteComment(objavaID, kommID)
     });
     $.ajax({
         type: "PUT",
-        url: "rest/komentari/update",
+        url: "rest/komentari/delete",
         data: data,
         contentType: 'application/json',
         success: function (response) {
             if (response.status == "SUCCESS") {
-                alert("Informations are updated successfully!");
+                alert("Comment Deleted Succkseffuly");
                 window.location = window.location;
             }
             else {

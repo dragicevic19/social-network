@@ -12,9 +12,15 @@ public class ObjaveService {
 			
 		}
 		
-		public static Objava update()
+		public static Objava update(Objava objava, ObjaveDAO objaveDAO)
 		{
-			return null;
+			Objava upObj = objaveDAO.pronadjiObjavu(objava.getId());
+			upObj.setKomentari(objava.getKomentari());
+			upObj.setKorisnik(objava.getKorisnik());
+			upObj.setObrisana(objava.isObrisana());
+			upObj.setSlika(objava.getSlika());
+			upObj.setTekst(objava.getTekst());
+			return upObj;
 			
 		}
 		

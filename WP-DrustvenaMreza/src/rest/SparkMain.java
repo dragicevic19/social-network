@@ -63,6 +63,8 @@ public class SparkMain {
 		
 		post("/rest/komentari/newComment", (req, res) -> KomentariApi.postKomment(req, res, komentariDAO, korisniciDAO, objaveDAO));
 		
-		put("rest/komentari/update", (req, res) -> KomentariApi.updateComment(req, res, komentariDAO));
+		put("rest/komentari/delete", (req, res) -> KomentariApi.deleteComment(req, res, komentariDAO));
+		
+		put("rest/objave/delete", (req, res) -> ObjaveApi.deleteObjava(req, res, objaveDAO));
 	}
 }

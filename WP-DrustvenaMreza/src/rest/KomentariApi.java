@@ -32,7 +32,7 @@ public class KomentariApi {
 			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
 		}
 	}
-	public static Object updateComment(Request req, Response res, KomentariDAO komentariDAO) {
+	public static Object deleteComment(Request req, Response res, KomentariDAO komentariDAO) {
 		res.type("application/json");
 		KomentariDTO k = g.fromJson(req.body(), KomentariDTO.class);
 		Komentar kom = komentariDAO.pronadjiKomentar(k.getId());
