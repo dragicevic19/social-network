@@ -127,7 +127,6 @@ function leftSettings() {
     let leftActiveLi = $('.friends_li');
     let leftActiveDiv = $('.friends');
     $('.mutuals').hide();
-    console.log("Banana");
     if (currentUser == userToShow) {
         getFriends(currentUser);
         return;
@@ -435,7 +434,6 @@ function centerSettings() {
 
     let centerActiveLi = $('.about_li');
     let centerActiveDiv = $('.about');
-    console.log("Banana");
     getPosts(userToShow);
     
     fillInformationsAboutUser();
@@ -532,8 +530,12 @@ function centerSettings() {
 }
 function wipePost(){
     let element = document.getElementById('showingPosts');
+    let element2 = document.getElementById('makingPostsLet');
     if (element){
         element.remove();
+    }
+    if(element2){
+        element2.remove();
     }
     
 }
@@ -591,8 +593,16 @@ function fillPostInformation(objave){
 }
 
 function bindButtonsPosts() {
+    let postGlobal = $('.posts');
+    if (currentUser.korisnickoIme != userToShow.korisnickoIme)
+    {
+        $('.makePostBtn').hide();
+    }
+    postGlobal.find(".makePostBtn").click(function() {
+        makePost();
+        bindMakePostBtn();
+    })
     let posts = $('.post');
-    console.log("ALLERTSESES");
     for (let i = 0; i < posts.length; i++){
         $(posts[i]).find(".showBtn").click(function () {
 
@@ -603,11 +613,89 @@ function bindButtonsPosts() {
         };
         $(posts[i]).find(".deleteBtn").click(function () {
             deletePost(this.getAttribute('data-index'));
-            console.log("Secoind ALLERTSESES" + this.getAttribute('data-index'));
         });
     }
 }
 
+function makePost(){
+    $('.posts').hide(300);
+    let divRequest = $('<div class="makingPost" ></div>');
+    let divInfo = $('<div class="info"></div>');
+    let divPathMsg = $('<p>Picture Path</p>')
+    let divPhoto = $('<input type="text" placeholder="Picture Path" class="input_pp" name="picturePath">');
+
+    divInfo.append(divPathMsg);
+    divInfo.append(divPhoto);
+
+    let divAction = $('<div class="action"></div>');
+    let textField = $('<textarea id="makePostID" name="makePostID" class="makePost" rows="4" cols="50" placeholder="Enter Post">');
+    let btnPost = $('<button class="btn postPostBtn" >Post</button>');
+    let btnBack = $('<button class="btn backPostBtn" >Back</button>');
+    divAction.append(textField);
+    divAction.append(btnPost);
+    divAction.append(btnBack);
+
+    divRequest.append(divInfo);
+    divRequest.append(divAction);
+
+    let singlePost = $('<div id="makingPostsLet" class="makingPostLet"></div>');
+
+    singlePost.append(divRequest);
+    singlePost.addClass('centerPostStyle');
+    $('.center_content').append(singlePost);
+
+}
+
+function bindMakePostBtn(){
+    let postGlobal = $('.makingPostLet');
+    postGlobal.find(".postPostBtn").click(function() {
+        postMadePost();
+    })
+    postGlobal.find('.backPostBtn').click(function(){
+        goBackToPosts();
+    
+    })
+}
+
+function postMadePost(){
+    let postText = $('textarea#makePostID').val();
+    let greska = false;
+
+    if (!postText) {
+        greska = true;
+        alert("Post text cant be empty!");
+    }
+
+    let postPic = $('input[name="picturePath"').val();
+    console.log(postPic);
+
+    if (greska) return;
+    console.log(postText);
+    let kIme = currentUser.korisnickoIme;
+
+    var data = JSON.stringify({
+        slika: postPic,
+        tekst: postText,
+        korsinickoIme: kIme,
+    });
+
+    $.ajax({
+        type: "POST",
+        url: "/rest/komentari/newPost",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "ERROR") {
+                alert("Failed to make post");
+                window.location = window.location;
+            }
+            else {
+                alert("Post posted!")
+                window.location = window.location;
+            }
+        }
+    });
+}
 function deletePost(objavaID)
 {
     let kObjava = objavaID;
@@ -675,14 +763,16 @@ function showSpecificPost(objava){
     divAction.append(btnPost);
     divAction.append(btnBack);
 
-    let profilePicPath = "pics/avatar.png"
+    
     let divKomentari = $('<div class="comments"></div>');
     for (let i = 0; i < objava.komentari.length; i++){
+
         if (objava.komentari[i]){
             if (!objava.komentari[i].obrisan)
-        {
+        {   
+            let profilePicPath = "pics/avatar.png"
             let divInfo = $('<div class="info"></div>');
-            if (objava.komentari[i].korisnik.profilnaSlika.putanja){
+            if (objava.komentari[i].korisnik.profilnaSlika){
                 profilePicPath = objava.komentari[i].korisnik.profilnaSlika.putanja;
             }
 
@@ -1122,7 +1212,6 @@ $(document).ready(function () {
             else {
                 userToShow = JSON.parse(userToShow);
             }
-            console.log("Banana Ultima");
             navSetting();
             leftSettings();
             rightSettings();

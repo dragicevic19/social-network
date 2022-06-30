@@ -4,7 +4,9 @@ import java.util.List;
 
 import beans.Komentar;
 import beans.Objava;
+import dao.KorisnikDAO;
 import dao.ObjaveDAO;
+import dto.ObjavaDTO;
 
 public class ObjaveService {
 
@@ -32,5 +34,16 @@ public class ObjaveService {
 			objava.setKomentari(komentari);
 			return objava;
 			
+		}
+
+		public static Objava makePost(ObjavaDTO objavaDTO, ObjaveDAO objaveDAO, KorisnikDAO korisnikDAO) {
+			Objava objava = new Objava();
+			objava.setKorisnik(korisnikDAO.pronadjiKorisnika(objavaDTO.getKorisnickoIme()));
+			objava.setObrisana(false);
+			objava.setSlika(objavaDTO.getSlika());
+			objava.setTekst(objavaDTO.getTekst());
+			objaveDAO.sacuvaj(objava, korisnikDAO);
+			
+			return objava;
 		}
 }

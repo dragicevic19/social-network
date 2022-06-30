@@ -11,6 +11,7 @@ import beans.Objava;
 import dao.KorisnikDAO;
 import dao.ObjaveDAO;
 import dto.KomentariDTO;
+import dto.ObjavaDTO;
 import spark.Request;
 import spark.Response;
 
@@ -52,6 +53,17 @@ public class ObjaveApi {
 		modObj = ObjaveService.update(modObj, objaveDAO);
 		if (modObj != null) {
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(modObj)));
+		} else {
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
+		}
+	}
+
+	public static Object newObjava(Request req, Response res, ObjaveDAO objaveDAO, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		ObjavaDTO objavaDTO = g.fromJson(req.body(), ObjavaDTO.class);
+		Objava objava = ObjaveService.makePost(objavaDTO, objaveDAO, korisniciDAO);
+		if (objava != null) {
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(objava)));
 		} else {
 			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
 		}
