@@ -255,7 +255,24 @@ nav .tabs ul li.active{
 {
     font-size: 18px;
 }
-  
+
+.center .posts{
+    height: 500px;
+    overflow: auto;
+}
+.center .posts .post{
+    border-bottom: 2px solid black;r
+}
+
+.center .posts .post .action{
+    float: right;
+}
+
+.centerPostStyle{
+    height: 500px;
+    overflow: auto;
+
+}
 .center .input_field .input{
 margin-left: 30px;
 width: 50%;

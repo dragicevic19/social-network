@@ -490,12 +490,15 @@ function centerSettings() {
 
     let centerActiveLi = $('.about_li');
     let centerActiveDiv = $('.about');
+    getPosts(userToShow);
+    
     fillInformationsAboutUser();
 
     $('.about_li').click(function () {
         if (centerActiveLi.is(this)) {
             return;
         }
+        wipePost()
         $(this).addClass('active');
         $(centerActiveLi).removeClass('active');
         centerActiveLi = $(this);
@@ -509,17 +512,20 @@ function centerSettings() {
         if (centerActiveLi.is(this)) {
             return;
         }
+
         $(this).addClass('active');
         $(centerActiveLi).removeClass('active');
         centerActiveLi = $(this);
         $('.posts').show(300);
         $(centerActiveDiv).hide(300);
         centerActiveDiv = $('.posts');
+
     });
     $('.photos_li').click(function () {
         if (centerActiveLi.is(this)) {
             return;
         }
+        wipePost()
         $(this).addClass('active');
         $(centerActiveLi).removeClass('active');
         centerActiveLi = $(this);
@@ -577,6 +583,388 @@ function centerSettings() {
     $("#btnNo").click(function () {
         $('.myprofile_li').click();
     });
+}
+function wipePost(){
+    let element = document.getElementById('showingPosts');
+    let element2 = document.getElementById('makingPostsLet');
+    if (element){
+        element.remove();
+    }
+    if(element2){
+        element2.remove();
+    }
+    
+}
+function getPosts(user){
+    $.ajax({
+        type: "GET",
+        url: "rest/objave/getObjave?username=" + user.korisnickoIme,
+        success: function (response) {
+            let objave = response.data;
+            fillPostInformation(objave);
+            bindButtonsPosts();
+
+        },
+        error: function (response) {
+            alert("error in fetching objave");
+        }
+})
+}
+function fillPostInformation(objave){
+    let btnNewPost = $('<button class="btn makePostBtn" >Make Post</button>');
+    $('.posts').append(btnNewPost);
+    for (let i = 0; i < objave.length; i++){
+        if(!objave[i].obrisana){
+            let divRequest = $("<div class='post' data-index='" + objave[i] +"'></div>");
+            let divInfo = $('<div class="info"></div>');
+            let divPhoto = $('<div class="photo"></div>');
+            let picPath = "pics/search.ico";
+            if (objave[i].slika) {
+
+                picPath = objave[i].slika;
+
+            }
+            let img = $('<img src=' + picPath + '>');
+            divPhoto.append(img);
+            let div = $('<div></div>');
+            let text = $('<p class="text-muted">' + objave[i].tekst + '</p>');
+            div.append(text);
+
+            let divAction = $('<div class="action"></div>');
+            let btnShow = $('<button class="btn btn-primary showBtn" data-index=' + objave[i].id + '>Show</button>');
+            let btnDelete = $('<button class="btn deleteBtn" data-index='+ objave[i].id +'>Delete</button>');
+            divAction.append(btnShow);
+            divAction.append(btnDelete);
+
+            divInfo.append(divPhoto);
+            divInfo.append(div);
+            divInfo.append(divAction);
+
+            divRequest.append(divInfo);
+
+            $('.posts').append(divRequest);
+        }
+        
+    }
+}
+
+function bindButtonsPosts() {
+    let postGlobal = $('.posts');
+    if (currentUser.korisnickoIme != userToShow.korisnickoIme)
+    {
+        $('.makePostBtn').hide();
+    }
+    postGlobal.find(".makePostBtn").click(function() {
+        makePost();
+        bindMakePostBtn();
+    })
+    let posts = $('.post');
+    for (let i = 0; i < posts.length; i++){
+        $(posts[i]).find(".showBtn").click(function () {
+
+            showPost(this.getAttribute("data-index"));
+        });
+        if (currentUser.korisnickoIme != userToShow.korisnickoIme){
+            $(".deleteBtn").hide();
+        };
+        $(posts[i]).find(".deleteBtn").click(function () {
+            deletePost(this.getAttribute('data-index'));
+        });
+    }
+}
+
+function makePost(){
+    $('.posts').hide(300);
+    let divRequest = $('<div class="makingPost" ></div>');
+    let divInfo = $('<div class="info"></div>');
+    let divPathMsg = $('<p>Picture Path</p>')
+    let divPhoto = $('<input type="text" placeholder="Picture Path" class="input_pp" name="picturePath">');
+
+    divInfo.append(divPathMsg);
+    divInfo.append(divPhoto);
+
+    let divAction = $('<div class="action"></div>');
+    let textField = $('<textarea id="makePostID" name="makePostID" class="makePost" rows="4" cols="50" placeholder="Enter Post">');
+    let btnPost = $('<button class="btn postPostBtn" >Post</button>');
+    let btnBack = $('<button class="btn backPostBtn" >Back</button>');
+    divAction.append(textField);
+    divAction.append(btnPost);
+    divAction.append(btnBack);
+
+    divRequest.append(divInfo);
+    divRequest.append(divAction);
+
+    let singlePost = $('<div id="makingPostsLet" class="makingPostLet"></div>');
+
+    singlePost.append(divRequest);
+    singlePost.addClass('centerPostStyle');
+    $('.center_content').append(singlePost);
+
+}
+
+function bindMakePostBtn(){
+    let postGlobal = $('.makingPostLet');
+    postGlobal.find(".postPostBtn").click(function() {
+        postMadePost();
+    })
+    postGlobal.find('.backPostBtn').click(function(){
+        goBackToPosts();
+    
+    })
+}
+
+function postMadePost(){
+    let postText = $('textarea#makePostID').val();
+    let greska = false;
+
+    if (!postText) {
+        greska = true;
+        alert("Post text cant be empty!");
+    }
+
+    let postPic = $('input[name="picturePath"').val();
+    console.log(postPic);
+
+    if (greska) return;
+    console.log(postText);
+    let kIme = currentUser.korisnickoIme;
+
+    var data = JSON.stringify({
+        slika: postPic,
+        tekst: postText,
+        korsinickoIme: kIme,
+    });
+
+    $.ajax({
+        type: "POST",
+        url: "/rest/komentari/newPost",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "ERROR") {
+                alert("Failed to make post");
+                window.location = window.location;
+            }
+            else {
+                alert("Post posted!")
+                window.location = window.location;
+            }
+        }
+    });
+}
+function deletePost(objavaID)
+{
+    let kObjava = objavaID;
+    var data = JSON.stringify({
+
+        id: kObjava,
+    });
+    $.ajax({
+        type: "PUT",
+        url: "rest/objave/delete",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "SUCCESS") {
+                alert("Objava deleted sucksefully!");
+                window.location = window.location;
+            }
+            else {
+                alert(response.message);
+            }
+        },
+        error: function (response) {
+            console.log(data);
+            alert("smolPP");
+        }
+    });
+}
+function showPost(postId) {
+        $.ajax({
+        type: "GET",
+        url: "rest/objave/getSpecificObjava?objavaID=" + postId,
+        success: function (response) {
+            let objava = response.data;
+            showSpecificPost(objava);
+            bindButtonsKomment();
+        },
+        error: function (response) {
+            alert("error in fetching objava");
+        }
+})
+}
+
+function showSpecificPost(objava){
+    $('.posts').hide(300);
+    let divRequest = $("<div class='singlePost' data-index='" + objava +"'></div>");
+    let divInfo = $('<div class="info"></div>');
+    let divPhoto = $('<div class="photo"></div>');
+    let picPath = "pics/search.ico";
+    if (objava.slika) {
+
+        picPath = objava.slika;
+
+    }
+    let img = $('<img src=' + picPath + '>');
+    divPhoto.append(img);
+    let div = $('<div></div>');
+    let text = $('<p class="text-muted">' + objava.tekst + '</p>');
+    div.append(text);
+
+    let divAction = $('<div class="action"></div>');
+    let textField = $('<textarea id="makeCommentID" name="makeCommentID" class="makeComment" data-index=' + objava.id +'rows="4" cols="50" placeholder="Enter Comment">');
+    let btnPost = $('<button class="btn postBtn" data-index='+ objava.id +'>Post</button>');
+    let btnBack = $('<button class="btn backBtn" data-index='+ objava.id +'>Back</button>');
+    divAction.append(textField);
+    divAction.append(btnPost);
+    divAction.append(btnBack);
+
+    
+    let divKomentari = $('<div class="comments"></div>');
+    for (let i = 0; i < objava.komentari.length; i++){
+
+        if (objava.komentari[i]){
+            if (!objava.komentari[i].obrisan)
+        {   
+            let profilePicPath = "pics/avatar.png"
+            let divInfo = $('<div class="info"></div>');
+            if (objava.komentari[i].korisnik.profilnaSlika){
+                profilePicPath = objava.komentari[i].korisnik.profilnaSlika.putanja;
+            }
+
+            let profile_pic = $('<img src=' + profilePicPath + ' class="avatar">');
+            let usernameOfKomment = $('<p class="kommentUsername">' + objava.komentari[i].korisnik.korisnickoIme + '</p>') 
+            let divKomment = $('<p class="text-comment">' + objava.komentari[i].tekst + '</p>');
+            let divKommentDlt = $('<button class="btn deleteKommentBtn" data-index=' + objava.komentari[i].korisnik.korisnickoIme + ' data-koment-id=' + objava.komentari[i].id + '>Delete</button>');
+            divInfo.append(profile_pic);
+            divInfo.append(usernameOfKomment);
+            divInfo.append(divKomment);
+            divInfo.append(divKommentDlt);
+
+            let divKomentarS = $('<div class="comment"></div>');
+            divKomentarS.append(divInfo);
+            divKomentari.append(divKomentarS);
+        }
+        }
+        
+    }
+
+    divInfo.append(divPhoto);
+    divInfo.append(div);
+    divInfo.append(divAction);
+    divInfo.append(divKomentari);
+
+    divRequest.append(divInfo);
+
+    let singlePost = $('<div id="showingPosts" class="showingPost" data-index=' + objava.id +'></div>');
+
+    singlePost.append(divRequest);
+    singlePost.addClass('centerPostStyle');
+    $('.center_content').append(singlePost);
+}
+
+function bindButtonsKomment(){
+    let post = $('.showingPost');
+    console.log("ALLERTSESES");
+    for (let i = 0; i < post.length; i++){
+        $(post[i]).find(".postBtn").click(function (){
+
+            postComment(post[i].getAttribute("data-index"));
+        });
+        if (currentUser.korisnickoIme != userToShow.korisnickoIme){
+            
+        };
+        $(post[i]).find(".backBtn").click(function () {
+            goBackToPosts();
+        });
+        let deleteButtons = $('.comment');
+        for (let y = 0; y < deleteButtons.length; y++){
+
+            let theButton = $(deleteButtons[y]).find(".deleteKommentBtn");
+            theButton.click(function() {
+                 deleteComment(post[i].getAttribute("data-index"), theButton.data('koment-id'));
+            });
+
+            if (theButton.data('index') != currentUser.korisnickoIme){
+                 theButton.hide();
+            }
+            
+
+            
+        }
+    }
+}
+
+function deleteComment(objavaID, kommID)
+{
+
+
+    let kObjava = objavaID;
+    let kID = kommID
+    var data = JSON.stringify({
+
+        objavaID: kObjava,
+        id: kommID,
+    });
+    $.ajax({
+        type: "PUT",
+        url: "rest/komentari/delete",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "SUCCESS") {
+                alert("Comment Deleted Succkseffuly");
+                window.location = window.location;
+            }
+            else {
+                alert(response.message);
+            }
+        },
+        error: function (response) {
+            console.log(data);
+            alert("smolPP");
+        }
+    });
+}
+function postComment(objavaID){
+    let kIme = $('textarea#makeCommentID').val();
+    let greska = false;
+
+    if (!kIme) {
+        greska = true;
+        alert("Comment cant be empty");
+    }
+
+    if (greska) return;
+    console.log(kIme);
+    let kUser = currentUser.korisnickoIme;
+    let kObjava = objavaID;
+    
+    var data = JSON.stringify({
+        tekst: kIme,
+        korisnik: kUser,
+        objavaID: kObjava,
+    });
+
+    $.ajax({
+        type: "POST",
+        url: "/rest/komentari/newComment",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "ERROR") {
+                alert("Failed to make comment");
+                window.location = window.location;
+            }
+            else {
+                window.location = window.location;
+            }
+        }
+    });
+}
+
+function goBackToPosts(){
+    window.location = window.location;
 }
 
 function addProfilePictureAndName() {

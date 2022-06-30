@@ -37,7 +37,7 @@ public class ObjaveDAO {
         return objave.containsKey(id) ? objave.get(id) : null;
     }
 
-    public Objava sacuvaj(Objava objava) {
+    public Objava sacuvaj(Objava objava, KorisnikDAO korisnikDAO) {
         if (objave.containsKey(objava.getId())) {
             return null; // greska
         }
@@ -51,6 +51,10 @@ public class ObjaveDAO {
         maxId++;
         objava.setId(maxId.toString());
         objave.put(objava.getId(), objava);
+        Korisnik korisnik = korisnikDAO.pronadjiKorisnika(objava.getKorisnik().getKorisnickoIme());
+        List<String> korisnickeOBJ = korisnik.getObjave();
+        korisnickeOBJ.add(objava.getId());
+        korisnik.setObjave(korisnickeOBJ);
         // DODAJ U FAJL
         return objava; // ok
     }

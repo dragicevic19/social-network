@@ -28,7 +28,7 @@ public class SparkMain {
 	private static PorukeDAO porukeDAO = new PorukeDAO(dataPath, korisniciDAO);
 
 	public static void main(String[] args) throws IOException {
-		port(8080);
+		port(8888);
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 		
 		webSocket("/ws", WsHandler.class);
@@ -62,6 +62,18 @@ public class SparkMain {
 		get("rest/korisnici/removeFriend", (req,res)-> KorisniciApi.removeFriend(req, res, korisniciDAO));
 
 		get("rest/korisnici/search", (req, res) -> KorisniciApi.search(req, res, korisniciDAO));
+		
+		get("rest/objave/getObjave", (req, res) -> ObjaveApi.getObjaveForUser(req, res, korisniciDAO, objaveDAO));
+		
+		get("rest/objave/getSpecificObjava", (req, res) -> ObjaveApi.getObjava(req, res, objaveDAO));
+		
+		post("/rest/komentari/newComment", (req, res) -> KomentariApi.postKomment(req, res, komentariDAO, korisniciDAO, objaveDAO));
+		
+		put("rest/komentari/delete", (req, res) -> KomentariApi.deleteComment(req, res, komentariDAO));
+		
+		put("rest/objave/delete", (req, res) -> ObjaveApi.deleteObjava(req, res, objaveDAO));
+		
+		post("/rest/komentari/newPost", (req, res) -> ObjaveApi.newObjava(req, res, objaveDAO, korisniciDAO));
 		
 		post("rest/poruke" , (req, res) -> PorukeApi.newMessage(req, res, porukeDAO, korisniciDAO));
 		

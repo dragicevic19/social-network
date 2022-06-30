@@ -83,7 +83,7 @@ public class KomentariDAO {
 		return retList;
 	}
 
-	private Komentar pronadjiKomentar(String id) {
+	public Komentar pronadjiKomentar(String id) {
 		return komentari.containsKey(id) ? komentari.get(id) : null;
 	}
 
