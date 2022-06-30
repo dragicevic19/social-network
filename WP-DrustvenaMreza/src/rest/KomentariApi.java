@@ -32,4 +32,17 @@ public class KomentariApi {
 			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
 		}
 	}
+	public static Object updateComment(Request req, Response res, KomentariDAO komentariDAO) {
+		res.type("application/json");
+		KomentariDTO k = g.fromJson(req.body(), KomentariDTO.class);
+		Komentar kom = komentariDAO.pronadjiKomentar(k.getId());
+		kom.setObrisan(true);
+		kom = KomentariService.updateKomentar(kom, komentariDAO);
+		
+		if (kom != null) {
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(kom)));
+		} else {
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
+		}
+	}
 }

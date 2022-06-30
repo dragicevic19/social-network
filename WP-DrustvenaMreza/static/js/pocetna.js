@@ -649,19 +649,23 @@ function showSpecificPost(objava){
         if (objava.komentari[i]){
             if (!objava.komentari[i].obrisan)
         {
+            let divInfo = $('<div class="info"></div>');
             if (objava.komentari[i].korisnik.profilnaSlika.putanja){
                 profilePicPath = objava.komentari[i].korisnik.profilnaSlika.putanja;
             }
 
             let profile_pic = $('<img src=' + profilePicPath + ' class="avatar">');
             let usernameOfKomment = $('<p class="kommentUsername">' + objava.komentari[i].korisnik.korisnickoIme + '</p>') 
-            console.log(objava.komentari[i].korisnik.korisnickoIme);
             let divKomment = $('<p class="text-comment">' + objava.komentari[i].tekst + '</p>');
-            let divKommentDlt = $('<button class="btn deleteKommentBtn" data-index=' + objava.komentari[i].korisnik.korisnickoIme + '>Delete</button>');
-            divKomentari.append(profile_pic);
-            divKomentari.append(usernameOfKomment);
-            divKomentari.append(divKomment);
-            divKomentari.append(divKommentDlt);
+            let divKommentDlt = $('<button class="btn deleteKommentBtn" data-index=' + objava.komentari[i].korisnik.korisnickoIme + ' data-koment-id=' + objava.komentari[i].id + '>Delete</button>');
+            divInfo.append(profile_pic);
+            divInfo.append(usernameOfKomment);
+            divInfo.append(divKomment);
+            divInfo.append(divKommentDlt);
+
+            let divKomentarS = $('<div class="comment"></div>');
+            divKomentarS.append(divInfo);
+            divKomentari.append(divKomentarS);
         }
         }
         
@@ -695,19 +699,54 @@ function bindButtonsKomment(){
         $(post[i]).find(".backBtn").click(function () {
             goBackToPosts();
         });
-        let deleteButtons = $('.comments');
+        let deleteButtons = $('.comment');
         for (let y = 0; y < deleteButtons.length; y++){
+
             let theButton = $(deleteButtons[y]).find(".deleteKommentBtn");
-            if (theButton[y].getAttribute("data-index") != currentUser.korisnickoIme){
-                theButton.hide();
-            }
             theButton.click(function() {
-                console.log("BOnus MEME");
+                 deleteComment(post[i].getAttribute("data-index"), theButton.data('koment-id'));
             });
+
+            if (theButton.data('index') != currentUser.korisnickoIme){
+                 theButton.hide();
+            }
+            
 
             
         }
     }
+}
+
+function deleteComment(objavaID, kommID)
+{
+
+
+    let kObjava = objavaID;
+    let kID = kommID
+    var data = JSON.stringify({
+
+        objavaID: kObjava,
+        id: kommID,
+    });
+    $.ajax({
+        type: "PUT",
+        url: "rest/komentari/update",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "SUCCESS") {
+                alert("Informations are updated successfully!");
+                window.location = window.location;
+            }
+            else {
+                alert(response.message);
+            }
+        },
+        error: function (response) {
+            console.log(data);
+            alert("smolPP");
+        }
+    });
 }
 function postComment(objavaID){
     let kIme = $('textarea#makeCommentID').val();
