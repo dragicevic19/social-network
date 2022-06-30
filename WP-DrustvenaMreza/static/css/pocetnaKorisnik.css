@@ -266,9 +266,10 @@ nav .tabs ul li.active{
     float: right;
 }
 
-.center .showingPosts{
+.centerPostStyle{
     height: 500px;
     overflow: auto;
+
 }
 .center .input_field .input{
 margin-left: 30px;

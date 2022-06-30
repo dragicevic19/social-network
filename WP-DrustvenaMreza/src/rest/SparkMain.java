@@ -60,5 +60,7 @@ public class SparkMain {
 		get("rest/objave/getObjave", (req, res) -> ObjaveApi.getObjaveForUser(req, res, korisniciDAO, objaveDAO));
 		
 		get("rest/objave/getSpecificObjava", (req, res) -> ObjaveApi.getObjava(req, res, objaveDAO));
+		
+		post("/rest/komentari/newComment", (req, res) -> KomentariApi.postKomment(req, res, komentariDAO, korisniciDAO, objaveDAO));
 	}
 }

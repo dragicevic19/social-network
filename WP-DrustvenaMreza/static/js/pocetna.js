@@ -553,7 +553,8 @@ function getPosts(user){
 })
 }
 function fillPostInformation(objave){
-    
+    let btnNewPost = $('<button class="btn makePostBtn" >Make Post</button>');
+    $('.posts').append(btnNewPost);
     for (let i = 0; i < objave.length; i++){
         let divRequest = $("<div class='post' data-index='" + objave[i] +"'></div>");
         let divInfo = $('<div class="info"></div>');
@@ -609,7 +610,7 @@ function showPost(postId) {
         success: function (response) {
             let objava = response.data;
             showSpecificPost(objava);
-
+            bindButtonsKomment();
         },
         error: function (response) {
             alert("error in fetching objava");
@@ -635,20 +636,35 @@ function showSpecificPost(objava){
     div.append(text);
 
     let divAction = $('<div class="action"></div>');
-    let textField = $('<textarea class="makeComment" data-index=' + objava.id +'rows="4" cols="50" placeholder="Enter Comment">');
+    let textField = $('<textarea id="makeCommentID" name="makeCommentID" class="makeComment" data-index=' + objava.id +'rows="4" cols="50" placeholder="Enter Comment">');
     let btnPost = $('<button class="btn postBtn" data-index='+ objava.id +'>Post</button>');
     let btnBack = $('<button class="btn backBtn" data-index='+ objava.id +'>Back</button>');
     divAction.append(textField);
     divAction.append(btnPost);
     divAction.append(btnBack);
 
+    let profilePicPath = "pics/avatar.png"
     let divKomentari = $('<div class="comments"></div>');
     for (let i = 0; i < objava.komentari.length; i++){
-        if (!objava.komentari[i].obrisan)
+        if (objava.komentari[i]){
+            if (!objava.komentari[i].obrisan)
         {
+            if (objava.komentari[i].korisnik.profilnaSlika.putanja){
+                profilePicPath = objava.komentari[i].korisnik.profilnaSlika.putanja;
+            }
+
+            let profile_pic = $('<img src=' + profilePicPath + ' class="avatar">');
+            let usernameOfKomment = $('<p class="kommentUsername">' + objava.komentari[i].korisnik.korisnickoIme + '</p>') 
+            console.log(objava.komentari[i].korisnik.korisnickoIme);
             let divKomment = $('<p class="text-comment">' + objava.komentari[i].tekst + '</p>');
+            let divKommentDlt = $('<button class="btn deleteKommentBtn" data-index=' + objava.komentari[i].korisnik.korisnickoIme + '>Delete</button>');
+            divKomentari.append(profile_pic);
+            divKomentari.append(usernameOfKomment);
             divKomentari.append(divKomment);
+            divKomentari.append(divKommentDlt);
         }
+        }
+        
     }
 
     divInfo.append(divPhoto);
@@ -658,11 +674,80 @@ function showSpecificPost(objava){
 
     divRequest.append(divInfo);
 
-    let singlePost = $('<div id="showingPosts" class="showingPost"></div>');
+    let singlePost = $('<div id="showingPosts" class="showingPost" data-index=' + objava.id +'></div>');
 
     singlePost.append(divRequest);
-
+    singlePost.addClass('centerPostStyle');
     $('.center_content').append(singlePost);
+}
+
+function bindButtonsKomment(){
+    let post = $('.showingPost');
+    console.log("ALLERTSESES");
+    for (let i = 0; i < post.length; i++){
+        $(post[i]).find(".postBtn").click(function (){
+
+            postComment(post[i].getAttribute("data-index"));
+        });
+        if (currentUser.korisnickoIme != userToShow.korisnickoIme){
+            
+        };
+        $(post[i]).find(".backBtn").click(function () {
+            goBackToPosts();
+        });
+        let deleteButtons = $('.comments');
+        for (let y = 0; y < deleteButtons.length; y++){
+            let theButton = $(deleteButtons[y]).find(".deleteKommentBtn");
+            if (theButton[y].getAttribute("data-index") != currentUser.korisnickoIme){
+                theButton.hide();
+            }
+            theButton.click(function() {
+                console.log("BOnus MEME");
+            });
+
+            
+        }
+    }
+}
+function postComment(objavaID){
+    let kIme = $('textarea#makeCommentID').val();
+    let greska = false;
+
+    if (!kIme) {
+        greska = true;
+        alert("Comment cant be empty");
+    }
+
+    if (greska) return;
+    console.log(kIme);
+    let kUser = currentUser.korisnickoIme;
+    let kObjava = objavaID;
+    
+    var data = JSON.stringify({
+        tekst: kIme,
+        korisnik: kUser,
+        objavaID: kObjava,
+    });
+
+    $.ajax({
+        type: "POST",
+        url: "/rest/komentari/newComment",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "ERROR") {
+                alert("Failed to make comment");
+                window.location = window.location;
+            }
+            else {
+                window.location = window.location;
+            }
+        }
+    });
+}
+
+function goBackToPosts(){
+    window.location = window.location;
 }
 
 function addProfilePictureAndName() {
