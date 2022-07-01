@@ -33,7 +33,7 @@ public class SparkMain {
 		
 		webSocket("/ws", WsHandler.class);
 
-		post("/rest/korisnici/register", (req, res) -> KorisniciApi.register(req, res, korisniciDAO));
+		post("/rest/korisnici/register", (req, res) -> KorisniciApi.register(req, res, korisniciDAO, slikeDAO));
 
 		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res, zahteviDAO, porukeDAO, korisniciDAO));
 
@@ -71,7 +71,7 @@ public class SparkMain {
 		
 		put("rest/komentari/delete", (req, res) -> KomentariApi.deleteComment(req, res, komentariDAO));
 		
-		put("rest/objave/delete", (req, res) -> ObjaveApi.deleteObjava(req, res, objaveDAO));
+		put("rest/objave/delete", (req, res) -> ObjaveApi.deleteObjava(req, res, objaveDAO, komentariDAO));
 		
 		post("/rest/komentari/newPost", (req, res) -> ObjaveApi.newObjava(req, res, objaveDAO, korisniciDAO));
 		
@@ -86,6 +86,8 @@ public class SparkMain {
 		post("/rest/komentari/newSlika", (req, res) -> ObjaveApi.newSlika(req, res, objaveDAO, korisniciDAO));
 		
 		get("rest/objave/getSlike", (req, res) -> ObjaveApi.getSlikeForUser(req, res, korisniciDAO, objaveDAO));
+		
+		put("rest/objave/setAsProfile/:objavaId", (req, res) -> KorisniciApi.setProfilePicture(req, res, korisniciDAO, objaveDAO, slikeDAO));
 
 	}
 }

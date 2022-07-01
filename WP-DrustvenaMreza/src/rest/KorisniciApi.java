@@ -7,11 +7,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import beans.Korisnik;
+import beans.Objava;
+import beans.Slika;
 import beans.Status;
 import beans.Uloga;
 import beans.ZahtevZaPrijateljstvo;
 import dao.KorisnikDAO;
+import dao.ObjaveDAO;
 import dao.PorukeDAO;
+import dao.SlikeDAO;
 import dao.ZahteviDAO;
 import dto.GrupisanePorukeDTO;
 import dto.RegistracijaKorisnikDTO;
@@ -69,11 +73,11 @@ public class KorisniciApi {
 		}
 	}
 
-	public static Object register(Request req, Response res, KorisnikDAO korisniciDAO) {
+	public static Object register(Request req, Response res, KorisnikDAO korisniciDAO, SlikeDAO slikeDAO) {
 		res.type("application/json");
 		RegistracijaKorisnikDTO k = g.fromJson(req.body(), RegistracijaKorisnikDTO.class);
 		Session ss = req.session(true);
-		Korisnik newUser = KorisniciService.register(k, korisniciDAO);
+		Korisnik newUser = KorisniciService.register(k, korisniciDAO, slikeDAO);
 		if (newUser != null) {
 			ss.attribute("currentUser", newUser);
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(newUser)));
@@ -230,6 +234,25 @@ public class KorisniciApi {
 		}
 		
 		KorisniciService.unblock(k, korisniciDAO);
+		
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
+	}
+
+	public static Object setProfilePicture(Request req, Response res, KorisnikDAO korisniciDAO, ObjaveDAO objaveDAO, SlikeDAO slikeDAO) {
+		res.type("application/json");
+		String id = req.params("objavaId");
+		
+		Objava objava = objaveDAO.pronadjiObjavu(id);
+		if (objava == null) {
+			res.status(400);
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Bad request!"));
+		}
+		
+		Slika slika = new Slika(objava.getSlika());
+		slika = slikeDAO.sacuvaj(slika); // dodaj u fajl
+		
+		Korisnik korisnik = objava.getKorisnik();
+		KorisniciService.setProfilePic(korisnik, slika, korisniciDAO);
 		
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS));
 	}

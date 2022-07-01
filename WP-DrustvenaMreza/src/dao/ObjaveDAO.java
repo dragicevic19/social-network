@@ -71,7 +71,7 @@ public class ObjaveDAO {
 				upis.append(";");
 				upis.append((objava.getSlika() == null || objava.getSlika().length() < 2) ? "/" : objava.getSlika()); // ? /
 				upis.append(";");
-				upis.append(objava.getTekst().replace('\n', ' '));
+				upis.append((objava.getTekst() != null) ? objava.getTekst().replace('\n', ' ') : "/");
 				upis.append(";");
 				if (objava.getKomentari().size() == 0) {
 					upis.append("/");
@@ -123,6 +123,7 @@ public class ObjaveDAO {
                     putanjaSlike = st.nextToken().trim();
                     putanjaSlike = (putanjaSlike.equals("/")) ? null : putanjaSlike; 
                     tekst = st.nextToken().trim();
+                    tekst = (tekst.equals("/")) ? null : tekst; 
                     idKomentari = st.nextToken().trim();
                     obrisana = st.nextToken().trim();
                     isSlika = st.nextToken().trim();

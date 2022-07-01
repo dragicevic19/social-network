@@ -8,8 +8,9 @@ public class Slika {
 	public Slika() {
 	}
 
-	public Slika(String id) {
-		this.id = id;
+	public Slika(String putanja) {
+		this.putanja = putanja;
+		this.obrisana = false;
 	}
 
 	public Slika(String id, String putanja, boolean obrisana) {

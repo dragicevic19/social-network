@@ -8,10 +8,12 @@ import java.util.List;
 
 import beans.Korisnik;
 import beans.Pol;
+import beans.Slika;
 import beans.Status;
 import beans.Uloga;
 import beans.ZahtevZaPrijateljstvo;
 import dao.KorisnikDAO;
+import dao.SlikeDAO;
 import dao.ZahteviDAO;
 import dto.RegistracijaKorisnikDTO;
 
@@ -31,7 +33,7 @@ public class KorisniciService {
 		}
 	}
 
-	public static Korisnik register(RegistracijaKorisnikDTO k, KorisnikDAO korisniciDAO) {
+	public static Korisnik register(RegistracijaKorisnikDTO k, KorisnikDAO korisniciDAO, SlikeDAO slikeDAO) {
 		Korisnik newUser = new Korisnik();
 		newUser.setEmail(k.getEmail());
 		newUser.setIme(k.getIme());
@@ -41,11 +43,12 @@ public class KorisniciService {
 		newUser.setPol(Pol.valueOf(k.getPol()));
 		newUser.setUloga(Uloga.valueOf(k.getUloga()));
 		newUser.setObrisan(false);
-		newUser.setPrivatan(false);
+		newUser.setPrivatan(true);
 		newUser.setObjave(new ArrayList<>());
 		newUser.setPrijatelji(new ArrayList<>());
 		newUser.setZahteviZaPrijateljstvo(new ArrayList<>());
 		newUser.setSlike(new ArrayList<>());
+		newUser.setProfilnaSlika(slikeDAO.pronadjiSliku("1")); // default avatar.png
 		try {
 			newUser.setDatumRodjenja(new SimpleDateFormat("dd/MM/yyyy").parse("01/01/1970"));
 		} catch (ParseException e) {
@@ -75,6 +78,7 @@ public class KorisniciService {
 		korisnik.setIme(k.getIme());
 		korisnik.setPrezime(k.getPrezime());
 		korisnik.setDatumRodjenja(k.getDatumRodjenja());
+		korisnik.setPrivatan(k.isPrivatan());
 		korisniciDAO.upisiUFajl();
 		return korisnik;
 	}
@@ -151,6 +155,11 @@ public class KorisniciService {
 
 	public static void unblock(Korisnik k, KorisnikDAO korisniciDAO) {
 		k.setBlokiran(false);
+		korisniciDAO.upisiUFajl();
+	}
+
+	public static void setProfilePic(Korisnik korisnik, Slika slika, KorisnikDAO korisniciDAO) {
+		korisnik.setProfilnaSlika(slika);
 		korisniciDAO.upisiUFajl();
 	}
 
