@@ -1,8 +1,12 @@
 package dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Writer;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,16 +17,21 @@ import java.util.StringTokenizer;
 
 import beans.Komentar;
 import beans.Korisnik;
+import beans.Objava;
 
 public class KomentariDAO {
 
 	private HashMap<String, Komentar> komentari = new HashMap<String, Komentar>();
 	private KorisnikDAO korisniciDAO;
+	private String contextPath;
+	DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
 
 	public KomentariDAO() {
 	}
 
 	public KomentariDAO(String contextPath, KorisnikDAO korisniciDAO) {
+		this.contextPath = contextPath;
 		this.korisniciDAO = korisniciDAO;
 		ucitajKomentare(contextPath);
 	}
@@ -78,7 +87,8 @@ public class KomentariDAO {
 		while (st.hasMoreTokens()) {
 			id = st.nextToken().trim();
 			Komentar k = pronadjiKomentar(id);
-			retList.add(k);
+			if (k != null)
+				retList.add(k);
 		}
 		return retList;
 	}
@@ -112,7 +122,37 @@ public class KomentariDAO {
 		komentar.setId(maxId.toString());
 		komentari.put(komentar.getId(), komentar);
 		// DODAJ U FAJL
-		return komentar; // ok
+		return (upisiUFajl()) ? komentar: null;
+	}
+
+	public boolean upisiUFajl() {
+		try {
+			File csvFile = new File(contextPath + "/komentari.csv");
+			Writer upis = new BufferedWriter(new FileWriter(csvFile, false));
+
+			for (Komentar komentar : komentari.values()) {
+				upis.append((komentar.getId()));
+				upis.append(";");
+				upis.append(komentar.getKorisnik().getKorisnickoIme());
+				upis.append(";");
+				upis.append(komentar.getTekst().replace('\n', ' '));
+				upis.append(";");	
+				upis.append(df.format(komentar.getDatumKomentara()));
+				upis.append(";");
+				upis.append((komentar.getDatumIzmene() == null) ? "/" : df.format(komentar.getDatumIzmene()));
+				upis.append(";");
+				upis.append(String.valueOf(komentar.isObrisan()));
+				upis.append("\n");
+			}
+
+			upis.flush();
+			upis.close();
+
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

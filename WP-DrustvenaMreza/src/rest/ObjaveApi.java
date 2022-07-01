@@ -29,7 +29,6 @@ public class ObjaveApi {
 		{
 			Objava objava = objaveDAO.pronadjiObjavu(id);
 			objave.add(objava);
-			
 		}
 		
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(objave)));

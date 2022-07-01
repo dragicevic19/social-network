@@ -1,5 +1,7 @@
 package rest;
 
+import java.util.Date;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -23,10 +25,12 @@ public class KomentariApi {
 		kom.setKorisnik(korisnikDAO.pronadjiKorisnika(k.getKorisnik()));
 		kom.setObrisan(false);
 		kom.setTekst(k.getTekst());
+		kom.setDatumKomentara(new Date());
+		kom.setDatumIzmene(null);
 		kom = komentariDAO.sacuvaj(kom);
 		
-		ObjaveService.addComment(kom, objaveDAO, k.getObjavaID());
 		if (kom != null) {
+			ObjaveService.addComment(kom, objaveDAO, k.getObjavaID());
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(kom)));
 		} else {
 			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));

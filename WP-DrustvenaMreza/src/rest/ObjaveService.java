@@ -3,6 +3,7 @@ package rest;
 import java.util.List;
 
 import beans.Komentar;
+import beans.Korisnik;
 import beans.Objava;
 import dao.KorisnikDAO;
 import dao.ObjaveDAO;
@@ -22,27 +23,28 @@ public class ObjaveService {
 			upObj.setObrisana(objava.isObrisana());
 			upObj.setSlika(objava.getSlika());
 			upObj.setTekst(objava.getTekst());
+			objaveDAO.upisiUFajl();
 			return upObj;
-			
 		}
 		
 		public static Objava addComment(Komentar k, ObjaveDAO objaveDAO, String objavaID)
 		{
 			Objava objava = objaveDAO.pronadjiObjavu(objavaID);
-			List<Komentar> komentari = objava.getKomentari();
-			komentari.add(k);
-			objava.setKomentari(komentari);
+			objava.getKomentari().add(k);
+			objaveDAO.upisiUFajl();
 			return objava;
-			
 		}
 
 		public static Objava makePost(ObjavaDTO objavaDTO, ObjaveDAO objaveDAO, KorisnikDAO korisnikDAO) {
 			Objava objava = new Objava();
-			objava.setKorisnik(korisnikDAO.pronadjiKorisnika(objavaDTO.getKorisnickoIme()));
+			Korisnik korisnik = korisnikDAO.pronadjiKorisnika(objavaDTO.getKorisnickoIme());
+			objava.setKorisnik(korisnik);
 			objava.setObrisana(false);
 			objava.setSlika(objavaDTO.getSlika());
 			objava.setTekst(objavaDTO.getTekst());
-			objaveDAO.sacuvaj(objava, korisnikDAO);
+			Objava novaObjava = objaveDAO.sacuvaj(objava, korisnikDAO);
+			korisnik.getObjave().add(novaObjava.getId());
+			korisnikDAO.upisiUFajl();
 			
 			return objava;
 		}

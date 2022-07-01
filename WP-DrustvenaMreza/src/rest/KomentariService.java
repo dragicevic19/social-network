@@ -17,7 +17,8 @@ public class KomentariService {
 		komentar.setKorisnik(k.getKorisnik());
 		komentar.setObrisan(k.isObrisan());
 		komentar.setTekst(k.getTekst());
-		return k;
+		
+		return komentariDAO.upisiUFajl() ? komentar : null;
 		
 	}
 	
