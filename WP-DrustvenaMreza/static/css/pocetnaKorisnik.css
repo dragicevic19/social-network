@@ -209,6 +209,10 @@ nav .tabs ul li.active{
     width: 150px;
     height: 150px;
     border-radius: 50%;
+    object-fit: cover;
+}
+img {
+    object-fit: cover;
 }
 .center .myprofile .name_last_name{
     display: inline-flex;
@@ -249,6 +253,13 @@ nav .tabs ul li.active{
 }
 .center .input_field{
     margin-bottom: 25px;
+}
+
+.center .input_field .priv {
+    margin-left: 150px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
 }
 
 .center p

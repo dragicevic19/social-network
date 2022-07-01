@@ -528,10 +528,8 @@ function centerSettings() {
             return;
         }
         wipePost();
-        if (!checkIfValid()){
-            
+        if (checkIfValid()){
 
-        } else{
             $(this).addClass('active');
             $(centerActiveLi).removeClass('active');
             centerActiveLi = $(this);
@@ -600,7 +598,7 @@ function checkIfValid(){
     }
     if(!isFriends(userToShow,currentUser)){
         if(userToShow.privatan){
-            alert("User isnt your friend and profile is private!");
+            alert("User is not your friend and profile is private!");
             valid = false;
         }
     }
@@ -650,33 +648,36 @@ function getSlike(user){
 }
 
 function fillSlikaInformation(objave){
-    let btnNewPost = $('<button class="btn makeSlikaBtn" >Make Slika</button>');
+    let btnNewPost = $('<button class="btn btn-primary makeSlikaBtn" style="margin-top:10px; width:200px;" >New Photo</button>');
+
     $('.photos').append(btnNewPost);
     for (let i = 0; i < objave.length; i++){
         if(!objave[i].obrisana){
             let divRequest = $("<div class='slika' data-index='" + objave[i] +"'></div>");
             let divInfo = $('<div class="info"></div>');
             let divPhoto = $('<div class="photo"></div>');
-            let picPath = "pics/search.ico";
             if (objave[i].slika) {
-
-                picPath = objave[i].slika;
-
+                let picPath = objave[i].slika;
+                let img = $('<img src=' + picPath + '>');
+                divPhoto.append(img);
             }
-            let img = $('<img src=' + picPath + '>');
-            divPhoto.append(img);
-            let div = $('<div></div>');
-            let text = $('<p class="text-muted">' + objave[i].tekst + '</p>');
-            div.append(text);
+            let div = $('<div style="margin:20px; text-align:left;"></div>');
+            if (objave[i].tekst){
+                let text = $('<p class="text-muted">' + objave[i].tekst + '</p>');
+                div.append(text);
+            }
 
             let divAction = $('<div class="action"></div>');
             let btnShow = $('<button class="btn btn-primary showBtn" data-index=' + objave[i].id + '>Show</button>');
+            let btnProfilePic = $('<button class="btn profilePicBtn" data-index='+ objave[i].id +'>Set as profile photo</button>');
             let btnDelete = $('<button class="btn deleteBtn" data-index='+ objave[i].id +'>Delete</button>');
             divAction.append(btnShow);
+            divAction.append(btnProfilePic);
             divAction.append(btnDelete);
 
             divInfo.append(divPhoto);
             divInfo.append(div);
+
             divInfo.append(divAction);
 
             divRequest.append(divInfo);
@@ -704,12 +705,17 @@ function bindButtonsSlika() {
         });
         if (currentUser.korisnickoIme != userToShow.korisnickoIme){
             $(".deleteBtn").hide();
+            $(".profilePicBtn").hide();
         };
         $(posts[i]).find(".deleteBtn").click(function () {
             deletePost(this.getAttribute('data-index'));
         });
+        $(posts[i]).find(".profilePicBtn").click(function () {
+            setAsProfile(this.getAttribute('data-index'));
+        });
     }
 }
+
 function fillPostInformation(objave){
     let btnNewPost = $('<button class="btn btn-primary makePostBtn" style="margin-top:10px; width:200px;" >New Post</button>');
     $('.posts').append(btnNewPost);
@@ -808,12 +814,17 @@ function makePost(){
 
 function bindMakeSlikaBtn(){
     let postGlobal = $('.makingPostLet');
+
+    $('input[type="file"]').change(function(e){
+        photo = e.target.files[0];
+    });
+
     postGlobal.find(".postPostBtn").click(function() {
         postMadeSlika();
     })
+
     postGlobal.find('.backPostBtn').click(function(){
         goBackToPosts();
-    
     })
 }
 
@@ -837,24 +848,48 @@ function postMadeSlika(){
     let postText = $('textarea#makePostID').val();
     let greska = false;
 
-    
-
-    let postPic = $('input[name="picturePath"').val();
-    if (!postPic) {
+    if (!photo) {
         greska = true;
-        alert("Picture cant be empty!");
+        alert("Picture can't be empty!");
     }
-
     if (greska) return;
 
-    let kIme = currentUser.korisnickoIme;
+    if (!postText) {
+        postText = '/';
+    }
 
+    let formData = new FormData();
+    formData.append("file", photo);
+    formData.append("upload_preset", "upload");
+    try{
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "https://api.cloudinary.com/v1_1/bookerapp/image/upload",
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 800000,
+            success: function (response){
+            photo = response.url;
+            savePhotoToServer(postText);
+            }
+        })
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+function savePhotoToServer(postText) {
+    let kIme = currentUser.korisnickoIme;
+  
     var data = JSON.stringify({
-        slika: postPic,
+        slika: photo,
         tekst: postText,
         korsinickoIme: kIme,
     });
-
+  
     $.ajax({
         type: "POST",
         url: "/rest/komentari/newSlika",
@@ -862,16 +897,19 @@ function postMadeSlika(){
         contentType: 'application/json',
         success: function (response) {
             if (response.status == "ERROR") {
-                alert("Failed to make post");
+                alert("Failed to add photo");
+                photo = null;
                 window.location = window.location;
             }
             else {
-                alert("Post posted!")
+                photo = null;
+                alert("Photo posted!")
                 window.location = window.location;
             }
         }
     });
-}
+  }
+    
 
 function postMadePost(){
     let postText = $('textarea#makePostID').val();
@@ -944,6 +982,28 @@ function savePostToServer() {
   });
 }
 
+function setAsProfile(objavaID) {
+    $.ajax({
+        type: "PUT",
+        url: `rest/objave/setAsProfile/${objavaID}`,
+        data: {},
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "SUCCESS") {
+                alert("Profile picture is successfully changed!");
+                window.location = window.location;
+            }
+            else {
+                alert(response.message);
+            }
+        },
+        error: function (response) {
+            console.log(data);
+        }
+    });
+}
+
+
 function deletePost(objavaID)
 {
     let kObjava = objavaID;
@@ -1007,18 +1067,18 @@ function showSpecificPost(objava){
     let divRequest = $("<div class='singlePost' data-index='" + objava +"'></div>");
     let divInfo = $('<div class="info"></div>');
     let divPhoto = $('<div class="photo"></div>');
-    // let picPath = "pics/search.ico";
-    if (objava.slika) {
 
+    if (objava.slika) {
       let picPath = objava.slika;
       let img = $('<img src=' + picPath + '>');
-
       divPhoto.append(img);
     }
     
     let div = $('<div class="message-body" style="margin:10px;"></div>');
-    let text = $('<p class="text-muted">' + objava.tekst + '</p>');
-    div.append(text);
+    if (objava.tekst){
+        let text = $('<p class="text-muted">' + objava.tekst + '</p>');
+        div.append(text);
+    }
 
     let divAction = $('<div class="action"></div>');
     let textField = $('<input type="text" id="makeCommentID" name="makeCommentID" class="makeComment" data-index=' + objava.id + ' placeholder="Enter Comment" style="height:40px; width:500px; margin-right:20px;">');
@@ -1323,6 +1383,7 @@ function fillInformationsAboutUser() {
     dan = (dan.length == 1) ? '0' + dan : dan;
     mesec = (mesec.length == 1) ? '0' + mesec : mesec;
     $('input[name="birthday"]').val(date.getFullYear() + '-' + mesec + '-' + dan).attr('disabled', !editUser);
+    $('input[name="private"').prop('checked', userToShow.privatan).attr('disabled', !editUser);
 }
 
 function changePassword() {
@@ -1396,6 +1457,10 @@ function changeInfos() {
     let name = $('input[name="name"]').val();
     let lastName = $('input[name="lastName"]').val();
     let date = $('input[name="birthday"]').val();
+    let private = $('input[name="private"]').prop("checked");
+
+    console.log(private);
+
     let err = false;
     if (!email) {
         $('#email').text("Enter E-Mail");
@@ -1430,7 +1495,8 @@ function changeInfos() {
         email: email,
         ime: name,
         prezime: lastName,
-        datumRodjenja: date
+        datumRodjenja: date,
+        privatan: private
     });
 
     $.ajax({

@@ -8,6 +8,7 @@ import java.util.List;
 
 import beans.Korisnik;
 import beans.Pol;
+import beans.Slika;
 import beans.Status;
 import beans.Uloga;
 import beans.ZahtevZaPrijateljstvo;
@@ -42,7 +43,7 @@ public class KorisniciService {
 		newUser.setPol(Pol.valueOf(k.getPol()));
 		newUser.setUloga(Uloga.valueOf(k.getUloga()));
 		newUser.setObrisan(false);
-		newUser.setPrivatan(false);
+		newUser.setPrivatan(true);
 		newUser.setObjave(new ArrayList<>());
 		newUser.setPrijatelji(new ArrayList<>());
 		newUser.setZahteviZaPrijateljstvo(new ArrayList<>());
@@ -77,6 +78,7 @@ public class KorisniciService {
 		korisnik.setIme(k.getIme());
 		korisnik.setPrezime(k.getPrezime());
 		korisnik.setDatumRodjenja(k.getDatumRodjenja());
+		korisnik.setPrivatan(k.isPrivatan());
 		korisniciDAO.upisiUFajl();
 		return korisnik;
 	}
@@ -153,6 +155,11 @@ public class KorisniciService {
 
 	public static void unblock(Korisnik k, KorisnikDAO korisniciDAO) {
 		k.setBlokiran(false);
+		korisniciDAO.upisiUFajl();
+	}
+
+	public static void setProfilePic(Korisnik korisnik, Slika slika, KorisnikDAO korisniciDAO) {
+		korisnik.setProfilnaSlika(slika);
 		korisniciDAO.upisiUFajl();
 	}
 

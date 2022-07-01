@@ -1,3 +1,14 @@
+22;pera;http://res.cloudinary.com/bookerapp/image/upload/v1656706248/upload/jqrcmbfkbr9snwqpkp0t.webp;/;/;true;true
+23;pera;http://res.cloudinary.com/bookerapp/image/upload/v1656706280/upload/hmieuqydvnwumvs6reyc.webp;Slika sa opisom;9;false;true
+24;pera;http://res.cloudinary.com/bookerapp/image/upload/v1656706756/upload/we6vcbsi3yckj3vo30ve.webp;/;/;false;true
+25;pera;http://res.cloudinary.com/bookerapp/image/upload/v1656708807/upload/snybgfaclmxcecaaw1he.jpg;Nova profilna;10,11;false;true
+26;jova;http://res.cloudinary.com/bookerapp/image/upload/v1656709162/upload/lh7snmadqjejvi9ganmk.jpg;/;14;false;true
+27;admin;http://res.cloudinary.com/bookerapp/image/upload/v1656709269/upload/icvi5zwpfbdnc18u8zwr.jpg;/;/;false;true
+28;admin;/;Ovaj post ce biti obrisan;12,13;true;false
+29;milan;/;Prvi post;/;false;false
+30;milan;http://res.cloudinary.com/bookerapp/image/upload/v1656709957/upload/xc2noqkkkktogszuaelq.png;Prvi post sa slikom;/;false;false
+31;milan;http://res.cloudinary.com/bookerapp/image/upload/v1656710048/upload/yc7jzmnucbvewzacltdz.jpg;prva slika;/;false;true
+10;admin;/;test;/;true;false
 11;admin;/;sdgghdf;5;false;false
 12;admin;C:\fakepath\v1.webp;kn;/;true;false
 13;admin;C:\fakepath\v3.webp;test;/;true;false
@@ -16,6 +27,5 @@
 7;mika;test;/;/;true;true
 8;admin;/;test;/;true;false
 9;pera;/;novi post;/;true;false
-20;pera;/;novi test bez slike;/;false;false
-10;admin;/;test;/;true;false
+20;pera;/;novi test bez slike;/;true;false
 21;pera;http://res.cloudinary.com/bookerapp/image/upload/v1656704902/upload/epcyxwpp6efkbhjlt3gw.webp;Novi post sa slikom;6,7;false;false

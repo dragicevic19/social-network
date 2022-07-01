@@ -61,7 +61,7 @@ public class ObjaveService {
 			objava.setObrisana(false);
 			objava.setSlika(true);
 			objava.setSlika(objavaDTO.getSlika());
-			objava.setTekst(objavaDTO.getTekst());
+			objava.setTekst(objavaDTO.getTekst().equals("/") ? null : objavaDTO.getTekst());
 			Objava novaObjava = objaveDAO.sacuvaj(objava, korisnikDAO);
 			korisnik.getObjave().add(novaObjava.getId());
 			korisnikDAO.upisiUFajl();

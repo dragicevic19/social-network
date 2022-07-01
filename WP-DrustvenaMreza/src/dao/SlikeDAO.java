@@ -1,19 +1,25 @@
 package dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import beans.Komentar;
+import beans.Objava;
 import beans.Slika;
 
 public class SlikeDAO {
 
 	private HashMap<String, Slika> slike = new HashMap<String, Slika>();
+	private String contextPath;
 
 	public SlikeDAO() {
 	}
@@ -23,6 +29,7 @@ public class SlikeDAO {
 	}
 
 	private void ucitajSlike(String contextPath) {
+		this.contextPath = contextPath;
 		BufferedReader in = null;
 		try {
 			File file = new File(contextPath + "/slike.csv");
@@ -93,8 +100,32 @@ public class SlikeDAO {
 		maxId++;
 		slika.setId(maxId.toString());
 		slike.put(slika.getId(), slika);
-		// DODAJ U FAJL
-		return slika; // ok
+		
+		return upisiUFajl() ? slika : null;
+	}
+
+	private boolean upisiUFajl() {
+		try {
+			File csvFile = new File(contextPath + "/slike.csv");
+			Writer upis = new BufferedWriter(new FileWriter(csvFile, false));
+
+			for (Slika slika : slike.values()) {
+				upis.append((slika.getId()));
+				upis.append(";");
+				upis.append(slika.getPutanja());
+				upis.append(";");
+				upis.append(String.valueOf(slika.isObrisana()));				
+				upis.append("\n");
+			}
+
+			upis.flush();
+			upis.close();
+
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public void ispisiSve() {

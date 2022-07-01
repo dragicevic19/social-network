@@ -6,8 +6,10 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import beans.Komentar;
 import beans.Korisnik;
 import beans.Objava;
+import dao.KomentariDAO;
 import dao.KorisnikDAO;
 import dao.ObjaveDAO;
 import dto.KomentariDTO;
@@ -70,13 +72,19 @@ public class ObjaveApi {
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(objava)));
 	}
 
-	public static Object deleteObjava(Request req, Response res, ObjaveDAO objaveDAO) {
+	public static Object deleteObjava(Request req, Response res, ObjaveDAO objaveDAO, KomentariDAO komentariDAO) {
 		res.type("application/json");
 		Objava objava = g.fromJson(req.body(), Objava.class);
 		Objava modObj = objaveDAO.pronadjiObjavu(objava.getId());
 		modObj.setObrisana(true);
 		
+		for(Komentar komentar : modObj.getKomentari()) {
+			komentar.setObrisan(true);
+		}
+		komentariDAO.upisiUFajl();
+		
 		modObj = ObjaveService.update(modObj, objaveDAO);
+		
 		if (modObj != null) {
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(modObj)));
 		} else {
