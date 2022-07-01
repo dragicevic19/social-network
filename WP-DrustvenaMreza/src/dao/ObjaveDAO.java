@@ -1,8 +1,11 @@
 package dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,6 +22,7 @@ public class ObjaveDAO {
     private HashMap<String, Objava> objave = new HashMap<String, Objava>();
     private KomentariDAO komentariDAO;
     private KorisnikDAO korisniciDAO;
+	private String contextPath;
 
     public ObjaveDAO() {
     }
@@ -26,6 +30,7 @@ public class ObjaveDAO {
     public ObjaveDAO(String contextPath, KorisnikDAO korisniciDAO, KomentariDAO komentariDAO) {
         this.komentariDAO = komentariDAO;
         this.korisniciDAO = korisniciDAO;
+        this.contextPath = contextPath;
         ucitajObjave(contextPath);
     }
 
@@ -51,15 +56,49 @@ public class ObjaveDAO {
         maxId++;
         objava.setId(maxId.toString());
         objave.put(objava.getId(), objava);
-        Korisnik korisnik = korisnikDAO.pronadjiKorisnika(objava.getKorisnik().getKorisnickoIme());
-        List<String> korisnickeOBJ = korisnik.getObjave();
-        korisnickeOBJ.add(objava.getId());
-        korisnik.setObjave(korisnickeOBJ);
-        // DODAJ U FAJL
-        return objava; // ok
+        return (upisiUFajl()) ? objava : null;
     }
 
-    private void ucitajObjave(String contextPath) {
+    public boolean upisiUFajl() {
+		try {
+			File csvFile = new File(contextPath + "/objave.csv");
+			Writer upis = new BufferedWriter(new FileWriter(csvFile, false));
+
+			for (Objava objava : objave.values()) {
+				upis.append((objava.getId()));
+				upis.append(";");
+				upis.append(objava.getKorisnik().getKorisnickoIme());
+				upis.append(";");
+				upis.append((objava.getSlika() == null || objava.getSlika().length() < 2) ? "/" : objava.getSlika()); // ? /
+				upis.append(";");
+				upis.append(objava.getTekst().replace('\n', ' '));
+				upis.append(";");
+				if (objava.getKomentari().size() == 0) {
+					upis.append("/");
+				} else {
+					String komentari = "";
+					for (Komentar komentar: objava.getKomentari()) {
+						komentari += komentar.getId() + ",";
+					}
+					komentari = komentari.substring(0, komentari.length() - 1);
+					upis.append(komentari);
+				}
+				upis.append(";");
+				upis.append(String.valueOf(objava.isObrisana()));
+				upis.append("\n");
+			}
+
+			upis.flush();
+			upis.close();
+
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	private void ucitajObjave(String contextPath) {
         BufferedReader in = null;
         try {
             File file = new File(contextPath + "/objave.csv");
