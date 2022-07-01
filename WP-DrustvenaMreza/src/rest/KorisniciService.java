@@ -12,6 +12,7 @@ import beans.Status;
 import beans.Uloga;
 import beans.ZahtevZaPrijateljstvo;
 import dao.KorisnikDAO;
+import dao.SlikeDAO;
 import dao.ZahteviDAO;
 import dto.RegistracijaKorisnikDTO;
 
@@ -31,7 +32,7 @@ public class KorisniciService {
 		}
 	}
 
-	public static Korisnik register(RegistracijaKorisnikDTO k, KorisnikDAO korisniciDAO) {
+	public static Korisnik register(RegistracijaKorisnikDTO k, KorisnikDAO korisniciDAO, SlikeDAO slikeDAO) {
 		Korisnik newUser = new Korisnik();
 		newUser.setEmail(k.getEmail());
 		newUser.setIme(k.getIme());
@@ -46,6 +47,7 @@ public class KorisniciService {
 		newUser.setPrijatelji(new ArrayList<>());
 		newUser.setZahteviZaPrijateljstvo(new ArrayList<>());
 		newUser.setSlike(new ArrayList<>());
+		newUser.setProfilnaSlika(slikeDAO.pronadjiSliku("1")); // default avatar.png
 		try {
 			newUser.setDatumRodjenja(new SimpleDateFormat("dd/MM/yyyy").parse("01/01/1970"));
 		} catch (ParseException e) {

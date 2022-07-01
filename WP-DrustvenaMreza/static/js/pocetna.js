@@ -5,15 +5,10 @@ let recievedRequests = null;
 let sentRequests = null;
 let messages = null;
 
-// $(".message").click(function (){
-//         // let username = $(this).attr('data-index');
-//     let username = "mika";
-//     window.sessionStorage.setItem('chatWith', username);
-//     window.location = "chat.html";
-// });
+let photo = null;
+
 
 function goToMessages(chatWith){
-    console.log(chatWith);
     window.sessionStorage.setItem('chatWith', chatWith);
     window.location = "chat.html";
 }
@@ -716,22 +711,19 @@ function bindButtonsSlika() {
     }
 }
 function fillPostInformation(objave){
-    let btnNewPost = $('<button class="btn makePostBtn" >Make Post</button>');
+    let btnNewPost = $('<button class="btn btn-primary makePostBtn" style="margin-top:10px; width:200px;" >New Post</button>');
     $('.posts').append(btnNewPost);
     for (let i = 0; i < objave.length; i++){
         if(!objave[i].obrisana){
             let divRequest = $("<div class='post' data-index='" + objave[i] +"'></div>");
             let divInfo = $('<div class="info"></div>');
             let divPhoto = $('<div class="photo"></div>');
-            let picPath = "pics/search.ico";
             if (objave[i].slika) {
-
-                picPath = objave[i].slika;
-
+                let picPath = objave[i].slika;
+                let img = $('<img src=' + picPath + '>');
+                divPhoto.append(img);
             }
-            let img = $('<img src=' + picPath + '>');
-            divPhoto.append(img);
-            let div = $('<div></div>');
+            let div = $('<div style="margin:20px;"></div>');
             let text = $('<p class="text-muted">' + objave[i].tekst + '</p>');
             div.append(text);
 
@@ -741,8 +733,9 @@ function fillPostInformation(objave){
             divAction.append(btnShow);
             divAction.append(btnDelete);
 
-            divInfo.append(divPhoto);
             divInfo.append(div);
+            divInfo.append(divPhoto);
+
             divInfo.append(divAction);
 
             divRequest.append(divInfo);
@@ -790,20 +783,19 @@ function makePost(){
 
     let divRequest = $('<div class="makingPost" ></div>');
     let divInfo = $('<div class="info"></div>');
-    let divPathMsg = $('<p>Picture Path</p>')
-    let divPhoto = $('<input type="text" placeholder="Picture Path" class="input_pp" name="picturePath">');
+    let divPhoto = $('<input type="file" accept="image/*" class="input_pp" name="picturePath" style="margin-top: 20px; margin-bottom: 20px;">');
 
-    divInfo.append(divPathMsg);
     divInfo.append(divPhoto);
+    let textField = $('<textarea id="makePostID" name="makePostID" class="makePost" rows="4" cols="40" placeholder="Enter Post">');
 
     let divAction = $('<div class="action"></div>');
-    let textField = $('<textarea id="makePostID" name="makePostID" class="makePost" rows="4" cols="50" placeholder="Enter Post">');
-    let btnPost = $('<button class="btn postPostBtn" >Post</button>');
+    let btnPost = $('<button class="btn btn-primary postPostBtn" >Post</button>');
     let btnBack = $('<button class="btn backPostBtn" >Back</button>');
-    divAction.append(textField);
+
     divAction.append(btnPost);
     divAction.append(btnBack);
 
+    divRequest.append(textField);
     divRequest.append(divInfo);
     divRequest.append(divAction);
 
@@ -812,7 +804,6 @@ function makePost(){
     singlePost.append(divRequest);
     singlePost.addClass('centerPostStyle');
     $('.center_content').append(singlePost);
-
 }
 
 function bindMakeSlikaBtn(){
@@ -828,6 +819,11 @@ function bindMakeSlikaBtn(){
 
 function bindMakePostBtn(){
     let postGlobal = $('.makingPostLet');
+
+    $('input[type="file"]').change(function(e){
+        photo = e.target.files[0];
+    });
+
     postGlobal.find(".postPostBtn").click(function() {
         postMadePost();
     })
@@ -882,40 +878,72 @@ function postMadePost(){
     let greska = false;
 
     if (!postText) {
-        greska = true;
-        alert("Post text cant be empty!");
+      greska = true;
+      alert("Post text cant be empty!");
     }
-
-    let postPic = $('input[name="picturePath"').val();
-
 
     if (greska) return;
 
-    let kIme = currentUser.korisnickoIme;
-
-    var data = JSON.stringify({
-        slika: postPic,
-        tekst: postText,
-        korsinickoIme: kIme,
-    });
-
-    $.ajax({
-        type: "POST",
-        url: "/rest/komentari/newPost",
-        data: data,
-        contentType: 'application/json',
-        success: function (response) {
-            if (response.status == "ERROR") {
-                alert("Failed to make post");
-                window.location = window.location;
+    if (photo == null) {
+        photo = '/';
+        savePostToServer();
+    }
+    else {
+        let formData = new FormData();
+        formData.append("file", photo);
+        formData.append("upload_preset", "upload");
+        try{
+          $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "https://api.cloudinary.com/v1_1/bookerapp/image/upload",
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 800000,
+            success: function (response){
+              photo = response.url;
+              savePostToServer(photo);
             }
-            else {
-                alert("Post posted!")
-                window.location = window.location;
-            }
+          })
+        } catch (err) {
+          console.log(err);
         }
-    });
+    }
+  }
+
+function savePostToServer() {
+  let kIme = currentUser.korisnickoIme;
+  let postText = $('textarea#makePostID').val();
+
+  var data = JSON.stringify({
+      slika: photo,
+      tekst: postText,
+      korsinickoIme: kIme,
+  });
+
+  $.ajax({
+      type: "POST",
+      url: "/rest/komentari/newPost",
+      data: data,
+      contentType: 'application/json',
+      success: function (response) {
+          if (response.status == "ERROR") {
+            photo = null;
+              alert("Failed to make post");
+              window.location = window.location;
+          }
+          else {
+            photo = null;
+
+              alert("Post posted!")
+              window.location = window.location;
+          }
+      }
+  });
 }
+
 function deletePost(objavaID)
 {
     let kObjava = objavaID;
@@ -930,7 +958,7 @@ function deletePost(objavaID)
         contentType: 'application/json',
         success: function (response) {
             if (response.status == "SUCCESS") {
-                alert("Objava deleted sucksefully!");
+                alert("Post deleted succesfully!");
                 window.location = window.location;
             }
             else {
@@ -976,61 +1004,63 @@ function showSlika(postId) {
 }
 
 function showSpecificPost(objava){
-        let divRequest = $("<div class='singlePost' data-index='" + objava +"'></div>");
+    let divRequest = $("<div class='singlePost' data-index='" + objava +"'></div>");
     let divInfo = $('<div class="info"></div>');
     let divPhoto = $('<div class="photo"></div>');
-    let picPath = "pics/search.ico";
+    // let picPath = "pics/search.ico";
     if (objava.slika) {
 
-        picPath = objava.slika;
+      let picPath = objava.slika;
+      let img = $('<img src=' + picPath + '>');
 
+      divPhoto.append(img);
     }
-    let img = $('<img src=' + picPath + '>');
-    divPhoto.append(img);
-    let div = $('<div></div>');
+    
+    let div = $('<div class="message-body" style="margin:10px;"></div>');
     let text = $('<p class="text-muted">' + objava.tekst + '</p>');
     div.append(text);
 
     let divAction = $('<div class="action"></div>');
-    let textField = $('<textarea id="makeCommentID" name="makeCommentID" class="makeComment" data-index=' + objava.id +'rows="4" cols="50" placeholder="Enter Comment">');
-    let btnPost = $('<button class="btn postBtn" data-index='+ objava.id +'>Post</button>');
+    let textField = $('<input type="text" id="makeCommentID" name="makeCommentID" class="makeComment" data-index=' + objava.id + ' placeholder="Enter Comment" style="height:40px; width:500px; margin-right:20px;">');
+    let btnPost = $('<button class="btn btn-primary postBtn" data-index='+ objava.id +'>Post</button>');
     let btnBack = $('<button class="btn backBtn" data-index='+ objava.id +'>Back</button>');
     divAction.append(textField);
     divAction.append(btnPost);
     divAction.append(btnBack);
 
     
-    let divKomentari = $('<div class="comments"></div>');
+    let divKomentari = $('<div class="comments" style="margin:20px;"></div>');
     for (let i = 0; i < objava.komentari.length; i++){
 
-        if (objava.komentari[i]){
-            if (!objava.komentari[i].obrisan)
+      if (objava.komentari[i]){
+        if (!objava.komentari[i].obrisan)
         {   
-            let profilePicPath = "pics/avatar.png"
-            let divInfo = $('<div class="info"></div>');
-            if (objava.komentari[i].korisnik.profilnaSlika){
-                profilePicPath = objava.komentari[i].korisnik.profilnaSlika.putanja;
-            }
+          let divKomentarS = $('<div class="message"></div>');
+          let divWrapper = $('<div class="wrappers"></div>');
+          let divPhoto = $('<div class="profile-photo"></div>');
+          let profilePicPath = objava.komentari[i].korisnik.profilnaSlika.putanja;
+          let profile_pic = $('<img src=' + profilePicPath + '>');
+          
+          divPhoto.append(profile_pic);
 
-            let profile_pic = $('<img src=' + profilePicPath + ' class="avatar">');
-            let usernameOfKomment = $('<p class="kommentUsername">' + objava.komentari[i].korisnik.korisnickoIme + '</p>') 
-            let divKomment = $('<p class="text-comment">' + objava.komentari[i].tekst + '</p>');
-            let divKommentDlt = $('<button class="btn deleteKommentBtn" data-index=' + objava.komentari[i].korisnik.korisnickoIme + ' data-koment-id=' + objava.komentari[i].id + '>Delete</button>');
-            divInfo.append(profile_pic);
-            divInfo.append(usernameOfKomment);
-            divInfo.append(divKomment);
-            divInfo.append(divKommentDlt);
+          let div = $('<div class="message-body"></div>');
+          let text = $('<h4>' + objava.komentari[i].korisnik.ime + ' ' + objava.komentari[i].korisnik.prezime + '</h4>');
+          let messagePara = $('<p class="text-muted">' + objava.komentari[i].tekst + '</p>');
+          div.append(text);
+          div.append(messagePara);
+          divWrapper.append(divPhoto);
+          divWrapper.append(div);
+          divKomentarS.append(divWrapper);
 
-            let divKomentarS = $('<div class="comment"></div>');
-            divKomentarS.append(divInfo);
-            divKomentari.append(divKomentarS);
+          let divKommentDlt = $('<button class="btn deleteKommentBtn" data-index=' + objava.komentari[i].korisnik.korisnickoIme + ' data-koment-id=' + objava.komentari[i].id + '>Delete</button>');
+          divKomentarS.append(divKommentDlt);
+          divKomentari.append(divKomentarS);
         }
-        }
-        
+      }
     }
 
-    divInfo.append(divPhoto);
     divInfo.append(div);
+    divInfo.append(divPhoto);
     divInfo.append(divAction);
     divInfo.append(divKomentari);
 
@@ -1057,7 +1087,7 @@ function bindButtonsKomment(){
         $(post[i]).find(".backBtn").click(function () {
             goBackToPosts();
         });
-        let deleteButtons = $('.comment');
+        let deleteButtons = $('.message');
         for (let y = 0; y < deleteButtons.length; y++){
 
             let theButton = $(deleteButtons[y]).find(".deleteKommentBtn");
@@ -1068,17 +1098,12 @@ function bindButtonsKomment(){
             if (theButton.data('index') != currentUser.korisnickoIme){
                  theButton.hide();
             }
-            
-
-            
         }
     }
 }
 
 function deleteComment(objavaID, kommID)
 {
-
-
     let kObjava = objavaID;
     let kID = kommID
     var data = JSON.stringify({
@@ -1093,7 +1118,7 @@ function deleteComment(objavaID, kommID)
         contentType: 'application/json',
         success: function (response) {
             if (response.status == "SUCCESS") {
-                alert("Comment Deleted Succkseffuly");
+                alert("Comment deleted successfully");
                 window.location = window.location;
             }
             else {
@@ -1107,7 +1132,7 @@ function deleteComment(objavaID, kommID)
     });
 }
 function postComment(objavaID){
-    let kIme = $('textarea#makeCommentID').val();
+    let kIme = $('#makeCommentID').val();
     let greska = false;
 
     if (!kIme) {

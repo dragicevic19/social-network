@@ -73,7 +73,8 @@ public class SlikeDAO {
 		while (st.hasMoreTokens()) {
 			id = st.nextToken().trim();
 			Slika s = pronadjiSliku(id);
-			retList.add(s);
+			if (s != null)
+				retList.add(s);
 		}
 		return retList;
 	}

@@ -12,6 +12,7 @@ import beans.Uloga;
 import beans.ZahtevZaPrijateljstvo;
 import dao.KorisnikDAO;
 import dao.PorukeDAO;
+import dao.SlikeDAO;
 import dao.ZahteviDAO;
 import dto.GrupisanePorukeDTO;
 import dto.RegistracijaKorisnikDTO;
@@ -69,11 +70,11 @@ public class KorisniciApi {
 		}
 	}
 
-	public static Object register(Request req, Response res, KorisnikDAO korisniciDAO) {
+	public static Object register(Request req, Response res, KorisnikDAO korisniciDAO, SlikeDAO slikeDAO) {
 		res.type("application/json");
 		RegistracijaKorisnikDTO k = g.fromJson(req.body(), RegistracijaKorisnikDTO.class);
 		Session ss = req.session(true);
-		Korisnik newUser = KorisniciService.register(k, korisniciDAO);
+		Korisnik newUser = KorisniciService.register(k, korisniciDAO, slikeDAO);
 		if (newUser != null) {
 			ss.attribute("currentUser", newUser);
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(newUser)));

@@ -257,32 +257,51 @@ nav .tabs ul li.active{
 }
 
 .center .posts{
-    height: 500px;
+    height: 600px;
     overflow: auto;
+}
+
+.center .makingPost {
+    margin: 10px;
 }
 
 .center .photos{
-    height: 500px;
+    height: 600px;
     overflow: auto;
 }
 .center .posts .post{
-    border-bottom: 2px solid black;r
+    border-bottom: 2px solid black;
+    margin: 20px;
+    background-color: rgba(218, 218, 218, 0.24);
+}
+.center .posts .post img,
+.center .photos .slika img,
+.centerPostStyle img{
+    height: 300px;
+    margin-bottom: 20px;
+    object-fit: cover;
 }
 
 .center .photos .slika{
-    border-bottom: 2px solid black;r
+    border-bottom: 2px solid black;
+    margin: 20px;
 }
 
 .center .posts .post .action{
+    margin: 10px;
     float: right;
 }
 
 .center .photos .slika .action{
+    margin: 10px;
     float: right;
 }
 
 .centerPostStyle{
-    height: 500px;
+    background-color: rgba(218, 218, 218, 0.24);
+
+    margin-top: 10px;
+    height: 600px;
     overflow: auto;
 
 }
@@ -346,7 +365,8 @@ background: #ecebeb;
     border-radius: 50%;
 }
 
-.wrapper .right .messages .message{
+.message
+{
     display: flex;
     gap: 1rem;
     padding: 0.3rem;
@@ -361,18 +381,34 @@ background: #ecebeb;
     color: red;
 }
 
-.wrapper .right .messages .message:hover,
+.wrapper .right .message:hover,
 .wrapper .left .friend:hover,
 .searchItem:hover {
     opacity: 0.9;
 }
 
-.right .messages .message:last-child{
+.message:last-child{
     margin: 0;
 }
 
-.right .messages .message p{
+.message p{
     font-size: 1rem;
+}
+
+.center .wrappers {
+    display: flex;
+    gap: 5px;
+}
+
+.center .message {
+    text-align: left;
+    justify-content: space-between;
+}
+
+.center .message img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
 }
 
 .right .requests{

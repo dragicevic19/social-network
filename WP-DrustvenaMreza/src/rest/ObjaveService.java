@@ -45,7 +45,7 @@ public class ObjaveService {
 			objava.setKorisnik(korisnik);
 			objava.setObrisana(false);
 			objava.setSlika(false);
-			objava.setSlika(objavaDTO.getSlika());
+			objava.setSlika(objavaDTO.getSlika().equals("/") ? null : objavaDTO.getSlika());
 			objava.setTekst(objavaDTO.getTekst());
 			Objava novaObjava = objaveDAO.sacuvaj(objava, korisnikDAO);
 			korisnik.getObjave().add(novaObjava.getId());

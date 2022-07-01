@@ -33,7 +33,7 @@ public class SparkMain {
 		
 		webSocket("/ws", WsHandler.class);
 
-		post("/rest/korisnici/register", (req, res) -> KorisniciApi.register(req, res, korisniciDAO));
+		post("/rest/korisnici/register", (req, res) -> KorisniciApi.register(req, res, korisniciDAO, slikeDAO));
 
 		get("/rest/korisnici/loggedIn", (req, res) -> KorisniciApi.getCurrentUser(req, res, zahteviDAO, porukeDAO, korisniciDAO));
 
