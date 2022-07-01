@@ -560,7 +560,7 @@ function deletePost(objavaID)
         },
         error: function (response) {
             console.log(data);
-            alert("smolPP");
+
         }
     });
 }
@@ -570,6 +570,7 @@ function showPost(postId) {
         url: "rest/objave/getSpecificObjava?objavaID=" + postId,
         success: function (response) {
             let objava = response.data;
+            $('.posts').hide(300);
             showSpecificPost(objava);
             bindButtonsKomment();
         },
@@ -580,7 +581,7 @@ function showPost(postId) {
 }
 
 function showSpecificPost(objava){
-    $('.posts').hide(300);
+
     let divRequest = $("<div class='singlePost' data-index='" + objava +"'></div>");
     let divInfo = $('<div class="info"></div>');
     let divPhoto = $('<div class="photo"></div>');

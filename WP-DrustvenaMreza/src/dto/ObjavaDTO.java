@@ -14,13 +14,14 @@ public class ObjavaDTO {
 	private String tekst;
 	private List<Komentar> komentari;
 	private boolean obrisana;
+	private boolean isSlika;
 
 	public ObjavaDTO() {
 		this.komentari = new ArrayList<Komentar>();
 	}
 
 	public ObjavaDTO(String id, String korisnik, String slika, String tekst, List<Komentar> komentari,
-			boolean obrisana) {
+			boolean obrisana, boolean isSlika) {
 		this();
 		this.id = id;
 		this.korsinickoIme = korisnik;
@@ -28,10 +29,27 @@ public class ObjavaDTO {
 		this.tekst = tekst;
 		this.komentari = komentari;
 		this.obrisana = obrisana;
+		this.isSlika = isSlika;
 	}
 
 	public String getId() {
 		return id;
+	}
+
+	public String getKorsinickoIme() {
+		return korsinickoIme;
+	}
+
+	public void setKorsinickoIme(String korsinickoIme) {
+		this.korsinickoIme = korsinickoIme;
+	}
+
+	public boolean isSlika() {
+		return isSlika;
+	}
+
+	public void setSlika(boolean isSlika) {
+		this.isSlika = isSlika;
 	}
 
 	public void setId(String id) {

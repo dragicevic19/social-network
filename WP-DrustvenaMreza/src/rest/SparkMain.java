@@ -82,6 +82,10 @@ public class SparkMain {
 		put("rest/korisnici/block", (req, res) -> KorisniciApi.block(req, res, korisniciDAO));
 		
 		put("rest/korisnici/unblock", (req, res) -> KorisniciApi.unblock(req, res, korisniciDAO));
+		
+		post("/rest/komentari/newSlika", (req, res) -> ObjaveApi.newSlika(req, res, objaveDAO, korisniciDAO));
+		
+		get("rest/objave/getSlike", (req, res) -> ObjaveApi.getSlikeForUser(req, res, korisniciDAO, objaveDAO));
 
 	}
 }

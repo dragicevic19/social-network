@@ -22,6 +22,7 @@ public class ObjaveService {
 			upObj.setObrisana(objava.isObrisana());
 			upObj.setSlika(objava.getSlika());
 			upObj.setTekst(objava.getTekst());
+			upObj.setSlika(objava.isSlika());
 			return upObj;
 			
 		}
@@ -40,6 +41,19 @@ public class ObjaveService {
 			Objava objava = new Objava();
 			objava.setKorisnik(korisnikDAO.pronadjiKorisnika(objavaDTO.getKorisnickoIme()));
 			objava.setObrisana(false);
+			objava.setSlika(false);
+			objava.setSlika(objavaDTO.getSlika());
+			objava.setTekst(objavaDTO.getTekst());
+			objaveDAO.sacuvaj(objava, korisnikDAO);
+			
+			return objava;
+		}
+
+		public static Objava makeSlika(ObjavaDTO objavaDTO, ObjaveDAO objaveDAO, KorisnikDAO korisnikDAO) {
+			Objava objava = new Objava();
+			objava.setKorisnik(korisnikDAO.pronadjiKorisnika(objavaDTO.getKorisnickoIme()));
+			objava.setObrisana(false);
+			objava.setSlika(true);
 			objava.setSlika(objavaDTO.getSlika());
 			objava.setTekst(objavaDTO.getTekst());
 			objaveDAO.sacuvaj(objava, korisnikDAO);

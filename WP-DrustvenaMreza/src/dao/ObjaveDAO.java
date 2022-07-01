@@ -65,7 +65,7 @@ public class ObjaveDAO {
             File file = new File(contextPath + "/objave.csv");
             System.out.println(file.getCanonicalPath());
             in = new BufferedReader(new FileReader(file));
-            String line, id = "", kIme = "", putanjaSlike = "", tekst = "", idKomentari = "", obrisana = "";
+            String line, id = "", kIme = "", putanjaSlike = "", tekst = "", idKomentari = "", obrisana = "", isSlika ="";
             List<Komentar> komentari = new ArrayList<Komentar>();
             Korisnik k = null;
 
@@ -83,11 +83,11 @@ public class ObjaveDAO {
                     tekst = st.nextToken().trim();
                     idKomentari = st.nextToken().trim();
                     obrisana = st.nextToken().trim();
-
+                    isSlika = st.nextToken().trim();
                     komentari = komentariDAO.pronadjiKomentare(idKomentari);
                     k = korisniciDAO.pronadjiKorisnika(kIme);
                 }
-                objave.put(id, new Objava(id, k, putanjaSlike, tekst, komentari, Boolean.parseBoolean(obrisana)));
+                objave.put(id, new Objava(id, k, putanjaSlike, tekst, komentari, Boolean.parseBoolean(obrisana), Boolean.parseBoolean(isSlika)));
             }
 
          //   korisniciDAO.onUcitaneObjave(objave.values()); // da se popune objave za sve korisnike

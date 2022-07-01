@@ -1,2 +1,3 @@
-1;pera;/;Moja objava;1;false
-2;pera;/;Druga objava;/;false
+1;pera;/;Moja objava;1;false;false
+2;pera;/;Druga objava;/;false;false
+3;pera;/;Prva slika;/;false;true

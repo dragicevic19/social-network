@@ -10,13 +10,14 @@ public class Objava {
 	private String tekst;
 	private List<Komentar> komentari;
 	private boolean obrisana;
+	private boolean isSlika;
 
 	public Objava() {
 		this.komentari = new ArrayList<Komentar>();
 	}
 
 	public Objava(String id, Korisnik korisnik, String slika, String tekst, List<Komentar> komentari,
-			boolean obrisana) {
+			boolean obrisana, boolean isSlika) {
 		this();
 		this.id = id;
 		this.korisnik = korisnik;
@@ -24,6 +25,15 @@ public class Objava {
 		this.tekst = tekst;
 		this.komentari = komentari;
 		this.obrisana = obrisana;
+		this.isSlika = isSlika;
+	}
+
+	public boolean isSlika() {
+		return isSlika;
+	}
+
+	public void setSlika(boolean isSlika) {
+		this.isSlika = isSlika;
 	}
 
 	public Objava(String id) {
