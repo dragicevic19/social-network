@@ -20,12 +20,14 @@ $(".search-input").keydown(function (event) {
         $.each($("input[name='searchOption']:checked"), function() {
             searchOptions.push($(this).val());
         });
+        var sort =  $("#sortingOption  option:selected").val();
+
         if (searchOptions.length != 0) { 
             query += '&options=' + searchOptions.join(",");
         }
         $.ajax({
             type: "GET",
-            url: "rest/korisnici/search?query=" + query,
+            url: "rest/korisnici/search?sort=" + sort + "&query=" + query,
             success: function (response) {          
                 if (response.status == "SUCCESS") {
                     $('.searchResult').empty();
@@ -609,10 +611,10 @@ function bindMakePostBtn(){
   });
 
   postGlobal.find(".postPostBtn").click(function() {
-      postMadePost();
+      postMadePost(type);
   })
   postGlobal.find('.backPostBtn').click(function(){
-      goBackToPosts();
+      goBackToPosts('post');
   
   })
 }
@@ -628,7 +630,7 @@ function bindMakeSlikaBtn(){
     })
 
     postGlobal.find('.backPostBtn').click(function(){
-        goBackToPosts();
+        goBackToPosts('pic');
     
     })
 }
@@ -861,7 +863,7 @@ function showPost(postId) {
             let objava = response.data;
             $('.posts').hide(300);
             showSpecificPost(objava);
-            bindButtonsKomment();
+            bindButtonsKomment('post');
         },
         error: function (response) {
             alert("error in fetching objava");
@@ -877,7 +879,7 @@ function showSlika(postId) {
         let objava = response.data;
         $('.photos').hide(300);
         showSpecificPost(objava);
-        bindButtonsKomment();
+        bindButtonsKomment('pic');
     },
     error: function (response) {
         alert("error in fetching objava");
@@ -957,7 +959,7 @@ function showSpecificPost(objava){
     $('.center_content').append(singlePost);
 }
 
-function bindButtonsKomment(){
+function bindButtonsKomment(type){
     let post = $('.showingPost');
 
     for (let i = 0; i < post.length; i++){
@@ -969,7 +971,7 @@ function bindButtonsKomment(){
             
         };
         $(post[i]).find(".backBtn").click(function () {
-            goBackToPosts();
+            goBackToPosts(type);
         });
         let deleteButtons = $('.message');
         for (let y = 0; y < deleteButtons.length; y++){
@@ -1047,10 +1049,17 @@ function postComment(objavaID){
     });
 }
 
-function goBackToPosts(){
-    window.location = window.location;
-}
+function goBackToPosts(type){
+    if (type === 'pic') {
+        $('.posts_li').click();
+        $('.photos_li').click();
 
+    }
+    else {
+        $('.photos_li').click();
+        $('.posts_li').click();
+    }
+}
 function addProfilePictureAndName() {
     let picPath = "pics/avatar.png";
     if (userToShow.profilnaSlika) {

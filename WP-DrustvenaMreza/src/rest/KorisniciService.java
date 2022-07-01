@@ -3,6 +3,8 @@ package rest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -137,11 +139,34 @@ public class KorisniciService {
 		return true;
 	}
 
-	public static List<Korisnik> search(String query, String options, KorisnikDAO korisniciDAO) {
+	public static List<Korisnik> search(String query, String options, String sort, KorisnikDAO korisniciDAO) {
 		List<Korisnik> searchRes = new ArrayList();
 
 		for (Korisnik k : korisniciDAO.getKorisnici().values()) {
 			if (k.search(query, options)) searchRes.add(k);
+		}
+		
+		switch(sort) {
+		case "name":
+			Collections.sort(searchRes, new Comparator<Korisnik>() {
+			  @Override
+			  public int compare(Korisnik k1, Korisnik k2) {
+			    return k1.getIme().toUpperCase().compareTo(k2.getIme().toUpperCase());
+			  }
+			});
+			break;
+		case "lastName":
+			Collections.sort(searchRes, new Comparator<Korisnik>() {
+			  @Override
+			  public int compare(Korisnik k1, Korisnik k2) {
+			    return k1.getPrezime().toUpperCase().compareTo(k2.getPrezime().toUpperCase());
+			  }
+			});
+			break;
+		case "none":
+			break;
+		default:
+			break;
 		}
 		
 		return searchRes;

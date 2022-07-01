@@ -21,12 +21,14 @@ $(".search-input").keydown(function (event) {
         $.each($("input[name='searchOption']:checked"), function() {
             searchOptions.push($(this).val());
         });
+        var sort =  $("#sortingOption  option:selected").val();
+
         if (searchOptions.length != 0) { 
             query += '&options=' + searchOptions.join(",");
         }
         $.ajax({
             type: "GET",
-            url: "rest/korisnici/search?query=" + query,
+            url: "rest/korisnici/search?sort=" + sort + "&query=" + query,
             success: function (response) {          
                 if (response.status == "SUCCESS") {
                     $('.searchResult').empty();
@@ -384,7 +386,6 @@ function fillMessages() {
         let adminClass = (message.withAdmin) ? 'admin' : '';
         let text = $(`<h4 class=${adminClass}>` + user.ime + ' ' + user.prezime + '</h4>');
         let you = (message.posiljalac.korisnickoIme === currentUser.korisnickoIme) ? 'You: ' : '';
-        console.log(message.posiljalac);
         let messagePara = $('<p class="text-muted">' + you + message.poslednjaPoruka + '</p>');
         div.append(text);
         div.append(messagePara);
@@ -509,10 +510,7 @@ function centerSettings() {
             return;
         }
         wipePost();
-        if (!checkIfValid()){
-            
-        } else
-        {
+        if (checkIfValid()){
             $(this).addClass('active');
             $(centerActiveLi).removeClass('active');
             centerActiveLi = $(this);
@@ -520,8 +518,6 @@ function centerSettings() {
             $(centerActiveDiv).hide(300);
             centerActiveDiv = $('.posts');
         }
-        
-
     });
     $('.photos_li').click(function () {
         if (centerActiveLi.is(this)) {
@@ -537,7 +533,6 @@ function centerSettings() {
             $(centerActiveDiv).hide(300);
             centerActiveDiv = $('.photos');
         }
-        
     });
 
     addProfilePictureAndName();
@@ -628,7 +623,7 @@ function getPosts(user){
         error: function (response) {
             alert("error in fetching objave");
         }
-})
+    })
 }
 
 function getSlike(user){
@@ -644,7 +639,7 @@ function getSlike(user){
         error: function (response) {
             alert("error in fetching objave");
         }
-})
+    })
 }
 
 function fillSlikaInformation(objave){
@@ -687,6 +682,7 @@ function fillSlikaInformation(objave){
         
     }
 }
+
 function bindButtonsSlika() {
     let postGlobal = $('.photos');
     if (currentUser.korisnickoIme != userToShow.korisnickoIme)
@@ -748,7 +744,6 @@ function fillPostInformation(objave){
 
             $('.posts').append(divRequest);
         }
-        
     }
 }
 
@@ -824,11 +819,11 @@ function bindMakeSlikaBtn(){
     })
 
     postGlobal.find('.backPostBtn').click(function(){
-        goBackToPosts();
+        goBackToPosts('pic');
     })
 }
 
-function bindMakePostBtn(){
+function bindMakePostBtn(type){
     let postGlobal = $('.makingPostLet');
 
     $('input[type="file"]').change(function(e){
@@ -839,7 +834,7 @@ function bindMakePostBtn(){
         postMadePost();
     })
     postGlobal.find('.backPostBtn').click(function(){
-        goBackToPosts();
+        goBackToPosts('post');
     
     })
 }
@@ -1031,36 +1026,37 @@ function deletePost(objavaID)
         }
     });
 }
+
 function showPost(postId) {
-        $.ajax({
+    $.ajax({
         type: "GET",
         url: "rest/objave/getSpecificObjava?objavaID=" + postId,
         success: function (response) {
             let objava = response.data;
             $('.posts').hide(300);
             showSpecificPost(objava);
-            bindButtonsKomment();
+            bindButtonsKomment('post');
         },
         error: function (response) {
             alert("error in fetching objava");
         }
-})
+    })
 }
 
 function showSlika(postId) {
-        $.ajax({
+    $.ajax({
         type: "GET",
         url: "rest/objave/getSpecificObjava?objavaID=" + postId,
         success: function (response) {
             let objava = response.data;
             $('.photos').hide(300);
             showSpecificPost(objava);
-            bindButtonsKomment();
+            bindButtonsKomment('pic');
         },
         error: function (response) {
             alert("error in fetching objava");
         }
-})
+    })
 }
 
 function showSpecificPost(objava){
@@ -1133,7 +1129,7 @@ function showSpecificPost(objava){
     $('.center_content').append(singlePost);
 }
 
-function bindButtonsKomment(){
+function bindButtonsKomment(type){
     let post = $('.showingPost');
 
     for (let i = 0; i < post.length; i++){
@@ -1145,7 +1141,7 @@ function bindButtonsKomment(){
             
         };
         $(post[i]).find(".backBtn").click(function () {
-            goBackToPosts();
+            goBackToPosts(type);
         });
         let deleteButtons = $('.message');
         for (let y = 0; y < deleteButtons.length; y++){
@@ -1191,6 +1187,7 @@ function deleteComment(objavaID, kommID)
         }
     });
 }
+
 function postComment(objavaID){
     let kIme = $('#makeCommentID').val();
     let greska = false;
@@ -1228,8 +1225,16 @@ function postComment(objavaID){
     });
 }
 
-function goBackToPosts(){
-    window.location = window.location;
+function goBackToPosts(type){
+    if (type === 'pic') {
+        $('.posts_li').click();
+        $('.photos_li').click();
+
+    }
+    else {
+        $('.photos_li').click();
+        $('.posts_li').click();
+    }
 }
 
 function addProfilePictureAndName() {

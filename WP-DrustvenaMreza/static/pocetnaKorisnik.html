@@ -130,9 +130,18 @@
                                 <input type="checkbox" value="lastName" name="searchOption"/>
                             </div>
                         </div>
-                        <div class="searchResult">
+                        <div class="search-options">
+                            <label>Sort by:</label>
+                            <div class="option sort">
+                                <select id="sortingOption">
+                                    <option value="none" selected="true"></option>
+                                    <option value="name">Name</option>
+                                    <option value="lastName">Last Name</option>
+                                </select>
+                            </div>
                         </div>
-                        </div>
+                        <div class="searchResult"></div>
+                    </div>
                 </div>
                 <div class="logout">
                     <h2>Are you sure you want to log out?</h2>

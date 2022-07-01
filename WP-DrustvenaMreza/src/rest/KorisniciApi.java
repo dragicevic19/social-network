@@ -197,8 +197,9 @@ public class KorisniciApi {
 		res.type("application/json");
 		String query = req.queryParams("query");
 		String options = req.queryParams("options");
+		String sort = req.queryParams("sort");
 		try {
-			List<Korisnik> searchRes = KorisniciService.search(query, options, korisniciDAO);
+			List<Korisnik> searchRes = KorisniciService.search(query, options, sort, korisniciDAO);
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(searchRes)));
 
 		}
