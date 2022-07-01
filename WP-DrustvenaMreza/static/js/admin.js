@@ -265,6 +265,7 @@ function centerSettings() {
     let centerActiveLi = $('.about_li');
     let centerActiveDiv = $('.about');
     getPosts(userToShow);
+    getSlike(userToShow);
     fillInformationsAboutUser();
 
     $('.about_li').click(function () {
@@ -285,6 +286,7 @@ function centerSettings() {
         if (centerActiveLi.is(this)) {
             return;
         }
+        wipePost();
         $(this).addClass('active');
         $(centerActiveLi).removeClass('active');
         centerActiveLi = $(this);
@@ -382,6 +384,89 @@ function wipePost(){
     }
     
 }
+function getSlike(user){
+    $.ajax({
+        type: "GET",
+        url: "rest/objave/getSlike?username=" + user.korisnickoIme,
+        success: function (response) {
+            let objave = response.data;
+            fillSlikaInformation(objave);
+            bindButtonsSlika();
+
+        },
+        error: function (response) {
+            alert("error in fetching objave");
+        }
+})
+}
+
+function fillSlikaInformation(objave){
+    let btnNewPost = $('<button class="btn makeSlikaBtn" >Make Slika</button>');
+    $('.photos').append(btnNewPost);
+    for (let i = 0; i < objave.length; i++){
+        if(!objave[i].obrisana){
+            let divRequest = $("<div class='slika' data-index='" + objave[i] +"'></div>");
+            let divInfo = $('<div class="info"></div>');
+            let divPhoto = $('<div class="photo"></div>');
+            let picPath = "pics/search.ico";
+            if (objave[i].slika) {
+
+                picPath = objave[i].slika;
+
+            }
+            let img = $('<img src=' + picPath + '>');
+            divPhoto.append(img);
+            let div = $('<div></div>');
+            let text = $('<p class="text-muted">' + objave[i].tekst + '</p>');
+            div.append(text);
+
+            let divAction = $('<div class="action"></div>');
+            let btnShow = $('<button class="btn btn-primary showBtn" data-index=' + objave[i].id + '>Show</button>');
+            let btnDelete = $('<button class="btn deleteBtn" data-index='+ objave[i].id +'>Delete</button>');
+            divAction.append(btnShow);
+            divAction.append(btnDelete);
+
+            divInfo.append(divPhoto);
+            divInfo.append(div);
+            divInfo.append(divAction);
+
+            divRequest.append(divInfo);
+
+            $('.photos').append(divRequest);
+        }
+        
+    }
+}
+function bindButtonsSlika() {
+    let postGlobal = $('.photos');
+    if (currentUser.korisnickoIme != userToShow.korisnickoIme)
+    {
+        $('.makeSlikaBtn').hide();
+    }
+    postGlobal.find(".makeSlikaBtn").click(function() {
+        makeSlikaTemp();
+        bindMakeSlikaBtn();
+    })
+    let posts = $('.slika');
+    for (let i = 0; i < posts.length; i++){
+        $(posts[i]).find(".showBtn").click(function () {
+
+            showSlika(this.getAttribute("data-index"));
+        });
+        $(posts[i]).find(".deleteBtn").click(function () {
+            deletePost(this.getAttribute('data-index'));
+        });
+    }
+}
+
+function makeSlikaTemp(){
+    $('.photos').hide(300);
+    makePost();
+}
+function makePostTemp(){
+    $('.posts').hide(300);
+    makePost();
+}
 function getPosts(user){
     $.ajax({
         type: "GET",
@@ -442,7 +527,7 @@ function bindButtonsPosts() {
         $('.makePostBtn').hide();
     }
     postGlobal.find(".makePostBtn").click(function() {
-        makePost();
+        makePostTemp();
         bindMakePostBtn();
     })
     let posts = $('.post');
@@ -459,7 +544,6 @@ function bindButtonsPosts() {
 }
 
 function makePost(){
-    $('.posts').hide(300);
     let divRequest = $('<div class="makingPost" ></div>');
     let divInfo = $('<div class="info"></div>');
     let divPathMsg = $('<p>Picture Path</p>')
@@ -496,6 +580,56 @@ function bindMakePostBtn(){
         goBackToPosts();
     
     })
+}
+function bindMakeSlikaBtn(){
+    let postGlobal = $('.makingPostLet');
+    postGlobal.find(".postPostBtn").click(function() {
+        postMadeSlika();
+    })
+    postGlobal.find('.backPostBtn').click(function(){
+        goBackToPosts();
+    
+    })
+}
+
+function postMadeSlika(){
+    let postText = $('textarea#makePostID').val();
+    let greska = false;
+
+    
+
+    let postPic = $('input[name="picturePath"').val();
+    if (!postPic) {
+        greska = true;
+        alert("Picture cant be empty!");
+    }
+
+    if (greska) return;
+
+    let kIme = currentUser.korisnickoIme;
+
+    var data = JSON.stringify({
+        slika: postPic,
+        tekst: postText,
+        korsinickoIme: kIme,
+    });
+
+    $.ajax({
+        type: "POST",
+        url: "/rest/komentari/newSlika",
+        data: data,
+        contentType: 'application/json',
+        success: function (response) {
+            if (response.status == "ERROR") {
+                alert("Failed to make post");
+                window.location = window.location;
+            }
+            else {
+                alert("Post posted!")
+                window.location = window.location;
+            }
+        }
+    });
 }
 
 function postMadePost(){
@@ -571,6 +705,22 @@ function showPost(postId) {
         success: function (response) {
             let objava = response.data;
             $('.posts').hide(300);
+            showSpecificPost(objava);
+            bindButtonsKomment();
+        },
+        error: function (response) {
+            alert("error in fetching objava");
+        }
+})
+}
+
+function showSlika(postId) {
+        $.ajax({
+        type: "GET",
+        url: "rest/objave/getSpecificObjava?objavaID=" + postId,
+        success: function (response) {
+            let objava = response.data;
+            $('.photos').hide(300);
             showSpecificPost(objava);
             bindButtonsKomment();
         },
