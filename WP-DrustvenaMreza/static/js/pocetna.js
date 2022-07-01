@@ -498,7 +498,7 @@ function centerSettings() {
         if (centerActiveLi.is(this)) {
             return;
         }
-        wipePost()
+        wipePost();
         $(this).addClass('active');
         $(centerActiveLi).removeClass('active');
         centerActiveLi = $(this);
@@ -525,7 +525,7 @@ function centerSettings() {
         if (centerActiveLi.is(this)) {
             return;
         }
-        wipePost()
+        wipePost();
         $(this).addClass('active');
         $(centerActiveLi).removeClass('active');
         centerActiveLi = $(this);
@@ -723,10 +723,10 @@ function postMadePost(){
     }
 
     let postPic = $('input[name="picturePath"').val();
-    console.log(postPic);
+
 
     if (greska) return;
-    console.log(postText);
+
     let kIme = currentUser.korisnickoIme;
 
     var data = JSON.stringify({
@@ -865,7 +865,7 @@ function showSpecificPost(objava){
 
 function bindButtonsKomment(){
     let post = $('.showingPost');
-    console.log("ALLERTSESES");
+
     for (let i = 0; i < post.length; i++){
         $(post[i]).find(".postBtn").click(function (){
 
@@ -936,7 +936,7 @@ function postComment(objavaID){
     }
 
     if (greska) return;
-    console.log(kIme);
+
     let kUser = currentUser.korisnickoIme;
     let kObjava = objavaID;
     
