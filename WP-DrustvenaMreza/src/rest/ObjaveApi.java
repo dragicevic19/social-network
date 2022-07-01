@@ -29,6 +29,7 @@ public class ObjaveApi {
 		{
 			Objava objava = objaveDAO.pronadjiObjavu(id);
 
+
 			if (!objava.isSlika()) {
 				objave.add(objava);
 			}
@@ -55,6 +56,9 @@ public class ObjaveApi {
 			}
 
 			
+
+			objave.add(objava);
+
 		}
 		
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(objave)));
