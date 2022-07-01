@@ -1,11 +1,11 @@
-pera;pera123;pera@gmail.com;Pera;Peric;12/12/2000;MUSKI;KORISNIK;jova,zika,mika;1;1;1,2;1;false;false;false
-mika;mika123;mika@gmail.com;Mika;Mikic;10/10/1999;MUSKI;KORISNIK;jova,zika,pera;1;1;/;/;false;false;false
-jova;jova123;jova@gmail.com;Jova;Jovic;02/02/2001;MUSKI;KORISNIK;mika,zika,pera;/;/;3;/;false;false;false
+pera;pera123;pera@gmail.com;Pera;Peric;12/12/2000;MUSKI;KORISNIK;jova,zika;1;1;1,2,3,4,5;1;false;false;false
+mika;mika123;mika@gmail.com;Mika;Mikic;10/10/1999;MUSKI;KORISNIK;jova,zika;1;1;/;/;false;false;false
+jova;jova123;jova@gmail.com;Jova;Jovic;02/02/2001;MUSKI;KORISNIK;mika,zika,pera;/;/;/;/;false;false;false
 aba;ba;ba;ba;ba;01/01/1970;MUSKI;KORISNIK;/;/;/;/;/;false;false;true
 asd;asd;asd;asd;asd;01/01/1970;MUSKI;KORISNIK;/;/;/;/;/;false;false;false
 test;test123;test@gmail.com;Tet;Test;01/01/1970;MUSKI;KORISNIK;/;/;/;/;/;false;false;false
 ttt;t;tt;t;t;01/01/1970;MUSKI;KORISNIK;/;/;/;/;/;false;false;false
-novi;novi;novi@gmail.com;Novi;Novic;01/01/1970;ZENSKI;KORISNIK;/;/;/;/;/;false;false;false
+novi;novi;novi@gmail.com;Novi;Novic;01/01/1970;ZENSKI;KORISNIK;/;/;/;6;/;true;false;false
 admin;admin;admin@gmail.com;Admin;Adminic;01/12/1991;MUSKI;ADMINISTRATOR;/;/;/;/;/;false;false;false
 zika;zika123;zika@gmail.com;Zika;Zikanovic;03/03/2003;MUSKI;KORISNIK;mika,jova,pera;1;1;/;/;false;false;false
 test1;test;test1;test;test;01/01/1970;MUSKI;KORISNIK;/;/;/;/;/;false;false;false

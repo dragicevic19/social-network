@@ -1,3 +1,6 @@
-1;pera;/;Moja objava;1,4;false
-2;pera;/;Druga objava;3;false
-3;jova;/;prvi jovin post;2,5;false
+1;pera;/;Moja objava;1;false;false
+2;pera;/;Druga objava;/;false;false
+3;pera;/;Prva slika;2;false;true
+4;pera;/;assaassaas;/;false;false
+5;pera;sssss;;/;false;true
+6;novi;/;asdasdasdad;/;false;false

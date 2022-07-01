@@ -260,11 +260,24 @@ nav .tabs ul li.active{
     height: 500px;
     overflow: auto;
 }
+
+.center .photos{
+    height: 500px;
+    overflow: auto;
+}
 .center .posts .post{
     border-bottom: 2px solid black;r
 }
 
+.center .photos .slika{
+    border-bottom: 2px solid black;r
+}
+
 .center .posts .post .action{
+    float: right;
+}
+
+.center .photos .slika .action{
     float: right;
 }
 

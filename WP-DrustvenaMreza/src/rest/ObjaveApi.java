@@ -28,7 +28,34 @@ public class ObjaveApi {
 		for (String id : k.getObjave())
 		{
 			Objava objava = objaveDAO.pronadjiObjavu(id);
-			objave.add(objava);
+
+
+			if (!objava.isSlika()) {
+				objave.add(objava);
+			}
+
+			
+		}
+		
+		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(objave)));
+	}
+	
+	public static Object getSlikeForUser(Request req, Response res, KorisnikDAO korisniciDAO, ObjaveDAO objaveDAO)
+	{
+		res.type("application/json");
+		String username = req.queryParams("username");
+		Korisnik k = korisniciDAO.pronadjiKorisnika(username);
+		List<Objava> objave = new ArrayList<Objava>();
+		
+		for (String id : k.getObjave())
+		{
+			Objava objava = objaveDAO.pronadjiObjavu(id);
+
+			if (objava.isSlika()) {
+				objave.add(objava);
+			}
+
+
 		}
 		
 		return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(objave)));
@@ -61,6 +88,17 @@ public class ObjaveApi {
 		res.type("application/json");
 		ObjavaDTO objavaDTO = g.fromJson(req.body(), ObjavaDTO.class);
 		Objava objava = ObjaveService.makePost(objavaDTO, objaveDAO, korisniciDAO);
+		if (objava != null) {
+			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(objava)));
+		} else {
+			return g.toJson(new StandardResponse(StatusResponse.ERROR, "Username already exists!"));
+		}
+	}
+	
+	public static Object newSlika(Request req, Response res, ObjaveDAO objaveDAO, KorisnikDAO korisniciDAO) {
+		res.type("application/json");
+		ObjavaDTO objavaDTO = g.fromJson(req.body(), ObjavaDTO.class);
+		Objava objava = ObjaveService.makeSlika(objavaDTO, objaveDAO, korisniciDAO);
 		if (objava != null) {
 			return g.toJson(new StandardResponse(StatusResponse.SUCCESS, g.toJsonTree(objava)));
 		} else {
