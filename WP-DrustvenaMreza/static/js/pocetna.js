@@ -512,13 +512,18 @@ function centerSettings() {
         if (centerActiveLi.is(this)) {
             return;
         }
-
-        $(this).addClass('active');
-        $(centerActiveLi).removeClass('active');
-        centerActiveLi = $(this);
-        $('.posts').show(300);
-        $(centerActiveDiv).hide(300);
-        centerActiveDiv = $('.posts');
+        if (!checkIfValid()){
+            
+        } else
+        {
+            $(this).addClass('active');
+            $(centerActiveLi).removeClass('active');
+            centerActiveLi = $(this);
+            $('.posts').show(300);
+            $(centerActiveDiv).hide(300);
+            centerActiveDiv = $('.posts');
+        }
+        
 
     });
     $('.photos_li').click(function () {
@@ -526,12 +531,18 @@ function centerSettings() {
             return;
         }
         wipePost();
-        $(this).addClass('active');
-        $(centerActiveLi).removeClass('active');
-        centerActiveLi = $(this);
-        $('.photos').show(300);
-        $(centerActiveDiv).hide(300);
-        centerActiveDiv = $('.photos');
+        if (!checkIfValid()){
+            
+            
+        } else{
+            $(this).addClass('active');
+            $(centerActiveLi).removeClass('active');
+            centerActiveLi = $(this);
+            $('.photos').show(300);
+            $(centerActiveDiv).hide(300);
+            centerActiveDiv = $('.photos');
+        }
+        
     });
 
     addProfilePictureAndName();
@@ -583,6 +594,20 @@ function centerSettings() {
     $("#btnNo").click(function () {
         $('.myprofile_li').click();
     });
+}
+
+function checkIfValid(){
+    let valid = true;
+    if(userToShow == currentUser){
+        return valid;
+    }
+    if(!isFriends(userToShow,currentUser)){
+        if(userToShow.privatan){
+            alert("User isnt your friend and profile is private!");
+            valid = false;
+        }
+    }
+    return valid;
 }
 function wipePost(){
     let element = document.getElementById('showingPosts');

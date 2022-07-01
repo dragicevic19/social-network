@@ -5,7 +5,7 @@ aba;ba;ba;ba;ba;01/01/1970;MUSKI;KORISNIK;/;/;/;/;/;false;false;true
 asd;asd;asd;asd;asd;01/01/1970;MUSKI;KORISNIK;/;/;/;/;/;false;false;false
 test;test123;test@gmail.com;Tet;Test;01/01/1970;MUSKI;KORISNIK;/;/;/;/;/;false;false;false
 ttt;t;tt;t;t;01/01/1970;MUSKI;KORISNIK;/;/;/;/;/;false;false;false
-novi;novi;novi@gmail.com;Novi;Novic;01/01/1970;ZENSKI;KORISNIK;/;/;/;/;/;false;false;false
+novi;novi;novi@gmail.com;Novi;Novic;01/01/1970;ZENSKI;KORISNIK;/;/;/;/;/;true;false;false
 admin;admin;admin@gmail.com;Admin;Adminic;01/12/1991;MUSKI;ADMINISTRATOR;/;/;/;/;/;false;false;false
 zika;zika123;zika@gmail.com;Zika;Zikanovic;03/03/2003;MUSKI;KORISNIK;mika,jova,pera;1;1;/;/;false;false;false
 test1;test;test1;test;test;01/01/1970;MUSKI;KORISNIK;/;/;/;/;/;false;false;false
