@@ -85,7 +85,10 @@ public class ObjaveDAO {
 				}
 				upis.append(";");
 				upis.append(String.valueOf(objava.isObrisana()));
+				upis.append(";");
+				upis.append(String.valueOf(objava.isSlika()));
 				upis.append("\n");
+				
 			}
 
 			upis.flush();

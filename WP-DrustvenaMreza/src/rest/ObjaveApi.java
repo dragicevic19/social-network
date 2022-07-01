@@ -55,9 +55,6 @@ public class ObjaveApi {
 				objave.add(objava);
 			}
 
-			
-
-			objave.add(objava);
 
 		}
 		
